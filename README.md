@@ -1,2 +1,2 @@
 # experimental
-Crude implementations of ideas ranging from simplex solver & suffix trees to monads & purely functional data structures.
+Crude implementations of ideas ranging from imperative algorithms to purely functional data structures.

@@ -44,4 +44,4 @@ sudoku_states(i, puzzle) as (
     and not exists (select * from all_pairs where fst = i and substring(puzzle from snd for 1) = d)
 )
 select puzzle from sudoku_states order by i desc limit 1;
--- 123456789789123456456789123312845967697312845845697312231574698968231574574968231
+-- (PostgreSQL 13.0) 123456789789123456456789123312845967697312845845697312231574698968231574574968231

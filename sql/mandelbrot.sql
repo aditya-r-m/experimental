@@ -15,7 +15,7 @@ iteration_bounds(i, ix, iy) as (
 select array_to_string(array_agg(substring(' ------~~~~~~#######++++++ ', i, 1)), '')
 from iteration_bounds group by iy order by iy;
 
-/* ref: https://wiki.postgresql.org/wiki/Mandelbrot_set
+/* (PostgreSQL 13.0) ref: https://wiki.postgresql.org/wiki/Mandelbrot_set
 ------------------------------------------------------------------------------------------------------
  ------------------------------------------------------------------------------------------------------
  ------------------------------------------------------------------------------------------------------

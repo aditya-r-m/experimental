@@ -203,7 +203,7 @@ split p tree
     | otherwise = (tree, Empty)
     where Split l v r = splitTree_ p mempty tree
 
--- Deque
+-- Deque Implementation using Finger Tree
 
 newtype Size = Size { getSize :: Int }
     deriving (Eq, Ord, Show)
@@ -249,6 +249,8 @@ popBack (Deque t) = case viewR t of
 qsize :: Deque a -> Size
 qsize (Deque t) = measure t
 
+-- Priority Queue Implementation using Finger Tree
+
 data Prio a = MInf | Prio a
     deriving (Eq, Ord, Show)
 instance (Ord a) => Semigroup (Prio a) where
@@ -270,6 +272,8 @@ push v (Heap t) = Heap (Elem v <| t)
 pop :: (Ord a) => Heap a -> (a, Heap a)
 pop (Heap t) = (e, Heap (l |><| r))
     where Split l (Elem e) r = splitTree_ (== measure t) MInf t
+
+-- Ordered Sequence Implementation using Finger Tree
 
 data Key a = NoKey | Key a
     deriving (Eq, Ord, Show)
@@ -327,6 +331,8 @@ countSmallerElems = snd ~. getLeftMeasure_
 
 countEqualElems :: (Ord a) => a -> OrdSeq a -> Size
 countEqualElems = snd ~. getEqMeasure_
+
+-- Interval Tree Implementation using Finger Tree
 
 data Interval a = Interval a a
     deriving (Show)

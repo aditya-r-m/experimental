@@ -64,31 +64,6 @@ type Raft struct {
 	lead   chan bool
 }
 
-func (r *Raft) reset() {
-	mux.Lock()
-	r.Role = Follower
-	r.CurrentTerm = 0
-	r.VotedBy = make([]bool, N)
-	r.Log = make([]Entry, 1)
-	r.Log[0] = Entry{0, 0}
-	r.CommitIndex = 0
-	r.NextIndex = make([]int, N)
-	r.MatchIndex = make([]int, N)
-	mux.Unlock()
-	r.clearChannels()
-	r.follow <- true
-	go r.updateMonitorState()
-}
-
-type ResetRequest struct{}
-
-type ResetResponse struct{}
-
-func (r *Raft) Reset(req *ResetRequest, res *ResetResponse) error {
-	r.reset()
-	return nil
-}
-
 func (r *Raft) clearChannels() {
 F:
 	for {
@@ -108,6 +83,33 @@ L:
 	}
 }
 
+func (r *Raft) reset() {
+	mux.Lock()
+	r.Role = Follower
+	r.CurrentTerm = 0
+	r.VotedBy = make([]bool, N)
+	r.Log = make([]Entry, 1)
+	r.Log[0] = Entry{0, 0}
+	r.CommitIndex = 0
+	r.NextIndex = make([]int, N)
+	r.MatchIndex = make([]int, N)
+	mux.Unlock()
+	r.clearChannels()
+	r.follow <- true
+	go r.updateMonitorState()
+}
+
+// rpc interfaces to reset/disconnect/re-connect raft server nodes
+
+type ResetRequest struct{}
+
+type ResetResponse struct{}
+
+func (r *Raft) Reset(req *ResetRequest, res *ResetResponse) error {
+	r.reset()
+	return nil
+}
+
 type NetworkChangeRequest struct{}
 
 type NetworkChangeResponse struct{}
@@ -119,6 +121,8 @@ func (r *Raft) NetworkChange(req *NetworkChangeRequest, res *NetworkChangeRespon
 	go r.updateMonitorState()
 	return nil
 }
+
+// raft rpc interfaces
 
 type AppendEntriesRequest struct {
 	Term         int
@@ -187,6 +191,8 @@ func (r *Raft) RequestVote(req *RequestVoteRequest, res *RequestVoteResponse) er
 	}
 	return nil
 }
+
+// raft server lifecycle implementation
 
 func (r *Raft) contendCandidecy() {
 	mux.Lock()
@@ -350,23 +356,9 @@ func (r *Raft) run() {
 	}
 }
 
-// Server initialization
+// Raft server initialization
 
 func initializeServer() {
-	// initialize global state
-	monitorAddr = os.Args[2]
-	for i := 6; i < len(os.Args); i++ {
-		clusterAddr = append(clusterAddr, os.Args[i])
-	}
-	N = len(clusterAddr)
-	x, xerr := strconv.ParseInt(os.Args[4], 0, 4)
-	if xerr != nil {
-		panic(xerr)
-	}
-	I = int(x)
-	rand.Seed(int64(I))
-
-	// initialize raft server object
 	raft := new(Raft)
 	raft.follow = make(chan bool, 1)
 	raft.lead = make(chan bool, 1)
@@ -464,49 +456,7 @@ func (m *Monitor) render() {
 	fmt.Println("Press ctrl+c to turndown the processes")
 }
 
-// Monitor Initialization
-
-func initializeMonitoredCluster() {
-	// initialize global state
-	x, xerr := strconv.ParseInt(os.Args[2], 0, 64)
-	if xerr != nil {
-		panic(xerr)
-	}
-	if x != 3 && x != 5 {
-		panic("cluster size must be either 3 or 5")
-	}
-	N = int(x)
-	monitorAddr = "localhost:1234"
-	for i := 0; i < N; i++ {
-		clusterAddr = append(clusterAddr, fmt.Sprintf("localhost:123%v", 5+i))
-	}
-
-	// trigger server processes
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	for i := 0; i < N; i++ {
-		args := append([]string{"run", "raft.go", "-m", monitorAddr, "-i", fmt.Sprintf("%v", i), "-p"}, clusterAddr...)
-		cmd := exec.CommandContext(ctx, "go", args...)
-		err := cmd.Start()
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	// initialize monitor object & rpc interface
-	monitor := new(Monitor)
-	monitor.rs = make([]Raft, N)
-	monitor.rc = 0
-	monitor.rt = 0
-	rpc.Register(monitor)
-	rpc.HandleHTTP()
-	l, e := net.Listen("tcp", fmt.Sprintf(":%v", strings.Split(monitorAddr, ":")[1]))
-	if e != nil {
-		panic(e)
-	}
-	go http.Serve(l, nil)
-
+func (m *Monitor) handleKeyInputs() {
 	// Key events setup : https://stackoverflow.com/a/54423725/5664000
 	ch := make(chan string)
 	go func(ch chan string) {
@@ -558,10 +508,71 @@ func initializeMonitoredCluster() {
 	}
 }
 
+// Monitor Initialization
+
+func initializeMonitoredCluster() {
+	// trigger server processes
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	for i := 0; i < N; i++ {
+		args := append([]string{"run", "raft.go", "-m", monitorAddr, "-i", fmt.Sprintf("%v", i), "-p"}, clusterAddr...)
+		cmd := exec.CommandContext(ctx, "go", args...)
+		err := cmd.Start()
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// initialize monitor object & interfaces
+	monitor := new(Monitor)
+	monitor.rs = make([]Raft, N)
+	monitor.rc = 0
+	monitor.rt = 0
+	rpc.Register(monitor)
+	rpc.HandleHTTP()
+	l, e := net.Listen("tcp", fmt.Sprintf(":%v", strings.Split(monitorAddr, ":")[1]))
+	if e != nil {
+		panic(e)
+	}
+	go http.Serve(l, nil)
+
+	monitor.handleKeyInputs()
+}
+
 func main() {
 	if os.Args[1] == "-n" {
+		// initialize global state for monitor
+		x, xerr := strconv.ParseInt(os.Args[2], 0, 64)
+		if xerr != nil {
+			panic(xerr)
+		}
+		if x != 3 && x != 5 {
+			panic("cluster size must be either 3 or 5")
+		}
+		N = int(x)
+		monitorAddr = "localhost:1234"
+		for i := 0; i < N; i++ {
+			clusterAddr = append(clusterAddr, fmt.Sprintf("localhost:123%v", 5+i))
+		}
+
+		// trigger server processes, initialize monitor object & listeners
 		initializeMonitoredCluster()
 	} else if os.Args[1] == "-m" {
+		// initialize global state for server
+		monitorAddr = os.Args[2]
+		for i := 6; i < len(os.Args); i++ {
+			clusterAddr = append(clusterAddr, os.Args[i])
+		}
+		N = len(clusterAddr)
+		x, xerr := strconv.ParseInt(os.Args[4], 0, 4)
+		if xerr != nil {
+			panic(xerr)
+		}
+		I = int(x)
+		rand.Seed(int64(I))
+
+		// initialize server object & listeners
 		initializeServer()
 	} else {
 		panic("Arguments must strictly follow one of two allowed forms")

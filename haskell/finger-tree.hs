@@ -1,3 +1,5 @@
+-- https://www.staff.city.ac.uk/~ross/papers/FingerTree.pdf
+
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}

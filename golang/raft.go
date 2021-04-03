@@ -332,6 +332,10 @@ func (r *Raft) sendHeartbeatsAndLogsToPeer(i int) {
 		req := new(AppendEntriesRequest)
 		res := new(AppendEntriesResponse)
 		mux.Lock()
+		if r.Role != Leader {
+			mux.Unlock()
+			return
+		}
 		req.Term = r.CurrentTerm
 		req.LeaderId = r.I
 		req.PrevLogIndex = r.NextIndex[i] - 1
@@ -347,6 +351,10 @@ func (r *Raft) sendHeartbeatsAndLogsToPeer(i int) {
 			return
 		}
 		mux.Lock()
+		if r.Role != Leader {
+			mux.Unlock()
+			return
+		}
 		if res.Term > r.CurrentTerm {
 			r.CurrentTerm = res.Term
 			mux.Unlock()

@@ -549,7 +549,11 @@ func (m *Monitor) render() {
 		fmt.Printf("\nServer %v | %c\n", i, "zabcd"[i])
 		fmt.Printf("Term : %v\n", m.servers[i].CurrentTerm)
 		fmt.Printf("Role : %v\n", [3]string{"follower", "candidate", "leader"}[m.servers[i].Role])
-		fmt.Printf("Network Connectivity : %v\n", m.servers[i].Connected)
+		if m.servers[i].Connected {
+			fmt.Println("\033[1;34mConnected to the cluster\033[0m")
+		} else {
+			fmt.Println("\033[1;31mDisconnected from the cluster\033[0m")
+		}
 		fmt.Printf("Commit Index & Log : %v, %v\n", m.servers[i].CommitIndex, m.servers[i].Log)
 		voteSheet := ""
 		if m.servers[i].Role != Follower {
@@ -566,7 +570,10 @@ func (m *Monitor) render() {
 		}
 	}
 	fmt.Println()
-	fmt.Println("Press Enter to send new log entry to Leader with the highest term (if any)")
+	fmt.Println("The monitor automatically renders updated state at most once per second.")
+	fmt.Println("Thus, there can be a slight delay before updates are propagated & rendered.")
+	fmt.Println("Additionally, note that Enter key is not required for providing key inputs.")
+	fmt.Println("Press Semicolon (;) to send new log entry to Leader with the highest term (if any)")
 	fmt.Println("Press numeric keys [0,1,2,..] to change network connectivity of servers")
 	fmt.Println("Press alphabetic keys [z,a,b,..] to reset servers")
 	fmt.Println("Press ctrl+c to turndown the processes")
@@ -593,7 +600,8 @@ func (m *Monitor) handleKeyInputs() {
 	}
 	for {
 		key, _ := <-ch
-		if key == "\n" {
+		inputHandled := false
+		if key == ";" {
 			leaderTerm := 0
 			leaderAddress := ""
 			for i := 0; i < len(m.servers); i++ {
@@ -615,6 +623,7 @@ func (m *Monitor) handleKeyInputs() {
 				if err != nil {
 					panic(err)
 				}
+				inputHandled = true
 			}
 		}
 		for i, s := range networkChangeInputs {
@@ -629,6 +638,7 @@ func (m *Monitor) handleKeyInputs() {
 				if err != nil {
 					panic(err)
 				}
+				inputHandled = true
 			}
 		}
 		for i, s := range resetInputs {
@@ -643,7 +653,14 @@ func (m *Monitor) handleKeyInputs() {
 				if err != nil {
 					panic(err)
 				}
+				inputHandled = true
 			}
+		}
+		if inputHandled {
+			mux.Lock()
+			m.lastRenderTime = 0
+			mux.Unlock()
+			go m.render()
 		}
 	}
 }

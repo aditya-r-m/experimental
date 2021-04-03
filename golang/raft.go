@@ -1,10 +1,8 @@
 // monitor & cluster setup : go run raft.go -n <3|5>
 
-// the monitor provides CLI interface for various interactions with the cluster
+// the monitor provides CLI interface for various interactions with the cluster.
 // the monitor listens at port 1234 & raft servers listen at ports 1235,1236,1237,..
-
-// if there is abnormal termination of monitor, servers may need to be turned down manually
-// ps aux | grep raft | awk '{print $2}' | xargs kill
+// the raft servers automatically exit after monitor process is killed.
 
 // (go version go1.16 linux/amd64)
 // https://raft.github.io/raft.pdf
@@ -501,7 +499,6 @@ func initializeServer(i int) {
 type Monitor struct {
 	servers        []Raft
 	stateCounter   int
-	lastRenderTime int
 	nextLogValue   int
 }
 
@@ -540,28 +537,24 @@ func (m *Monitor) RegisterUpdatedServerState(
 func (m *Monitor) render() {
 	mux.Lock()
 	defer mux.Unlock()
-	crt := int(time.Now().Unix())
-	if crt-m.lastRenderTime < 1 {
-		return
-	}
-	m.lastRenderTime = crt
 	fmt.Print("\033[H\033[2J") // https://stackoverflow.com/a/22892171/5664000
 	for i := 0; i < len(m.servers); i++ {
 		if len(m.servers[i].Log) < 1 {
-			fmt.Printf("initializing servers...")
+			fmt.Printf("\033[1;34mInitializing servers...\033[0m")
 			return
 		}
 	}
-	fmt.Println("\nstate ", m.stateCounter)
+	fmt.Printf("\033[1;34mState %v\033[0m\n", m.stateCounter)
 	for i := 0; i < len(m.servers); i++ {
-		fmt.Printf("\nServer %v | %c\n", i, "zabcd"[i])
+		if m.servers[i].Connected {
+			fmt.Print("\n\033[1;32m(✓) ")
+		} else {
+			fmt.Print("\n\033[1;31m(x) ")
+		}
+		fmt.Printf("Server %v | %c", i, "zabcd"[i])
+		fmt.Println("\033[0m")
 		fmt.Printf("Term : %v\n", m.servers[i].CurrentTerm)
 		fmt.Printf("Role : %v\n", [3]string{"follower", "candidate", "leader"}[m.servers[i].Role])
-		if m.servers[i].Connected {
-			fmt.Println("\033[1;34mConnected to the cluster\033[0m")
-		} else {
-			fmt.Println("\033[1;31mDisconnected from the cluster\033[0m")
-		}
 		fmt.Printf("Commit Index & Log : %v, %v\n", m.servers[i].CommitIndex, m.servers[i].Log)
 		voteSheet := ""
 		if m.servers[i].Role != Follower {
@@ -578,13 +571,9 @@ func (m *Monitor) render() {
 		}
 	}
 	fmt.Println()
-	fmt.Println("The monitor automatically renders updated state at most once per second.")
-	fmt.Println("Thus, there can be a slight delay before updates are propagated & rendered.")
-	fmt.Println("Additionally, note that Enter key is not required for providing key inputs.")
 	fmt.Println("Press Semicolon (;) to send new log entry to Leader with the highest term (if any)")
-	fmt.Println("Press numeric keys [0,1,2,..] to change network connectivity of servers")
+	fmt.Println("Press numeric keys [0,1,2,..] to disconnect/reconnect servers")
 	fmt.Println("Press alphabetic keys [z,a,b,..] to reset servers")
-	fmt.Println("Press ctrl+c to turndown the processes")
 }
 
 func (m *Monitor) handleKeyInputs() {
@@ -612,12 +601,14 @@ func (m *Monitor) handleKeyInputs() {
 		if key == ";" {
 			leaderTerm := 0
 			leaderAddress := ""
+			mux.Lock()
 			for i := 0; i < len(m.servers); i++ {
 				if m.servers[i].Role == Leader && m.servers[i].CurrentTerm > leaderTerm {
 					leaderTerm = m.servers[i].CurrentTerm
 					leaderAddress = clusterAddr[i]
 				}
 			}
+			mux.Unlock()
 			if leaderTerm > 0 {
 				client, err := rpc.DialHTTP("tcp", leaderAddress)
 				if err != nil {
@@ -625,8 +616,10 @@ func (m *Monitor) handleKeyInputs() {
 				}
 				req := new(LogEntryRequest)
 				res := new(LogEntryResponse)
+				mux.Lock()
 				req.Value = m.nextLogValue
 				m.nextLogValue++
+				mux.Unlock()
 				err = client.Call("Raft.LogEntry", req, &res)
 				if err != nil {
 					panic(err)
@@ -665,9 +658,6 @@ func (m *Monitor) handleKeyInputs() {
 			}
 		}
 		if inputHandled {
-			mux.Lock()
-			m.lastRenderTime = 0
-			mux.Unlock()
 			go m.render()
 		}
 	}
@@ -694,7 +684,6 @@ func initializeMonitoredCluster() {
 	monitor := new(Monitor)
 	monitor.servers = make([]Raft, N)
 	monitor.stateCounter = 0
-	monitor.lastRenderTime = 0
 	monitor.nextLogValue = 1
 	rpc.Register(monitor)
 	rpc.HandleHTTP()

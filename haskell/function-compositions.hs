@@ -8,3 +8,9 @@ suffixSumUsingApplicatives = foldr (curry $ (:) <$> uncurry (flip $ (+) . head) 
 suffixSumUsingMonads :: [Integer] -> [Integer]
 suffixSumUsingMonads = foldr ((>>= (:)) .  (flip $ (+) . head)) [0]
 
+cartesianProduct :: [[a]] -> [[a]]
+cartesianProduct [] = [[]]
+cartesianProduct (l:ls) = [i:r | i <- l, r <- cartesianProduct ls]
+
+cartesianProductUsingApplicatives :: [[a]] -> [[a]]
+cartesianProductUsingApplicatives = foldr ((<*>) . (<$>) (:)) [[]]

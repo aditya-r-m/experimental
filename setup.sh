@@ -21,5 +21,6 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab smarttab
 
+syntax on
 autocmd BufWritePre * :%s/\s\+$//e
 " > ~/.vimrc

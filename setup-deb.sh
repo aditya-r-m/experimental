@@ -11,7 +11,7 @@ focus
 screen -t \"zsh\" zsh
 split -v
 focus
-screen -t \"htop\" htop
+screen -t \"python3\" python3
 focus
 
 " > ~/.screenrc

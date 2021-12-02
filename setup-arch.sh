@@ -4,7 +4,7 @@ echo "
 
 unbind C-b
 set -g prefix C-a
-set-hook -g -t 0 after-new-session \"splitw -h -p 40 \; selectp -t 0\"
+set-hook -g -t 0 after-new-session \"splitw -h -p 40 \\\"ghci\\\" \; selectp -t 0\"
 
 " > ~/.tmux.conf
 

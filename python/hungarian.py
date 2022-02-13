@@ -1,92 +1,108 @@
+from math import inf
 from queue import Queue
 
-bi_graph = [
-    [4,88,70,68,],
-    [57,59,43,11],
-    [33,79,41,73],
-    [46,16,66,39]
-]
-n, mm = len(bi_graph), 0
-lx, ly = [max(bi_graph[x]) for x in range(n)], [0] * n
-xy, yx = [None] * n, [None] * n
-slack, slackx = [0] * n, [-1] * n
-s, t = set(), set()
-prev = [None] * n
+# The function expects a square matrix of integers
+# The value at row 'x' & column 'y' is the cost of matching
+# -> node 'x' in left partition 'X'
+# -> node 'y' in right partition 'y'
+# The function returns total cost in a minimum-cost-matching, assignments, & labels
+def hungarian(cost_matrix):
+    n = len(cost_matrix)
+    lx, ly = [0] * n, [0] * n
+    xy, yx = [None] * n, [None] * n
 
-def print_state(i):
-    print('id', i)
-    print('lx', lx)
-    print('ly', ly)
-    print('xy', xy)
-    print('yx', yx)
-    print('s', s)
-    print('t', t)
-    print('slack', slack)
-    print('slackx', slackx)
-    print('-----')
-
-def update_labels():
-    global mm, lx, ly, xy, yx, slack, slackx, s, t, prev
-    delta = min(slack[y] for y in set(range(n)).difference(t))
-    for y in t: ly[y] += delta
-    for y in set(range(n)).difference(t): slack[y] -= delta
-
-def add_to_tree(x, prevx):
-    global mm, lx, ly, xy, yx, slack, slackx, s, t, prev
-    s.add(x)
-    prev[x] = prevx
-    for y in range(n):
-        new_slack = lx[x] + ly[y] - bi_graph[x][y]
-        if new_slack < slack[y]: slack[y], slackx[y] = new_slack, x
-
-def augment():
-    global mm, lx, ly, xy, yx, slack, slackx, s, t, prev
-    if mm == n: return
-    prev, q = [None] * n, Queue()
-    s, t = set(), set()
-    for x in range(n):
-        if xy[x] is None:
-            root, prev[x] = x, None
-            q.put(root)
-            break
-    for y in range(n): slack[y], slackx[y] = lx[root] + ly[y] - bi_graph[root][y], root
-    ax, ay = None, None
+    # Every iteration of the following loop constructs an alternating tree.
+    # -> The root is some arbitrary unmatched node in 'X'.
+    # -> The tree alternates between nodes in 'X' & 'Y'.
+    # -> The tree alternates between "matched" & "unmatched" edges.
+    # Every iteration ends with flipping of some augmenting path to add root to the matching.
     while True:
-        while not q.empty():
-            x = q.get()
-            for y in range(n):
-                if bi_graph[x][y] == lx[x] + ly[y] and y not in t:
-                    if yx[y] is None:
-                        ax, ay = x, y
-                        break
-                    t.add(y)
-                    q.put(yx[y])
-                    add_to_tree(yx[y], x)
+        root = None
+
+        # check if matching complete
+        for x in range(n):
+            if xy[x] is None:
+                root = x
+                break
+        if root is None: break
+
+        # exposed vertex in 'Y' which connects to 'root' via alternating path of 'tight' edges
+        ay = None
+
+        # queue for BFS & sets for storing visited alternating tree nodes
+        q, zxs, zys = Queue(), set(), set()
+        zxs.add(root)
+        q.put(root)
+
+        # grandchild->grandparent mapping among nodes in 'X' contained in the alternating tree
+        prevx = [None] * n
+
+        # slack measures the smallest difference between cost & label-sums for a given node in 'Y'
+        yslack = [inf] * n
+        yslackx = [None] * n # alternating tree node 'x' in 'X' for which 'y' has smallest slack
+
+        while ay is None:
+
+            # BFS to contruct alternating tree of 'tight' edges
+            while not q.empty():
+                x = q.get()
+
+                # Check if the new 'x' in alternating tree provides the minimum slack for some 'y'
+                for y in range(n):
+                    new_slack = cost_matrix[x][y] - (lx[x] + ly[y])
+                    if new_slack < yslack[y]:
+                        yslack[y] = new_slack
+                        yslackx[y] = x
+
+                for y in range(n):
+                    # Traverse all the 'tight' edges extending from the new 'x'
+                    if lx[x] + ly[y] == cost_matrix[x][y]:
+                        if yx[y] is None:
+                            # augmenting leaf found in 'Y'
+                            ay = y
+                            break
+                        if y not in zys:
+                            # extend the alternating tree
+                            zys.add(y)
+                            zxs.add(yx[y])
+                            q.put(yx[y])
+                            prevx[yx[y]] = x
+
+                if ay is not None: break
             if ay is not None: break
-        if ay is not None: break
-        update_labels()
-        for y in range(n):
-            if y not in t and not slack[y]:
-                if yx[y] is None:
-                    ax, ay = slackx[y], y
-                    break
-                t.add(y)
-                if yx[y] not in s:
-                    q.put(yx[y])
-                    add_to_tree(yx[y], slackx[y])
-        if ay is not None: break
-    if ay is not None:
-        mm += 1
+
+            # No augmenting path has been found, so we update the labels with min slack
+            # This new labeling (finds an augmenting path OR extends the BFS) with new tight edges
+            delta = inf
+            for y in range(n):
+                if y not in zys: delta = min(delta, yslack[y])
+            for x in zxs: lx[x] += delta
+            for y in zys: ly[y] -= delta
+            for y in range(n):
+                if y not in zys:
+                    # update the slack according to the label change
+                    yslack[y] -= delta
+                    if yslack[y] == 0:
+                        if yx[y] is None:
+                            # augmenting leaf found in 'Y'
+                            ay = y
+                            break
+                        # add newly reached 'matched' edge to the alternating tree
+                        zys.add(y)
+                        zxs.add(yx[y])
+                        q.put(yx[y])
+                        prevx[yx[y]] = yslackx[y]
+
+        # Augmenting path found, flip the alternating matched/unmatched edges
+        # starting at 'ay', going up to the root
+        ax = yslackx[ay]
         while ax is not None:
-            ty = xy[ax]
+            axn, ayn = prevx[ax], xy[ax]
             xy[ax], yx[ay] = ay, ax
-            ax, ay = prev[ax], ty
-        augment()
+            ax, ay = axn, ayn
+    return sum(lx) + sum(ly), xy, lx, ly
 
 
-augment()
-sol = 0
-for x, y in enumerate(xy):
-    print(x, '->', y)
-    sol += bi_graph[x][y]
-print('total value', sol)
+print(hungarian([[4, 2, 5], [5, 3, 4], [6, 0, 7]]))
+
+

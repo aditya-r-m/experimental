@@ -1,98 +1,59 @@
 # python3
 
-import queue
+from queue import Queue
+from math import inf
 
-inf = 10 ** 10
+'''
+The function takes an NxN adjacency matrix representing the capacity of edges in the graph.
+Vertex 0 is assumed to be the source & Vertex -1 is assumed to be the sink.
+If there is no edge from 'i' to 'j', capacity[i][j] == 0.
+'''
+def preflow_push(capacity):
+    n = len(capacity)
+    preflow = [[0] * n for _ in range(n)]
+    label, excess = [0] * n, [0] * n
 
-class Edge:
+    def residual_capacity(i, j):
+        return capacity[i][j] - preflow[i][j]
 
-    def __init__(self, u, v, capacity):
-        self.u = u
-        self.v = v
-        self.capacity = capacity
-        self.flow = 0
+    def admissible_capacity(i, j):
+        if label[i] != label[j] + 1: return 0
+        return residual_capacity(i, j)
 
-# This class implements a bit unusual scheme for storing edges of the graph,
-# in order to retrieve the backward edge for a given edge quickly.
-class FlowGraph:
+    def push(i, j):
+        f = min(excess[i], admissible_capacity(i, j))
+        if f:
+            preflow[i][j] += f
+            preflow[j][i] -= f
+            excess[i] -= f
+            excess[j] += f
+        return f
 
-    def __init__(self, n):
-        # List of all - forward and backward - edges
-        self.edges = []
-        # These adjacency lists store only indices of edges in the edges list
-        self.graph = [[] for _ in range(n)]
+    def relabel(i):
+        nxt_label = inf
+        for j in range(n):
+            if residual_capacity(i, j):
+                nxt_label = min(nxt_label, label[j])
+        if nxt_label < inf: label[i] = 1 + nxt_label
 
-    def add_edge(self, from_, to, capacity):
-        # Note that we first append a forward edge and then a backward edge,
-        # so all forward edges are stored at even indices (starting from 0),
-        # whereas backward edges are stored at odd indices.
-        forward_edge = Edge(from_, to, capacity)
-        backward_edge = Edge(to, from_, 0)
-        self.graph[from_].append(len(self.edges))
-        self.edges.append(forward_edge)
-        self.graph[to].append(len(self.edges))
-        self.edges.append(backward_edge)
+    q = Queue()
 
-    def size(self):
-        return len(self.graph)
+    label[0], excess[0] = 1, inf
+    for j in range(1, n):
+        if push(0, j) and j < n-1: q.put(j)
+    label[0] = n
 
-    def get_ids(self, from_):
-        return self.graph[from_]
+    def discharge(i):
+        j = 0
+        while excess[i]:
+            if push(i, j) and j > 0 and j < n-1: q.put(j)
+            j += 1
+            if j == n:
+                j = 0
+                relabel(i)
 
-    def get_edge(self, id):
-        return self.edges[id]
+    while not q.empty(): discharge(q.get())
 
-    def add_flow(self, id, flow):
-        # To get a backward edge for a true forward edge (i.e id is even), we should get id + 1
-        # due to the described above scheme. On the other hand, when we have to get a "backward"
-        # edge for a backward edge (i.e. get a forward edge for backward - id is odd), id - 1
-        # should be taken.
-        #
-        # It turns out that id ^ 1 works for both cases. Think this through!
-        self.edges[id].flow += flow
-        self.edges[id ^ 1].flow -= flow
-
-
-def read_data():
-    vertex_count, edge_count = map(int, input().split())
-    graph = FlowGraph(vertex_count)
-    for _ in range(edge_count):
-        u, v, capacity = map(int, input().split())
-        graph.add_edge(u - 1, v - 1, capacity)
-    return graph
+    return excess[-1], preflow
 
 
-def max_flow(graph, from_, to):
-    flow = 0
-    done = False
-    while not done:
-        done = True
-        discovered = [False] * graph.size()
-        prev_edge = [None] * graph.size()
-        q = queue.Queue()
-        q.put((from_, inf))
-        discovered[from_] = True
-        while not q.empty():
-            u, dflow_min = q.get()
-            if u == to:
-                done = False
-                flow += dflow_min
-                while prev_edge[u] != None:
-                    graph.add_flow(prev_edge[u], dflow_min)
-                    u = graph.edges[prev_edge[u]].u
-                break
-            else:
-                for ie in graph.graph[u]:
-                    e = graph.edges[ie]
-                    if not discovered[e.v]:
-                        dflow = e.capacity - e.flow
-                        if dflow:
-                            prev_edge[e.v] = ie
-                            discovered[e.v] = True
-                            q.put((e.v, min(dflow, dflow_min)))
-    return flow
-
-
-if __name__ == '__main__':
-    graph = read_data()
-    print(max_flow(graph, 0, graph.size() - 1))

@@ -1,7 +1,4 @@
 # python2
-'''
-Simplex solver with an application to allocating ads.
-'''
 from sys import stdin
 
 def get_pivot(n, m, t, basis):
@@ -47,7 +44,7 @@ def simplex(n, m, t, basis):
 
 
 def allocate_ads(n, m, A, b, c):
-    # add slack variables & artificial 
+    # add slack variables & artificial
     slack_pad = [0] * n
     A = map(lambda row: row + slack_pad, A)
     c += slack_pad
@@ -96,8 +93,7 @@ def allocate_ads(n, m, A, b, c):
 
 '''
 Input Format.
-You are given the ad allocation problem reduced to a linear programming problem of the
-form 𝐴𝑥 ≤ 𝑏, 𝑥 ≥ 0,
+You are given a linear programming problem of the form 𝐴𝑥 ≤ 𝑏, 𝑥 ≥ 0,
 ∑︀𝑐𝑖𝑥𝑖 → max, where 𝐴 is a matrix 𝑝 × 𝑞, 𝑏 is a vector of length 𝑝,
 𝑐 is a vector of length 𝑞 and 𝑥 is the unknown vector of length 𝑞.
 
@@ -110,14 +106,11 @@ The last line of the input contains 𝑞 integers — the coefficients 𝑐𝑖 
 Constraints. 1 ≤ 𝑛, 𝑚 ≤ 100; −100 ≤ 𝐴𝑖𝑗 ≤ 100; −1 000 000 ≤ 𝑏𝑖 ≤ 1 000 000; −100 ≤ 𝑐𝑖 ≤ 100.
 
 Output Format.
-If there is no allocation that satisfies all the requirements, output “No solution” (without
-quotes). If you can get as much revenue as you want despite all the requirements, output “Infinity”
-(without quotes). If the maximum possible revenue is bounded, output two lines. On the first line,
-output “Bounded solution” (without quotes). On the second line, output 𝑞 real numbers — the optimal
-values of the vector 𝑥 (recall that 𝑥 = 𝑥𝑖𝑗 is how many users will see the ad of advertiser 𝑖 through
-the placement 𝑗, but we changed the numbering of variables to 𝑥1, 𝑥2, . . . , 𝑥𝑞). Output all the numbers
-with at least 15 digits after the decimal point. Your solution will be accepted if all the inequalities
-are satisfied and the answer has absolute error of at most 10−3
+If there is no feasible solultion, output “No solution” (without quotes).
+If you can get as much revenue as you want despite all the requirements, output “Infinity” (without quotes).
+If the maximum possible revenue is bounded, output two lines. On the first line,
+On the first line, output “Bounded solution” (without quotes).
+On the second line, output 𝑞 real numbers — the optimal values of the vector 𝑥.
 '''
 def main():
     n, m = map(int, stdin.readline().split())

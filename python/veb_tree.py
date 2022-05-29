@@ -58,10 +58,11 @@ class VebTree():
             if self.aux.is_empty(): self.mx = self.mn
             else: self.mx = self._merge_bits(self.aux.mx, self.children[self.aux.mx].mx)
 
-tree = VebTree(1<<(1<<(1<<1)))
-while True:
-    o, v = input().split()
-    if o == 'i': tree.insert(int(v))
-    if o == 'd': tree.delete(int(v))
-    if o == 's': print(tree.successor(int(v)))
+if __name__ == "__main__":
+    tree = VebTree(1<<(1<<(1<<1)))
+    while True:
+        o, v = input().split()
+        if o == 'i': tree.insert(int(v))
+        if o == 'd': tree.delete(int(v))
+        if o == 's': print(tree.successor(int(v)))
 

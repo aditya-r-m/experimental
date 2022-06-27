@@ -8,8 +8,8 @@ class AVLTree():
         self._left = self._right = self._parent = None
         self._height = 1
         self._size = 1
-        self._aux = False
-        self._subtree_aux = False
+        self._annotation = False
+        self._subtree_annotation = False
         self._link_left(left)
         self._link_right(right)
 
@@ -22,32 +22,33 @@ class AVLTree():
         return 0 if tree is None else tree._size
 
     @staticmethod
-    def subtree_aux(tree):
-        return False if tree is None else tree._subtree_aux
+    def subtree_annotation(tree):
+        return False if tree is None else tree._subtree_annotation
 
-    def _update_subtree_aux(self):
-        self._subtree_aux = self._aux or any(map(AVLTree.subtree_aux, [self._left, self._right]))
+    def _update_subtree_annotation(self):
+        self._subtree_annotation = self._annotation or\
+            any(map(AVLTree.subtree_annotation, [self._left, self._right]))
         return self
 
-    def set_aux(self, flag):
-        if self._aux == flag: return
-        self._aux = flag
+    def set_annotation(self, flag):
+        if self._annotation == flag: return
+        self._annotation = flag
         cur_node = self
         while cur_node is not None:
-            cur_node._update_subtree_aux()
+            cur_node._update_subtree_annotation()
             cur_node = cur_node._parent
 
-    def aux_nodes(self, result=None):
+    def annotated_nodes(self, result=None):
         if result is None: result = []
-        if AVLTree.subtree_aux(self._left): self._left.aux_nodes(result)
-        if self._aux: result.append(self)
-        if AVLTree.subtree_aux(self._right): self._right.aux_nodes(result)
+        if AVLTree.subtree_annotation(self._left): self._left.annotated_nodes(result)
+        if self._annotation: result.append(self)
+        if AVLTree.subtree_annotation(self._right): self._right.annotated_nodes(result)
         return result
 
     def _update_stats(self):
         self._height = 1 + max(map(AVLTree.height, [self._left, self._right]))
         self._size = 1 + sum(map(AVLTree.size, [self._left, self._right]))
-        return self._update_subtree_aux()
+        return self._update_subtree_annotation()
 
     @staticmethod
     def balance_factor(tree):
@@ -190,8 +191,8 @@ class AVLTree():
             return
         print(offset, 'node id', node.id)
         print(offset, 'node value', node.value)
-        print(offset, 'node aux flag', node._aux)
-        print(offset, 'tree aux flag', node._subtree_aux)
+        print(offset, 'node annotation', node._annotation)
+        print(offset, 'tree annotation', node._subtree_annotation)
         print(offset, 'tree height', node._height)
         print(offset, 'tree size', node._size)
         print(offset, 'tree balance', AVLTree.balance_factor(node))
@@ -211,7 +212,8 @@ def run_avl_tree_tests():
         if tree is None: return
         validate_structure(tree._left)
         validate_structure(tree._right)
-        assert tree._subtree_aux == tree._aux or any(map(AVLTree.subtree_aux, [tree._left, tree._right]))
+        assert tree._subtree_annotation == tree._annotation or\
+            any(map(AVLTree.subtree_annotation, [tree._left, tree._right]))
         assert tree._height == 1 + max(map(AVLTree.height, [tree._left, tree._right]))
         assert tree._size == 1 + sum(map(AVLTree.size, [tree._left, tree._right]))
         assert tree._parent is None or tree._parent._left == tree or tree._parent._right == tree
@@ -246,7 +248,7 @@ def run_avl_tree_tests():
 
     tree_list = list(map(lambda v: AVLTree(v), range(l)))
 
-    for tree in tree_list[::1<<4]: tree.set_aux(True)
+    for tree in tree_list[::1<<4]: tree.set_annotation(True)
 
     while len(tree_list) > 1:
         m = randint(0, len(tree_list)-2)
@@ -255,11 +257,11 @@ def run_avl_tree_tests():
         tree_list = tree_list[:m] + [tree] + tree_list[m+2:]
     assert list(filter(lambda x: x >= 0, AVLTree.inorder(tree))) == list(range(l))
 
-    assert list(map(lambda x: x.value, tree.aux_nodes())) == list(range(0, l, 1<<4))
+    assert list(map(lambda x: x.value, tree.annotated_nodes())) == list(range(0, l, 1<<4))
 
-    for node in tree.aux_nodes(): node.set_aux(False)
+    for node in tree.annotated_nodes(): node.set_annotation(False)
 
-    assert list(map(lambda x: x.value, tree.aux_nodes())) == []
+    assert list(map(lambda x: x.value, tree.annotated_nodes())) == []
 
     while True:
         try: i = \
@@ -270,6 +272,8 @@ def run_avl_tree_tests():
         validate_structure(right)
         tree_list = tree_list[:i] + [left, right] + tree_list[i+1:]
     assert list(map(lambda t: t.value, tree_list)) == list(range(l))
+
+    print('AVL Tree tests finished!')
 
 
 class EulerTourForest():
@@ -292,13 +296,13 @@ class EulerTourForest():
         while current_node._left is not None: current_node = current_node._left
         return current_node
 
-    def set_aux(self, u, flag):
+    def set_annotation(self, u, flag):
         self._insert_node(u)
-        self._edge_map[u, u].set_aux(flag)
+        self._edge_map[u, u].set_annotation(flag)
 
-    def aux_nodes(self, u):
+    def annotated_nodes(self, u):
         self._insert_node(u)
-        return list(map(lambda n: n.value[0], self._get_avl_root(u, u).aux_nodes()))
+        return list(map(lambda n: n.value[0], self._get_avl_root(u, u).annotated_nodes()))
 
     def size(self, u):
         self._insert_node(u)
@@ -393,14 +397,14 @@ def run_euler_tour_forest_tests():
     longest_tree_tour = max(map(lambda l: (len(l), l), euler_tour_forest.repr()))[1]
     tree_nodes = list(set(map(lambda e: e[0], longest_tree_tour)))
 
-    for node in tree_nodes: euler_tour_forest.set_aux(node, True)
-    assert sorted(euler_tour_forest.aux_nodes(tree_nodes[0])) == sorted(tree_nodes)
+    for node in tree_nodes: euler_tour_forest.set_annotation(node, True)
+    assert sorted(euler_tour_forest.annotated_nodes(tree_nodes[0])) == sorted(tree_nodes)
 
-    for node in tree_nodes[::2]: euler_tour_forest.set_aux(node, False)
-    assert sorted(euler_tour_forest.aux_nodes(tree_nodes[0])) == sorted(tree_nodes[1::2])
+    for node in tree_nodes[::2]: euler_tour_forest.set_annotation(node, False)
+    assert sorted(euler_tour_forest.annotated_nodes(tree_nodes[0])) == sorted(tree_nodes[1::2])
 
-    for node in tree_nodes: euler_tour_forest.set_aux(node, False)
-    assert sorted(euler_tour_forest.aux_nodes(tree_nodes[0])) == []
+    for node in tree_nodes: euler_tour_forest.set_annotation(node, False)
+    assert sorted(euler_tour_forest.annotated_nodes(tree_nodes[0])) == []
 
     get_root = lambda u: u if u == forest[u] else get_root(forest[u])
     for i in range(l):
@@ -416,72 +420,160 @@ def run_euler_tour_forest_tests():
         forest[i] = i
         validate_structure(euler_tour_forest, forest)
 
+    print('Euler Tour Forest tests finished!')
+
 class LevelStructure():
-    def __init__(self, log_u):
+    def __init__(self):
         from collections import defaultdict
 
-        self.log_u = log_u
-        self.euler_tour_forests = [EulerTourForst() for _ in range(self.log_u)]
-        self.auxiliary_edges = [defaultdict(lambda: set()) for _ in range(self.log_u)]
-        self.edge_level = dict()
+        self._euler_tour_forests = defaultdict(lambda: EulerTourForest())
+        self._spanning_edges = defaultdict(lambda: defaultdict(lambda: set()))
+        self._auxiliary_edges = defaultdict(lambda: defaultdict(lambda: set()))
+        self._edge_level = dict()
 
     def connected(self, i, j):
-        return self.euler_tour_forests[0].connected(i, j)
+        return self._euler_tour_forests[0].connected(i, j)
+
+    def _linked(self, i, j):
+        return (i, j) in self._edge_level
 
     def _is_auxiliary_edge(self, i, j):
-        return j in self.auxiliary_edges[self.edge_level[i, j]][i]
+        return j in self._auxiliary_edges[self._edge_level[i, j]][i]
+
+    def _update_link_metadata(self, l, i, j):
+        self._euler_tour_forests[l].set_annotation(i, True)
+        self._euler_tour_forests[l].set_annotation(j, True)
+        self._edge_level[i, j] = self._edge_level[j, i] = l
 
     def _link_auxiliary_edge(self, l, i, j):
-        self.euler_tour_forests[l].set_aux(i, True)
-        self.euler_tour_forests[l].set_aux(j, True)
-        self.auxiliary_edges[l][i].insert(j)
-        self.auxiliary_edges[l][j].insert(i)
-        if self.edge_level[i, j] < l: self.edge_level[i, j] = self.edge_level[j, i] = l
-
-    def _cut_auxiliary_edge(self, i, j):
-        l = self.edge_level[i, j]
-        self.auxiliary_edges[l][i].remove(j)
-        self.auxiliary_edges[l][j].remove(i)
-        if not len(self.auxiliary_edges[l][i]): self.euler_tour_forests[l].set_aux(i, False)
-        if not len(self.auxiliary_edges[l][j]): self.euler_tour_forests[l].set_aux(j, False)
-        del self.edge_level[i, j]
-        del self.edge_level[j, i]
+        self._update_link_metadata(l, i, j)
+        self._auxiliary_edges[l][i].add(j)
+        self._auxiliary_edges[l][j].add(i)
 
     def _link_spanning_edge(self, l, i, j):
-        self.euler_tour_forests[l].link(i, j)
-        if self.edge_level[i, j] < l: self.edge_level[i, j] = self.edge_level[j, i] = l
+        self._update_link_metadata(l, i, j)
+        self._spanning_edges[l][i].add(j)
+        self._spanning_edges[l][j].add(i)
+
+    def _update_cut_metadata(self, l, i, j):
+        if (not len(self._spanning_edges[l][i])) and (not len(self._auxiliary_edges[l][i])):
+            self._euler_tour_forests[l].set_annotation(i, False)
+        if (not len(self._spanning_edges[l][j])) and (not len(self._auxiliary_edges[l][j])):
+            self._euler_tour_forests[l].set_annotation(j, False)
+        del self._edge_level[i, j]
+        del self._edge_level[j, i]
+
+    def _cut_auxiliary_edge(self, i, j):
+        l = self._edge_level[i, j]
+        self._auxiliary_edges[l][i].remove(j)
+        self._auxiliary_edges[l][j].remove(i)
+        self._update_cut_metadata(l, i, j)
 
     def _cut_spanning_edge(self, i, j):
-        for l in range(self.edge_level[i, j], -1, -1): self.euler_tour_forests[l].cut(i, j)
-        del self.edge_level[i, j]
-        del self.edge_level[j, i]
+        l = self._edge_level[i, j]
+        self._spanning_edges[l][i].remove(j)
+        self._spanning_edges[l][j].remove(i)
+        self._update_cut_metadata(l, i, j)
 
     def link(self, i, j):
-        if (i, j) in self.edge_level: return self
-        if self.euler_tour_forests[0].connected(i, j): self._link_auxiliary_edge(0, i, j)
-        else: self._link_spanning_edge(0, i, j)
+        if (i, j) in self._edge_level: return self
+        if self._euler_tour_forests[0].connected(i, j): self._link_auxiliary_edge(0, i, j)
+        else:
+            self._link_spanning_edge(0, i, j)
+            self._euler_tour_forests[0].link(i, j)
         return self
 
     def cut(self, i, j):
-        if (i, j) not in self.edge_level: return
+        if (i, j) not in self._edge_level: return self
         if self._is_auxiliary_edge(i, j): self._cut_auxiliary_edge(i, j)
         else:
-            level = self.edge_level[i, j]
+            level = self._edge_level[i, j]
             self._cut_spanning_edge(i, j)
+            for l in range(level, -1, -1): self._euler_tour_forests[l].cut(i, j)
             for l in range(level, -1, -1):
-                forest = self.euler_tour_forest[l]
-                (min_v, max_v) = (i, j) if forest.size(i) < forest.size(j) else (j, i)
-                for v in forest.aux_nodes[min_v]:
-                    for u in self.auxiliary_edges[l][v]:
+                forest = self._euler_tour_forests[l]
+                (x, y) = (i, j) if forest.size(i) < forest.size(j) else (j, i)
+                for u in forest.annotated_nodes(x):
+                    for v in list(self._spanning_edges[l][u]):
+                        self._cut_spanning_edge(u, v)
+                        self._link_spanning_edge(1+l, u, v)
+                        self._euler_tour_forests[1+l].link(u, v)
+                for u in forest.annotated_nodes(x):
+                    for v in list(self._auxiliary_edges[l][u]):
                         self._cut_auxiliary_edge(u, v)
-                        if forest.connected(u, max_v):
-                            for cl in range(1+l): self._link_spanning_edge(cl, u, v)
+                        if forest.connected(v, y):
+                            self._link_spanning_edge(l, u, v)
+                            for f in range(1+l): self._euler_tour_forests[f].link(u, v)
                             return self
                         self._link_auxiliary_edge(1+l, u, v)
         return self
 
+    def render(self):
+        print('edge levels')
+        print(self._edge_level)
+        for l in self._euler_tour_forests:
+            print('level', l)
+            print('euler tour forest')
+            self._euler_tour_forests[l].render()
+            print('spanning edges')
+            print(dict(self._spanning_edges[l]))
+            print('auxiliary edges')
+            print(dict(self._auxiliary_edges[l]))
+            print()
+
+def run_level_structure_tests():
+    from random import choice
+
+    n = 1<<5
+
+    level_structure = LevelStructure()
+    graph = [set() for _ in range(n)]
+
+    def connected(u, v, visited=None):
+        if visited is None: visited = set()
+        if u == v: return True
+        visited.add(u)
+        for i in graph[u]:
+            if i in visited: continue
+            if connected(i, v, visited): return True
+        return False
+
+    def validate():
+        for u in range(n):
+            for v in range(u):
+                assert level_structure.connected(u, v) == connected(u, v)
+
+    unlinked_edges = [(i, j) for i in range(n) for j in range(i)]
+    linked_edges = []
+
+    def link_and_validate():
+        e = unlinked_edges.pop(choice(range(len(unlinked_edges))))
+        linked_edges.append(e)
+        level_structure.link(*e)
+        graph[e[0]].add(e[1])
+        graph[e[1]].add(e[0])
+        validate()
+
+    def cut_and_validate():
+        e = linked_edges.pop(choice(range(len(linked_edges))))
+        unlinked_edges.append(e)
+        level_structure.cut(*e)
+        graph[e[0]].remove(e[1])
+        graph[e[1]].remove(e[0])
+        validate()
+
+    ne = len(unlinked_edges)
+    while len(unlinked_edges) > (ne>>1): link_and_validate()
+    while len(linked_edges) > (ne>>2): cut_and_validate()
+    while len(unlinked_edges) > (ne>>2): link_and_validate()
+    while len(linked_edges) > (ne>>1): cut_and_validate()
+    while len(unlinked_edges) > 0: link_and_validate()
+    while len(linked_edges) > 0: cut_and_validate()
+
+    print('Level Structure tests finished!')
 
 if __name__ == "__main__":
     run_avl_tree_tests()
     run_euler_tour_forest_tests()
+    run_level_structure_tests()
 

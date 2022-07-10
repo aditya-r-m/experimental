@@ -206,7 +206,7 @@ class AVLTree():
             AVLTree.render(node._right, offset + '  ')
 
 def run_avl_tree_tests():
-    from random import randint, choice
+    from random import choice, randrange
 
     def validate_structure(tree):
         if tree is None: return
@@ -251,7 +251,7 @@ def run_avl_tree_tests():
     for tree in tree_list[::1<<4]: tree.set_annotation(True)
 
     while len(tree_list) > 1:
-        m = randint(0, len(tree_list)-2)
+        m = randrange(len(tree_list)-1)
         tree = AVLTree.merge(tree_list[m], AVLTree(-1), tree_list[m+1])
         validate_structure(tree)
         tree_list = tree_list[:m] + [tree] + tree_list[m+2:]
@@ -368,7 +368,7 @@ class EulerTourForest():
             print(tour)
 
 def run_euler_tour_forest_tests():
-    from random import choice
+    from random import choice, randrange
 
     def validate_structure(euler_tour_forest, forest):
         tours = euler_tour_forest.repr()
@@ -389,7 +389,7 @@ def run_euler_tour_forest_tests():
 
     euler_tour_forest, forest = EulerTourForest(), dict()
     for i in range(l):
-        p = choice(list(range(i+1)))
+        p = randrange(i+1)
         forest[i] = p
         euler_tour_forest.link(i, p)
         validate_structure(euler_tour_forest, forest)
@@ -522,7 +522,7 @@ class LevelStructure():
             print()
 
 def run_level_structure_tests():
-    from random import choice
+    from random import randrange
 
     n = 1<<5
 
@@ -547,7 +547,7 @@ def run_level_structure_tests():
     linked_edges = []
 
     def link_and_validate():
-        e = unlinked_edges.pop(choice(range(len(unlinked_edges))))
+        e = unlinked_edges.pop(randrange(len(unlinked_edges)))
         linked_edges.append(e)
         level_structure.link(*e)
         graph[e[0]].add(e[1])
@@ -555,7 +555,7 @@ def run_level_structure_tests():
         validate()
 
     def cut_and_validate():
-        e = linked_edges.pop(choice(range(len(linked_edges))))
+        e = linked_edges.pop(randrange(len(linked_edges)))
         unlinked_edges.append(e)
         level_structure.cut(*e)
         graph[e[0]].remove(e[1])

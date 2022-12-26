@@ -1,6 +1,0 @@
-[build]
-target-dir = "/tmp/pathfinder"
-
-[profile.dev]
-opt-level = 3
-

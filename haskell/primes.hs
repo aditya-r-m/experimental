@@ -1,4 +1,17 @@
-import Data.Bits as B
+import qualified Data.Bits as B
+import qualified Data.Set as S
+
+-- Sieve of Eratosthenes
+
+foldSieve :: S.Set Int -> Int -> S.Set Int
+foldSieve sieve i
+  | S.member i sieve = S.difference sieve $ S.fromList [2*i,3*i..S.findMax sieve]
+  | otherwise = sieve
+
+sieve :: S.Set Int
+sieve = (S.fromList >>= foldl foldSieve) [2..10^6]
+
+-- Miller–Rabin primality test
 
 (>>>) :: Int -> Int
 (>>>) = flip B.shiftR 1
@@ -25,4 +38,3 @@ isPrime p
   where
     l = takeWhile even $ iterate (>>>) (p - 1)
     (r, d) = (,) <$> length <*> (>>>) . last $ l
-

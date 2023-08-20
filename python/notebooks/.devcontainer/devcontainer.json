@@ -1,0 +1,13 @@
+{
+	"name": "TF + Jupyter",
+
+	"context": "..",
+
+	"dockerFile": "./Dockerfile",
+
+	"customizations": {"vscode": {"extensions": [
+        "ms-toolsai.jupyter", "ms-python.python"]}},
+
+    "runArgs": ["--gpus=all"]
+}
+

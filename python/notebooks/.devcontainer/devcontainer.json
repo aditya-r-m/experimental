@@ -5,9 +5,6 @@
 
 	"dockerFile": "./Dockerfile",
 
-	"customizations": {"vscode": {"extensions": [
-        "ms-toolsai.jupyter", "ms-python.python"]}},
-
-    "runArgs": ["--gpus=all"]
+	"customizations": {"vscode": {"extensions": [ "ms-toolsai.jupyter", "ms-python.python" ]}},
 }
 

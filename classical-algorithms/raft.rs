@@ -1,21 +1,26 @@
+// [ Reference ]
+//  Publication : In Search of an Understandable Consensus Algorithm (Extended Version)
+//              - Ongaro & Ousterhout
+
+// [ Setup ]
 // groupadd raft
 // for i in {0..4}; do useradd -g raft r$i; mkdir /home/r$i; chown r$i:raft /home/r$i; done
 
+// [ Execution ]
 // rustc raft.rs -o /tmp/raft
 // for i in {0..4}; do runuser -l r$i -c "/tmp/raft $i > ~/log" & done
 // watch -n 0.1 tail -n 3 /home/r*/log
 
+// [ Interaction ]
 // iptables -A OUTPUT -m owner -j DROP --uid r$i
 // iptables -D OUTPUT -m owner -j DROP --uid r$i
+// echo -ne `python3 -c "print(\
+// '\\\\\xff'*24\
+// +'\\\\\x00'*3+'\\\\\x$t'\
+// +'\\\\\x00'*3+'\\\\\x$e'\
+// )"` > /dev/tcp/127.0.0.1/789$i
 
-/*
-echo -ne `python3 -c "print(\
-'\\\\\xff'*24\
-+'\\\\\x00'*3+'\\\\\x$t'\
-+'\\\\\x00'*3+'\\\\\x$e'\
-)"` > /dev/tcp/127.0.0.1/789$i
-*/
-
+// [ Termination ]
 // ps aux | grep /tmp/raft | awk '{print $2}' |  xargs kill
 
 use std::convert::TryInto;

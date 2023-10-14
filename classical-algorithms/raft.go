@@ -1,11 +1,10 @@
-// monitor & cluster setup : go run raft.go -n <3|5>
+// [ Reference ]
+//  Publication : In Search of an Understandable Consensus Algorithm (Extended Version)
+//              - Ongaro & Ousterhout
 
-// the monitor provides CLI interface for various interactions with the cluster.
-// the monitor listens at port 1234 & raft servers listen at ports 1235,1236,1237,..
-// the raft servers automatically exit after monitor process is killed.
+// [ Execution ]
+// go run raft.go -n <3|5>
 
-// (go version go1.16 linux/amd64)
-// https://raft.github.io/raft.pdf
 package main
 
 import (

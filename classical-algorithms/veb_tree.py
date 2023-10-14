@@ -1,3 +1,9 @@
+# [ Reference ]
+#  Publication : Preserving order in a forest in less than logarithmic time
+#              - van Emde Boas
+#  Streamlined : Divide & Conquer: van Emde Boas Trees
+#              - Demaine (MIT 6.046J Design and Analysis of Algorithms)
+
 class VebTree():
     def __init__(self, lg_u):
         self.lg_u = lg_u

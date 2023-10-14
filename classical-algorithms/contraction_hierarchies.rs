@@ -1,3 +1,9 @@
+// [ Reference ]
+//  Publication : Contraction Hierarchies: Faster and Simpler Hierarchical Routing in Road Networks
+//              - Geisberger, Sanders, Schultes, Delling
+//  Streamlined : Route Planning in Large Transportation Networks
+//              - Bast (ICAPS 2018)
+
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;

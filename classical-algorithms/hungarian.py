@@ -1,3 +1,9 @@
+# [ Reference ]
+#  Publication : The Hungarian Method for the assignment problem (& follow-ups)
+#              - Kuhn, Munkres, Edmonds, Karp, Tomizawa
+#  Streamlined : Assignment Problem and Hungarian Algorithm
+#              - Topcoder
+
 from math import inf
 from queue import Queue
 

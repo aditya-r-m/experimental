@@ -1,13 +1,10 @@
--- https://www.staff.city.ac.uk/~ross/papers/FingerTree.pdf
+-- [ Reference ]
+--  Publication : Finger trees: a simple general-purpose data structure
+--              - Hinze & Paterson
 
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
-
--- Util
-
-(~.) :: (c -> d) -> (a -> b -> c) -> (a -> b -> d)
-(~.) f g = curry $ f . uncurry g
 
 -- Core
 
@@ -329,10 +326,10 @@ getEqMeasure_ x oxs = measure e
         (e, _) = split ((> (Key x)) . fst) m
 
 countSmallerElems :: (Ord a) => a -> OrdSeq a -> Size
-countSmallerElems = snd ~. getLeftMeasure_
+countSmallerElems x = snd . getLeftMeasure_ x
 
 countEqualElems :: (Ord a) => a -> OrdSeq a -> Size
-countEqualElems = snd ~. getEqMeasure_
+countEqualElems x = snd . getEqMeasure_ x
 
 -- Interval Tree Implementation using Finger Tree
 

@@ -1,3 +1,9 @@
+# [ Reference ]
+#  Publication : Randomized Fully Dynamic Graph Algorithms with Polylogarithmic Time per Operation
+#              - Henzinger & King
+#  Streamlined : Dynamic Graphs II
+#              - Demaine (MIT 6.851 Advanced Data Structures)
+
 class AVLTree():
     total_nodes = 0
 

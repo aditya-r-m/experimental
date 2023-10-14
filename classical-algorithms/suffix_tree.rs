@@ -1,3 +1,9 @@
+// [ Reference ]
+//  Publication : On-line construction of suffix trees
+//              - Ukkonen
+//  Streamlined : Ukkonen's suffix tree algorithm in plain English
+//              - Stackoverflow
+
 use std::collections::BTreeMap;
 
 struct Node {

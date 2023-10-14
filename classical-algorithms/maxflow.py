@@ -1,13 +1,13 @@
-# python3
+# [ Reference ]
+#  Publication : A New Approach to the Maximum Flow Problem
+#              - Goldberg & Tarjan
+#  Streamlined : A New Approach to the Maximum Flow Problem
+#              - Topcoder
 
-from queue import Queue
 from math import inf
+from queue import Queue
+from collections import defaultdict
 
-'''
-The function takes an NxN adjacency matrix representing the capacity of edges in the graph.
-Vertex 0 is assumed to be the source & Vertex -1 is assumed to be the sink.
-If there is no edge from 'i' to 'j', capacity[i][j] == 0.
-'''
 def preflow_push(capacity):
     n = len(capacity)
     preflow = [[0] * n for _ in range(n)]
@@ -56,4 +56,11 @@ def preflow_push(capacity):
 
     return excess[-1], preflow
 
-
+print(preflow_push([
+    defaultdict(lambda: 0, { 1: 16, 2: 13 }),
+    defaultdict(lambda: 0, { 3: 12 }),
+    defaultdict(lambda: 0, { 1: 4, 4: 14 }),
+    defaultdict(lambda: 0, { 2: 9, 5: 20 }),
+    defaultdict(lambda: 0, { 3: 7, 5: 4 }),
+    defaultdict(lambda: 0),
+]))

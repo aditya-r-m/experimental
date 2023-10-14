@@ -1,3 +1,9 @@
+// [ Reference ]
+//  Publication : An Algorithm for the Machine Calculation of Complex Fourier Series
+//              - Cooley & Tukey
+//  Streamlined : The Fast Fourier Transform
+//              - Reducible (YouTube)
+
 use std::ops::Add;
 use std::ops::AddAssign;
 use std::ops::Mul;

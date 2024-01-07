@@ -1,6 +1,8 @@
 # [ Reference ]
 #  Publication : A New Approach to the Maximum Flow Problem
 #              - Goldberg & Tarjan
+#  Streamlined : Push–relabel maximum flow algorithm
+#              - Wikipedia
 #  Streamlined : A New Approach to the Maximum Flow Problem
 #              - Topcoder
 
@@ -11,7 +13,7 @@ from collections import defaultdict
 def preflow_push(capacity):
     n = len(capacity)
     preflow = [[0] * n for _ in range(n)]
-    label, excess = [0] * n, [0] * n
+    label, excess, cur_arc = [0] * n, [0] * n, [0] * n
 
     def residual_capacity(i, j):
         return capacity[i][j] - preflow[i][j]
@@ -44,12 +46,11 @@ def preflow_push(capacity):
     label[0] = n
 
     def discharge(i):
-        j = 0
         while excess[i]:
-            if push(i, j) and j > 0 and j < n-1: q.put(j)
-            j += 1
-            if j == n:
-                j = 0
+            if push(i, cur_arc[i]) and cur_arc[i] > 0 and cur_arc[i] < n-1: q.put(cur_arc[i])
+            cur_arc[i] += 1
+            if cur_arc[i] == n:
+                cur_arc[i] = 0
                 relabel(i)
 
     while not q.empty(): discharge(q.get())

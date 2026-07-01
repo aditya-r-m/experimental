@@ -1,10 +1,3 @@
-'''
-
-docker run -it --rm -v "$(pwd)":/manim manimcommunity/manim manim determinant.py Determinant
-ffplay media/videos/determinant/1080p60/Determinant.mp4
-
-'''
-
 import numpy as np
 from manim import *
 
@@ -13,15 +6,16 @@ CS = [GREEN,RED,YELLOW,TEAL]
 class Determinant(Scene):
    def construct(self):
         '''
-        Before we start, I want to highlight that this video provides a vector-oriented view to determinants.
+        This animation provides a vector-oriented view to determinants.
         The textbook approach is often focused on a covector oriented view, with transformations as left-multiplications.
         The distinction is not important in this context, but matters when solving systems of equations.
 
-        First, we will look at a simple efficient determinant computation by shearing the vectors into an orthogonal arrangement.
         Let's call the n-dimensional version of the volume the "measure".
         1D measure is simply the length of any line.
         This is the fundamental building block which can be stretched into higher dimensions to create a sequence of measures.
-        The computation is trivial, the single value in a 1x1 matrix represents this measure.
+
+        First, we will look at a simple efficient determinant computation by shearing the vectors into an orthogonal arrangement.
+        The 1D computation is trivial, the single value in a 1x1 matrix represents this measure.
         '''
         line = NumberLine(x_range=(-4, 4, 1)).move_to(RIGHT*3)
         self.play(Create(line, run_time=1, lag_ratio=0.1))
@@ -45,8 +39,8 @@ class Determinant(Scene):
                   Uncreate(arrows[1]))
         '''
         2D version of this measure is area of the parallelogram, the simplest case being a rectangle.
-        The idea is that any parallelogram can be changed to a rectangle of the same area by shear transformations.
-        Shear can be though of as sliding the full area by as smoothly connected parallel lines of constant length.
+        The key idea is that any parallelogram can be changed to a rectangle of the same area by shear transformations.
+        Shear can be though of as sliding the full area as smoothly connected parallel lines of constant length.
         Finally, we are left with just a rectangle with edge lengths in the diagonal, determinant being the simple product.
         '''
         get_arrows = lambda arrays: [
@@ -115,6 +109,7 @@ class Determinant(Scene):
         '''
         For all practical purposes, this shearing algorithm is sufficient.
         In higher dimensions, the shear operations slide continuous copies of parallel n-1 dimensional objects instead of lines.
+
         In the next section, we work towards a compact closed form computation.
         Focusing on the 2x2 case, we can eliminate lower half below the triangle with a simple shear matrix multiplication.
         This leads to a very nice formula, where we're choosing complementary components from two vectors and multiplying them for the result.
@@ -182,7 +177,7 @@ class Determinant(Scene):
         '''
         The same concept of two-valued orientation generalizes in higher dimensions.
         it doesn't matter whether we turn a sphere inside-out horizontally or vertically, the inner surface becomes the outer surface.
-        While this is much harder to imagine this starting with 3D surface of a 4D volume, we can see it as follows,
+        While this is much harder to imagine this starting with 3D surface of a 4D volume, we generalize the orientation sign as follows,
         - let's restrict our focus to 4 4D vectors which are almost diagonal.
         - In the first case, w & x components are similar to the 2D case, and y2z3 can simply be thought of as uniform weight per unit area.
           we can see how wxyz and xwyz work against earch other from our previous formula.
@@ -344,6 +339,9 @@ class Determinant(Scene):
         self.play(Create(tex))
         self.wait()
         self.play(Uncreate(tex))
+        '''
+        This gives us all the tools that we need to build the simple compact formulae : sum of all signed permutation products!
+        '''
         tex_str = r'''
             &{{det}} \begin{bmatrix}
             {{w_0}} & 0 & 0 & 0 \\

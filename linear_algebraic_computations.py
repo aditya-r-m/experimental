@@ -1,3 +1,5 @@
+# docker run -it --rm -v "$(pwd)":/manim manimcommunity/manim manim linear_algebraic_computations.py
+
 import numpy as np
 from manim import *
 

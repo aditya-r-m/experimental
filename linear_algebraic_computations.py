@@ -3,51 +3,53 @@
 import numpy as np
 from manim import *
 
-CS = [GREEN,RED,YELLOW,TEAL]
+CS = [GREEN,RED,YELLOW,TEAL,BLUE]
 
 class Determinant(Scene):
    def construct(self):
-        '''
-        This animation provides a vector-oriented view to determinants.
-        The textbook approach is often focused on a covector oriented view, with transformations as left-multiplications.
-        The distinction is not important in this context, but matters when solving systems of equations.
-
-        Let's call the n-dimensional version of the volume the "measure".
-        1D measure is simply the length of any line.
-        This is the fundamental building block which can be stretched into higher dimensions to create a sequence of measures.
-
-        First, we will look at a simple efficient determinant computation by shearing the vectors into an orthogonal arrangement.
-        The 1D computation is trivial, the single value in a 1x1 matrix represents this measure.
-        '''
         line = NumberLine(x_range=(-4, 4, 1)).move_to(RIGHT*3)
+        matrix = Matrix([["{{x_0}}"]]).move_to(LEFT*4)
+        matrix.get_entries()[0].set_color(CS[0])
+        arrow = Arrow(start=line.n2p(0), end=line.n2p(2), buff=0, color=CS[0])
+        brace = Brace(arrow, direction=UP, buff=0.2, color=CS[-1])
         self.play(Create(line, run_time=1, lag_ratio=0.1))
-        tex_0 = MathTex(r"det \begin{bmatrix} 2 \end{bmatrix} = 2").move_to(LEFT*4)
-        tex_1 = MathTex(r"det \begin{bmatrix} -3 \end{bmatrix} = -3").move_to(LEFT*4)
-        tex_0[0][4].set_color(CS[0])
-        tex_1[0][4:6].set_color(CS[0])
-        arrows = [
-            Arrow(color=CS[0]).put_start_and_end_on(line.n2p(0), line.n2p(2)),
-            Arrow(color=CS[0]).put_start_and_end_on(line.n2p(0), line.n2p(-3)),
-        ]
-        self.play(Create(tex_0),
-                  Create(arrows[0]))
-        self.wait()
-        self.play(Uncreate(tex_0))
-        self.play(Create(tex_1),
-                  ReplacementTransform(arrows[0], arrows[1]))
-        self.wait()
-        self.play(Uncreate(tex_1),
-                  Uncreate(line),
-                  Uncreate(arrows[1]))
+        self.play(
+            Create(matrix),
+            Create(arrow),
+        )
+        # The determinant measures the size of some very special n-dimensional shapes formed by n-vectors.
+        self.wait(8)
+        self.play(
+            matrix.brackets.animate.set_style(fill_opacity=0, stroke_opacity=0),
+            matrix[0][0].animate.set_color(CS[-1]),
+        )
+        self.play(
+            matrix.animate.next_to(brace, UP, buff=0),
+            FadeIn(brace)
+        )
+        # In the 1-dimensional case, the determinant is simply the value representing the length of the single vector.
+        self.wait(8)
+        self.play(
+            FadeOut(line),
+            FadeOut(matrix),
+            FadeOut(arrow),
+            FadeOut(brace),
+        )
         '''
-        2D version of this measure is area of the parallelogram, the simplest case being a rectangle.
-        The key idea is that any parallelogram can be changed to a rectangle of the same area by shear transformations.
-        Shear can be though of as sliding the full area as smoothly connected parallel lines of constant length.
-        Finally, we are left with just a rectangle with edge lengths in the diagonal, determinant being the simple product.
+        2D version of this measure is area of the parallelogram.
+        This area can be computed by aligning the vectors with coordinate axes without changing the covered area.
+        The shear transformation slides the area as smoothly connected parallel lines.
+        Finally, we are left with just a rectangle with edge lengths in the diagonal matrix.
+        The determinant is the product of these 2 values.
+        Note that the textbook approach for this exact computation is row-reduction,
+        which used left-multiplication by shear matrix and pushes both vectors downwards in the first step.
+
+        The shearing algorithm generalizes efficiently in higher dimensions,
+        sliding continuous copies of parallel n-1 dimensional slices to align edges of n-dimensional parallelotopes with coordinate axes.
         '''
         get_arrows = lambda arrays: [
-            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(*arrays[0].flatten())),
-            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(*arrays[1].flatten())),
+            Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(*arrays[0].flatten()), buff=0),
+            Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(*arrays[1].flatten()), buff=0),
         ]
         get_polygon = lambda arrays: Polygon(grid.c2p(0, 0),
                                             grid.c2p(*arrays[0].flatten()),
@@ -56,126 +58,88 @@ class Determinant(Scene):
                                             color=BLUE, fill_opacity=0.5)
         grid = NumberPlane(x_range=(-4, 4, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
-        arrays = [np.array([[1], [0]]), np.array([[0], [1]])]
+        arrays = [np.array([[1], [0]]), np.array([[0], [2]])]
         polygons = [get_polygon(arrays)]
         arrows = [get_arrows(arrays)]
-        diff_arrows = [Arrow(color=CS[1]).put_start_and_end_on(
-                             grid.c2p(*arrays[0].flatten()),
-                             grid.c2p(*(arrays[0] + arrays[1]).flatten()))]
-        arrays = [arrays[0] + arrays[1], arrays[1]]
+        diff_arrows = [
+            Arrow(color=CS[0], start=grid.c2p(*arrays[1].flatten()), end=grid.c2p(*(arrays[0] + arrays[1]).flatten()), buff=0)]
+        arrays = [arrays[0], arrays[0] + arrays[1]]
         polygons.append(get_polygon(arrays))
         arrows.append(get_arrows(arrays))
-        diff_arrows.append(Arrow(color=CS[0]).put_start_and_end_on(
-                             grid.c2p(*arrays[1].flatten()),
-                             grid.c2p(*(arrays[0] + arrays[1]).flatten())))
-        arrays = [arrays[0], arrays[0] + arrays[1]]
+        diff_arrows.append(
+            Arrow(color=CS[1], start=grid.c2p(*arrays[0].flatten()), end=grid.c2p(*(arrays[0] + arrays[1]).flatten()), buff=0))
+        arrays = [arrays[0] + arrays[1], arrays[1]]
         polygons.append(get_polygon(arrays))
         arrows.append(get_arrows(arrays))
         polygons.reverse()
         arrows.reverse()
         diff_arrows.reverse()
-        tex = MathTex(r'{{det}} \begin{bmatrix}',
-                      r'1 & 1 \\ 1 & 2 \end{bmatrix} \\',
-                      r'= {{det}} \begin{bmatrix}',
-                      r'1 & 0 \\ 1 & 1 \end{bmatrix} \\',
-                      r'= {{det}} \begin{bmatrix}',
-                      r'1 & 0 \\ 0 & 1 \end{bmatrix} \\',
-                      r'= 1', substrings_to_isolate=["0"]).move_to(LEFT*4)
-        for t in tex[2::4]:
-            t[0:3:2].set_color(CS[0])
-            t[1:4:2].set_color(CS[1])
-        tex.set_color_by_tex("0", WHITE)
-        self.play(Create(tex),
-                  Create(polygons[0]),
-                  Create(arrows[0][0]),
-                  Create(arrows[0][1]))
-        self.wait()
-        self.play(Create(diff_arrows[0]))
-        self.play(ReplacementTransform(polygons[0], polygons[1]),
-                  ReplacementTransform(arrows[0][0], arrows[1][0]),
-                  ReplacementTransform(arrows[0][1], arrows[1][1]))
-        self.play(Uncreate(diff_arrows[0]))
-        self.wait()
-        self.play(Create(diff_arrows[1]))
-        self.play(ReplacementTransform(polygons[1], polygons[2]),
-                  ReplacementTransform(arrows[1][0], arrows[2][0]),
-                  ReplacementTransform(arrows[1][1], arrows[2][1]))
-        self.play(Uncreate(diff_arrows[1]))
-        self.wait()
-        self.play(Uncreate(tex),
-                  Uncreate(grid, lag_ratio=0),
-                  Uncreate(polygons[2]),
-                  Uncreate(arrows[2][0]),
-                  Uncreate(arrows[2][1]))
-        self.wait()
-        '''
-        For all practical purposes, this shearing algorithm is sufficient.
-        In higher dimensions, the shear operations slide continuous copies of parallel n-1 dimensional objects instead of lines.
-
-        In the next section, we work towards a compact closed form computation.
-        Focusing on the 2x2 case, we can eliminate lower half below the triangle with a simple shear matrix multiplication.
-        This leads to a very nice formula, where we're choosing complementary components from two vectors and multiplying them for the result.
-        The most interesting bit is that the two products work against each other.
-        The best analogy I can think of is that one pair is trying to inflate the 2D balloon the default way,
-        while the second pair is trying to inflate it while pushing its insides out.
-        '''
-        get_arrows = lambda arrays: [
-            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(*arrays[0].flatten())),
-            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(*arrays[1].flatten())),
+        matrices = [
+            Matrix([["x_0","x_1"],["y_0","y_1"]], element_alignment_corner=ORIGIN, h_buff=2, v_buff=1).move_to(LEFT*4),
+            Matrix([[r"x_0 - \frac{y_0}{y_1} x_1","x_1"],["0","y_1"]], element_alignment_corner=ORIGIN, h_buff=2, v_buff=1).move_to(LEFT*4),
+            Matrix([[r"x_0 - \frac{y_0}{y_1} x_1","0"],["0","y_1"]], element_alignment_corner=ORIGIN, h_buff=2, v_buff=1).move_to(LEFT*4),
         ]
-        get_polygon = lambda arrays: Polygon(grid.c2p(0, 0),
-                                            grid.c2p(*arrays[0].flatten()),
-                                            grid.c2p(*(arrays[0] + arrays[1]).flatten()),
-                                            grid.c2p(*(arrays[1].flatten())),
-                                            color=BLUE, fill_opacity=0.5)
-        grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
-        self.play(Create(grid))
-        arrays = [np.array([[3], [3]]), np.array([[1], [2]])]
-        polygons = [get_polygon(arrays)]
-        arrows = [get_arrows(arrays)]
-        diff_arrows = [
-            Arrow(color=CS[1]).put_start_and_end_on(
-                 grid.c2p(*(arrays[0] - arrays[1]).flatten()),
-                 grid.c2p(*(arrays[0]).flatten())),
-            Arrow(color=CS[1]).put_start_and_end_on(
-                 grid.c2p(*(arrays[0] - 2*arrays[1]).flatten()),
-                 grid.c2p(*(arrays[0] - arrays[1]).flatten())),
+        secondary_matrices= [
+            Matrix([["1","0"],[r"\frac{-y_0}{y_1}","1"]], element_alignment_corner=ORIGIN, h_buff=2, v_buff=1).move_to(LEFT*4 + DOWN*2.4),
+            Matrix([["1",r"\frac{-x_1}{x_0 - \frac{y_0}{y_1} x_1}"],["0","1"]], element_alignment_corner=ORIGIN, h_buff=2, v_buff=1).move_to(LEFT*4 + DOWN*2.4),
         ]
-        arrays = [arrays[0] - 3/2*arrays[1], arrays[1]]
-        polygons.append(get_polygon(arrays))
-        arrows.append(get_arrows(arrays))
-        tex = MathTex(
-            r'{{ det }} \begin{bmatrix}',
-            r'{{x_0}} & {{x_1}} \\ {{y_0}} & {{y_1}}',
-            r'\end{bmatrix} \\ =',
-            r'{{ det }} \begin{bmatrix}',
-            r'{{x_0}} & {{x_1}} \\ {{y_0}} & {{y_1}}',
-            r'\end{bmatrix} \begin{bmatrix} 1 & 0 \\ -\frac{y_0}{y_1} & 1 \end{bmatrix} \\ = {{ det }} \begin{bmatrix}',
-            r'{{x_0 - \frac{y_0 x_1}{y_1}}} & {{x_1}} \\ 0 & {{y_1}}',
-            r'\end{bmatrix} \\ =',
-            r'{{x_0}} {{y_1}} - {{y_0}} {{x_1}}').move_to(LEFT*4)
+        tex = MathTex(r"{{x_0}} {{y_1}} - {{y_0}} {{x_1}}")
         for c in ["x", "y"]:
             for i in range(2):
                 tex.set_color_by_tex(f"{c}_{i}", CS[i])
-        tex[22][:10].set_color(CS[0])
-        self.play(Create(tex),
-                  Create(polygons[0]),
-                  Create(arrows[0][0]),
-                  Create(arrows[0][1]))
-        self.wait()
-        self.play(Create(diff_arrows[0]), Create(diff_arrows[1]))
-        self.play(ReplacementTransform(polygons[0], polygons[1]),
-                  ReplacementTransform(arrows[0][0], arrows[1][0]),
-                  ReplacementTransform(arrows[0][1], arrows[1][1]))
-        self.wait()
-        self.play(Uncreate(tex),
-                  Uncreate(grid, lag_ratio=0),
-                  Uncreate(polygons[1]),
-                  Uncreate(arrows[1][0]),
-                  Uncreate(arrows[1][1]),
-                  Uncreate(diff_arrows[0]),
-                  Uncreate(diff_arrows[1]))
-        self.wait()
+        for (m, matrix) in enumerate(matrices):
+            for i in range(4):
+                if (m, i) in [(1, 2), (2, 1), (2, 2)]: continue
+                matrix.get_entries()[i].set_color(CS[i%2])
+        self.play(
+                Create(matrices[0]),
+                Create(polygons[0]),
+                Create(arrows[0][0]),
+                Create(arrows[0][1]),
+        )
+        self.wait(8)
+        self.play(
+                Create(diff_arrows[0]),
+                Create(secondary_matrices[0]),
+        )
+        self.play(
+            ReplacementTransform(polygons[0], polygons[1]),
+            ReplacementTransform(arrows[0][0], arrows[1][0]),
+            ReplacementTransform(arrows[0][1], arrows[1][1]),
+            ReplacementTransform(matrices[0], matrices[1]),
+            FadeOut(secondary_matrices[0]),
+        )
+        self.play(FadeOut(diff_arrows[0]))
+        self.wait(8)
+        self.play(
+                Create(diff_arrows[1]),
+                Create(secondary_matrices[1]),
+        )
+        self.play(
+            ReplacementTransform(polygons[1], polygons[2]),
+            ReplacementTransform(arrows[1][0], arrows[2][0]),
+            ReplacementTransform(arrows[1][1], arrows[2][1]),
+            ReplacementTransform(matrices[1], matrices[2]),
+            FadeOut(secondary_matrices[1]),
+        )
+        self.play(FadeOut(diff_arrows[1]))
+        self.wait(8)
+        self.play(
+            FadeOut(grid, lag_ratio=0),
+            FadeOut(polygons[2]),
+            FadeOut(arrows[2][0]),
+            FadeOut(arrows[2][1]),
+        )
+        '''
+        We also have a really nice closed form already for 2x2 case,
+        where we're choosing complementary components from two vectors and multiplying them for the result.
+        The most interesting bit is that the two products work against each other.
+        The best analogy I can think of is that one pair is trying to inflate the 2D balloon the default way,
+        while the second pair is trying to inflate it while pushing its skin insides out.
+        '''
+        self.play(TransformMatchingShapes(matrices[2], tex))
+        self.wait(8)
+        self.play(FadeOut(tex))
         '''
         The same concept of two-valued orientation generalizes in higher dimensions.
         it doesn't matter whether we turn a sphere inside-out horizontally or vertically, the inner surface becomes the outer surface.
@@ -187,38 +151,39 @@ class Determinant(Scene):
           again, we see that wxyz and wyxz work against each other.
         Thus, swapping the order of any 2 dimensions flips the sign of the permutations combination!
         '''
-        tex = MathTex(
-            r'''
-            {{ det }} \begin{bmatrix}
-            {{w_0}} & {{w_1}} & 0 & 0 \\
-            {{x_0}} & {{x_1}} & 0 & 0 \\
-            0 & 0 & {{y_2}} & 0 \\
-            0 & 0 & 0 & {{z_3}} \end{bmatrix}
-            = {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}} \\
-            {{ det }} \begin{bmatrix}
-            {{w_0}} & 0 & 0 & 0 \\
-            0 & {{x_1}} & {{x_2}} & 0 \\
-            0 & {{y_1}} & {{y_2}} & 0 \\
-            0 & 0 & 0 & {{z_3}}
-            \end{bmatrix}
-            = {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}
-            ''')
-        for c in ["w","x", "y", "z"]:
-            for i in range(4):
-                tex.set_color_by_tex(f"{c}_{i}", CS[i])
-        self.play(Create(tex))
-        self.wait()
-        self.play(Uncreate(tex))
-        grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
-        self.play(Create(grid))
-        tex = MathTex(
-            r'''{{ det }} \begin{bmatrix} {{v_x}} + {{v_y}} & {{w}} \end{bmatrix} \\
-            = {{ det }} \begin {bmatrix} {{v_x}} & {{w}} \end{bmatrix} \\
-            + {{ det }} \begin {bmatrix} {{v_y}} & {{w}} \end{bmatrix}
-            ''').move_to(LEFT*4)
-        tex.set_color_by_tex("v_x", CS[0])
-        tex.set_color_by_tex("v_y", CS[0])
-        tex.set_color_by_tex("w", CS[1])
+        matrices = [
+            Matrix([["w_0","w_1","0","0"],["x_0","x_1","0","0"],["0","0","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
+            Matrix([["w_0","0","0","0"],["0","x_1","x_2","0"],["0","y_1","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
+        ]
+        texs = [
+            MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}}"),
+            MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}"),
+        ]
+        texs[0].next_to(matrices[0], RIGHT)
+        texs[1].next_to(matrices[1], RIGHT)
+        for matrix in matrices:
+            for entry in matrix.get_entries():
+                for c in ["w","x", "y", "z"]:
+                    for i in range(4):
+                        entry.set_color_by_tex(f"{c}_{i}", CS[i])
+        for tex in texs:
+            for c in ["w","x", "y", "z"]:
+                for i in range(4):
+                    tex.set_color_by_tex(f"{c}_{i}", CS[i])
+        self.play(Create(matrices[0]))
+        self.play(Create(texs[0]))
+        self.wait(8)
+        self.play(
+            FadeOut(matrices[0]),
+            FadeOut(texs[0]),
+        )
+        self.play(Create(matrices[1]))
+        self.play(Create(texs[1]))
+        self.wait(8)
+        self.play(
+            FadeOut(matrices[1]),
+            FadeOut(texs[1]),
+        )
         '''
         Apart from the sign flips on swaps, the only other part we need is that all permutations must play a role in a symmetric way.
         The intuition for this is that if we can form n-dimensional volume by picking n distinct orthogonal parts
@@ -227,6 +192,16 @@ class Determinant(Scene):
         This is also why we don't see x0*y0 or x0*x1 in the 2D determinant formula.
         More rigorously, the following property can be used to split the first vector into n subproblems, second into n-1, and so on.
         '''
+        grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
+        self.play(Create(grid))
+        tex = MathTex(
+            r'''| {{v_x}} + {{v_y}} \ \ {{w}} | \\
+            = | {{v_x}} \ \ {{w}} | \\
+            + | {{v_y}} \ \ {{w}} |
+            ''').move_to(LEFT*4)
+        tex.set_color_by_tex("v_x", CS[0])
+        tex.set_color_by_tex("v_y", CS[0])
+        tex.set_color_by_tex("w", CS[1])
         arrows = [
             Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(-1, 2)),
             Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 3)),
@@ -254,169 +229,110 @@ class Determinant(Scene):
                   Create(polygons[0]),
                   Create(arrows[0]),
                   Create(arrows[1]))
-        self.wait()
-        self.play(Uncreate(arrows[1]))
+        self.wait(8)
+        self.play(FadeOut(arrows[1]))
         self.play(Create(arrows[2]))
         self.play(Create(arrows[3]))
         self.play(Create(arrows[4]))
         self.play(ReplacementTransform(polygons[0], polygons[1]))
-        self.wait()
-        polygons[1].set_shebang(polygons[1].get_center())
-        self.play(Uncreate(grid),
-                  Uncreate(tex),
-                  Uncreate(arrows[0]),
-                  Uncreate(arrows[2]),
-                  Uncreate(arrows[3]),
-                  Uncreate(arrows[4]),
-                  polygons[1].animate.scale(0).set_opacity(0))
-        self.remove(polygons[1])
+        self.wait(8)
+        self.play(FadeOut(grid),
+                  FadeOut(tex),
+                  FadeOut(arrows[0]),
+                  FadeOut(arrows[2]),
+                  FadeOut(arrows[3]),
+                  FadeOut(arrows[4]),
+                  FadeOut(polygons[1]))
         '''
         Using this property, the determinant can be expanded level-by-level while clearing rows one-by-one.
         Eventually we end up with all the permutations, with the orientation defined by the swap-distance from identity permutation.
-        This finally can be summarized in a single compact equation.
+        This finally can be summarized in a single compact equation : sum of all signed permutation products!
         '''
-        tex_str = r'''
-            &{{det}} \begin{bmatrix}
-            {{w_0}} & {{w_1}} & {{w_2}} & {{w_3}} \\
-            {{x_0}} & {{x_1}} & {{x_2}} & {{x_3}} \\
-            {{y_0}} & {{y_1}} & {{y_2}} & {{y_3}} \\
-            {{z_0}} & {{z_1}} & {{z_2}} & {{z_3}} \\
-            \end{bmatrix} \\
-            '''
-        c = r"=\ &"
-        for d in ["w","x","y","z"]:
-            tex_str += rf"{c}{{det}} \begin{{bmatrix}}"
-            for r in ["w","x","y","z"]:
-                tex_str += rf" {{{{{r}_0}}}} " if d == r else rf"0 "
-                tex_str += rf"& {{{{{r}_1}}}} & {{{{{r}_2}}}} & {{{{{r}_3}}}} \\"
-            tex_str += r"\end{bmatrix}"
-            c = r"&+\ "
-        tex_str += r"\\"
-        c = r"=\ &"
-        for d in ["w","x","y","z"]:
-            tex_str += rf"{c}{{det}} \begin{{bmatrix}}"
-            for r in ["w","x","y","z"]:
-                tex_str += rf" {{{{{r}_0}}}} & 0 & 0 & 0 \\" if d == r else rf"0 & {{{{{r}_1}}}} & {{{{{r}_2}}}} & {{{{{r}_3}}}} \\"
-            tex_str += r"\end{bmatrix}"
-            c = r"&+\ "
-        tex = MathTex(tex_str)
-        tex.scale_to_fit_width(12)
+        from copy import deepcopy
+        base_array = [[f"{j}_{i}" for i in range(4)] for j in ["w","x","y","z"]]
+        matrice_groups = [[Matrix(base_array, left_bracket="|", right_bracket="|")],[],[],[]]
+        matrice_groups_final = [[Matrix(base_array, left_bracket="|", right_bracket="|")],[],[],[]]
+        for k in range(3):
+            for i in range(k, 4):
+                array = deepcopy(base_array)
+                for j in set(range(k, 4)) - {i}:
+                    array[j][k] = "0"
+                matrice_groups[k+1].append(Matrix(array, left_bracket="|", right_bracket="|"))
+                for j in range(k+1,4):
+                    array[i][j] = "0"
+                matrice_groups_final[k+1].append(Matrix(array, left_bracket="|", right_bracket="|"))
+                if i == k: new_base_array = deepcopy(array)
+            base_array = new_base_array
+        for matrices in matrice_groups + matrice_groups_final:
+            for matrix in matrices:
+                for entry in matrix.get_entries():
+                    for c in ["w","x", "y", "z"]:
+                        for i in range(4):
+                            entry.set_color_by_tex(f"{c}_{i}", CS[i])
+        for (i, matrices) in enumerate(matrice_groups):
+            for (j, matrix) in enumerate(matrices):
+                matrix_final = matrice_groups_final[i][j]
+                for m in [matrix, matrix_final]:
+                    m.scale(0.5)
+                    m.shift(3*UP + i*2*DOWN + 4*LEFT + j*3*RIGHT)
+                if i:
+                    if not j:
+                        arrow = Arrow(start=matrice_groups[i-1][0].get_bottom(), end=matrix.get_top())
+                        arrow.set_stroke(width=1)
+                        arrow.tip.scale(0.5)
+                        self.play(Create(arrow))
+                    else:
+                        tex = MathTex("+")
+                        tex.scale(0.5)
+                        tex.next_to(matrices[j-1], RIGHT)
+                        self.play(Create(tex))
+                        for m in [matrix, matrix_final]:
+                            m.next_to(tex, RIGHT)
+                self.play(Create(matrix))
+            for (matrix, matrix_final) in zip(matrices, matrice_groups_final[i]):
+                self.play(ReplacementTransform(matrix, matrix_final))
+        tex = MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{x_1}} {{z_2}} {{y_3}}")
         for c in ["w","x", "y", "z"]:
             for i in range(4):
                 tex.set_color_by_tex(f"{c}_{i}", CS[i])
+        tex.scale(0.5)
+        tex.next_to(matrix_final, RIGHT)
         self.play(Create(tex))
-        self.wait()
-        self.play(Uncreate(tex))
-        tex_str = r'''
-            &{{det}} \begin{bmatrix}
-            {{w_0}} & 0 & 0 & 0 \\
-            0 & {{x_1}} & {{x_2}} & {{x_3}} \\
-            0 & {{y_1}} & {{y_2}} & {{y_3}} \\
-            0 & {{z_1}} & {{z_2}} & {{z_3}} \\
-            \end{bmatrix} \\
-            '''
-        c = r"=\ &"
-        for d in ["x","y","z"]:
-            tex_str += rf"{c}{{det}} \begin{{bmatrix}}"
-            tex_str += rf" {{{{w_0}}}} & 0 & 0 & 0 \\"
-            for r in ["x","y","z"]:
-                tex_str += rf"0 & {{{{{r}_1}}}} " if d == r else rf"0 & 0 "
-                tex_str += rf"& {{{{{r}_2}}}} & {{{{{r}_3}}}} \\"
-            tex_str += r"\end{bmatrix}"
-            c = r"&+\ "
-        tex_str += r"\\"
-        c = r"=\ &"
-        for d in ["x","y","z"]:
-            tex_str += rf"{c}{{det}} \begin{{bmatrix}}"
-            tex_str += rf" {{{{w_0}}}} & 0 & 0 & 0 \\"
-            for r in ["x","y","z"]:
-                tex_str += rf" 0 & {{{{{r}_1}}}} & 0 & 0 \\" if d == r else rf"0 & 0 & {{{{{r}_2}}}} & {{{{{r}_3}}}} \\"
-            tex_str += r"\end{bmatrix}"
-            c = r"&+\ "
-        tex = MathTex(tex_str)
-        tex.scale_to_fit_width(12)
-        for c in ["w","x", "y", "z"]:
-            for i in range(4):
-                tex.set_color_by_tex(f"{c}_{i}", CS[i])
-        self.play(Create(tex))
-        self.wait()
-        self.play(Uncreate(tex))
-        '''
-        This gives us all the tools that we need to build the simple compact formulae : sum of all signed permutation products!
-        '''
-        tex_str = r'''
-            &{{det}} \begin{bmatrix}
-            {{w_0}} & 0 & 0 & 0 \\
-            0 & {{x_1}} & 0 & 0 \\
-            0 & 0 & {{y_2}} & {{y_3}} \\
-            0 & 0 & {{z_2}} & {{z_3}} \\
-            \end{bmatrix} \\
-            '''
-        c = r"=\ &"
-        for d in ["y","z"]:
-            tex_str += rf"{c}{{det}} \begin{{bmatrix}}"
-            tex_str += rf" {{{{w_0}}}} & 0 & 0 & 0 \\"
-            tex_str += rf"0 & {{{{x_1}}}} & 0 & 0 \\"
-            for r in ["y","z"]:
-                tex_str += rf"0 & 0 & {{{{{r}_2}}}} " if d == r else rf"0 & 0 & 0 "
-                tex_str += rf"& {{{{{r}_3}}}} \\"
-            tex_str += r"\end{bmatrix}"
-            c = r"&+\ "
-        tex_str += r"\\"
-        c = r"=\ &"
-        for d in ["y","z"]:
-            tex_str += rf"{c}{{det}} \begin{{bmatrix}}"
-            tex_str += rf" {{{{w_0}}}} & 0 & 0 & 0 \\"
-            tex_str += rf"0 & {{{{x_1}}}} & 0 & 0 \\"
-            for r in ["y","z"]:
-                tex_str += rf" 0 & 0 & {{{{{r}_2}}}} & 0 \\" if d == r else rf"0 & 0 & 0 & {{{{{r}_3}}}} \\"
-            tex_str += r"\end{bmatrix}"
-            c = r"&+\ "
-        tex = MathTex(tex_str)
-        tex.scale_to_fit_width(8)
-        for c in ["w","x", "y", "z"]:
-            for i in range(4):
-                tex.set_color_by_tex(f"{c}_{i}", CS[i])
-        self.play(Create(tex))
-        self.wait()
-        self.play(Uncreate(tex))
+        self.wait(8)
+        self.play(FadeOut(*self.mobjects))
         tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}")
         self.play(Create(tex))
-        self.wait()
-        self.play(Uncreate(tex))
+        # The entire computation can be represented compactly as a sum of products of signed permutations.
+        self.wait(8)
+        self.play(FadeOut(tex))
 
-def qr(A):
-    """
-    Computes the QR decomposition of matrix A using 
-    the Modified Gram-Schmidt process.
-    """
-    m, n = A.shape
-    Q = np.zeros((m, n))
-    R = np.zeros((n, n))
-    # Work on a copy to avoid modifying the original matrix
-    V = A.copy().astype(float)
-    for i in range(n):
-        # Compute the norm of the current column
-        R[i, i] = np.linalg.norm(V[:, i])
-        # Normalize to get the orthogonal vector component
-        Q[:, i] = V[:, i] / R[i, i]
-        # Project and subtract from remaining columns
-        for j in range(i + 1, n):
-            R[i, j] = np.dot(Q[:, i], V[:, j])
-            V[:, j] -= R[i, j] * Q[:, i]
-    return Q, R
 
-def get_arrows(grid, m, q):
-    # _, ev = np.linalg.eig(a)
-    return [
-        Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
-        Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
-        Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
-        Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
-    ]
+class Projection(Scene):
+   def construct(self):
+        # Overview of Dot Prodct
+        pass
 
-class QR(Scene):
-    def construct(self):
+        # Overview of QR algorithm
+        def qr(A):
+            m, n = A.shape
+            Q = np.zeros((m, n))
+            R = np.zeros((n, n))
+            V = A.copy().astype(float)
+            for i in range(n):
+                R[i, i] = np.linalg.norm(V[:, i])
+                Q[:, i] = V[:, i] / R[i, i]
+                for j in range(i + 1, n):
+                    R[i, j] = np.dot(Q[:, i], V[:, j])
+                    V[:, j] -= R[i, j] * Q[:, i]
+            return Q, R
+
+        get_arrows = lambda grid, m, q: [
+            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
+            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
+            Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
+            Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
+        ]
+
         grid = NumberPlane(x_range=(-4, 4, 1))
         self.play(Create(grid))
         m = np.array([[3,1],[1,3]])
@@ -441,4 +357,18 @@ class QR(Scene):
         # A_0 = Q_0 R_0 -> E_0 = Q_0
         # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
         # A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
- 
+        pass
+
+        # Proof of Spectral Theorem
+        # - Lagrange multipliers : \nabla xAx optimized over xx=1
+        # - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
+        pass
+
+        # SVD
+        pass
+
+        # PCA
+        pass
+
+        # OLS
+        pass

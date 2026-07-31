@@ -7,7 +7,7 @@ CS = [GREEN,RED,YELLOW,TEAL,BLUE]
 
 class Determinant(Scene):
    def construct(self):
-        title = Text("Chapter 1: 1D Determinant", font_size=32, color=YELLOW).to_edge(UP + LEFT)
+        title = Text("Chapter 1: Introduction", font_size=32).to_edge(UP + LEFT)
         self.play(Create(title))
         line = NumberLine(x_range=(-4, 4, 1)).move_to(RIGHT*3)
         matrix = Matrix([["{{x_0}}"]]).move_to(LEFT*4)
@@ -20,6 +20,7 @@ class Determinant(Scene):
             Create(arrow),
         )
         self.wait(8) # The determinant measures the size of some very special n-dimensional shapes formed by n-vectors.
+        self.wait(8) # The computation can be performed by an efficient shearing algorithm, as well as an elegant closed form.
         self.play(
             matrix.brackets.animate.set_style(fill_opacity=0, stroke_opacity=0),
             matrix[0][0].animate.set_color(CS[-1]),
@@ -35,7 +36,7 @@ class Determinant(Scene):
             FadeOut(arrow),
             FadeOut(brace),
         )
-        self.play(ReplacementTransform(title, Text("Chapter 1: 1D Determinant", font_size=32, color=YELLOW).to_edge(UP + LEFT))
+        self.play(ReplacementTransform(title, Text("Chapter 1: Shearing Algorithm", font_size=32).to_edge(UP + LEFT)))
         get_arrows = lambda arrays: [
             Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(*arrays[0].flatten()), buff=0),
             Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(*arrays[1].flatten()), buff=0),
@@ -125,14 +126,16 @@ class Determinant(Scene):
             FadeOut(arrows[2][0]),
             FadeOut(arrows[2][1]),
         )
+        self.play(ReplacementTransform(title, Text("Chapter 2.1: Closed form : 2D Computation", font_size=32).to_edge(UP + LEFT)))
         self.play(TransformMatchingShapes(matrices[2], tex))
-        self.wait(8) # The multiplication leads to a really nice closed form already.
+        self.wait(8) # The multiplication leads to a really nice closed form in the 2D case.
         self.wait(8) # We're choosing distinct components from two vectors and multiplying them for the result.
         self.wait(8) # this makes intuitive sense, since picking two components from the same vector or picking the same axis from both vectors will span zero area.
         self.wait(8) # The most interesting bit is that the two products work against each other.
         self.wait(8) # A good analogy is that one pair is trying to inflate the 2D balloon the default way,
         self.wait(8) # while the second pair is trying to inflate it while pushing its skin insides out.
         self.play(FadeOut(tex))
+        self.play(ReplacementTransform(title, Text("Chapter 2.2: Closed form : Generalizing Sign flips", font_size=32).to_edge(UP + LEFT)))
         matrices = [
             Matrix([["w_0","w_1","0","0"],["x_0","x_1","0","0"],["0","0","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
             Matrix([["w_0","0","0","0"],["0","x_1","x_2","0"],["0","y_1","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
@@ -169,6 +172,7 @@ class Determinant(Scene):
             FadeOut(matrices[1]),
             FadeOut(texs[1]),
         )
+        self.play(ReplacementTransform(title, Text("Chapter 2.3: Closed form : Generalizing permutation terms", font_size=32).to_edge(UP + LEFT)))
         grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
         tex = MathTex(
@@ -272,6 +276,7 @@ class Determinant(Scene):
         self.play(Create(tex))
         self.wait(8) # Fully expanding the recursive tree structure leads to all permutation, with the orientation defined by the swap-distance from identity permutation.
         self.play(FadeOut(*self.mobjects))
+        self.play(ReplacementTransform(title, Text("Chapter 2.4: Closed form : Final Result", font_size=32).to_edge(UP + LEFT)))
         tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}")
         self.play(Create(tex))
         self.wait(8) # Finally, the entire computation can be represented compactly as a sum of products of signed permutations!

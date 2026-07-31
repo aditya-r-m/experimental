@@ -7,7 +7,12 @@ CS = [GREEN,RED,YELLOW,TEAL,BLUE]
 
 class Determinant(Scene):
    def construct(self):
-        title = Text("Chapter 1: Introduction", font_size=32).to_edge(UP + LEFT)
+        Text.set_default(color=LIGHT_GRAY, font_size=16)
+        def update_title(title, content):
+            updated_title = Text(content).to_edge(UP + LEFT)
+            self.play(ReplacementTransform(title, updated_title))
+            return updated_title
+        title = get_title("Chapter 1 : Introduction")
         self.play(Create(title))
         line = NumberLine(x_range=(-4, 4, 1)).move_to(RIGHT*3)
         matrix = Matrix([["{{x_0}}"]]).move_to(LEFT*4)
@@ -36,7 +41,7 @@ class Determinant(Scene):
             FadeOut(arrow),
             FadeOut(brace),
         )
-        self.play(ReplacementTransform(title, Text("Chapter 1: Shearing Algorithm", font_size=32).to_edge(UP + LEFT)))
+        title = update_title("Chapter 1 : Shearing Algorithm")
         get_arrows = lambda arrays: [
             Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(*arrays[0].flatten()), buff=0),
             Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(*arrays[1].flatten()), buff=0),
@@ -126,7 +131,7 @@ class Determinant(Scene):
             FadeOut(arrows[2][0]),
             FadeOut(arrows[2][1]),
         )
-        self.play(ReplacementTransform(title, Text("Chapter 2.1: Closed form : 2D Computation", font_size=32).to_edge(UP + LEFT)))
+        title = update_title("Chapter 2.1 : Closed form : 2D Computation")
         self.play(TransformMatchingShapes(matrices[2], tex))
         self.wait(8) # The multiplication leads to a really nice closed form in the 2D case.
         self.wait(8) # We're choosing distinct components from two vectors and multiplying them for the result.
@@ -135,7 +140,7 @@ class Determinant(Scene):
         self.wait(8) # A good analogy is that one pair is trying to inflate the 2D balloon the default way,
         self.wait(8) # while the second pair is trying to inflate it while pushing its skin insides out.
         self.play(FadeOut(tex))
-        self.play(ReplacementTransform(title, Text("Chapter 2.2: Closed form : Generalizing Sign flips", font_size=32).to_edge(UP + LEFT)))
+        title = update_title("Chapter 2.2 : Closed form : Generalizing Sign flips")
         matrices = [
             Matrix([["w_0","w_1","0","0"],["x_0","x_1","0","0"],["0","0","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
             Matrix([["w_0","0","0","0"],["0","x_1","x_2","0"],["0","y_1","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
@@ -172,7 +177,7 @@ class Determinant(Scene):
             FadeOut(matrices[1]),
             FadeOut(texs[1]),
         )
-        self.play(ReplacementTransform(title, Text("Chapter 2.3: Closed form : Generalizing permutation terms", font_size=32).to_edge(UP + LEFT)))
+        title = update_title("Chapter 2.3 : Closed form : Generalizing permutation terms")
         grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
         tex = MathTex(
@@ -276,7 +281,7 @@ class Determinant(Scene):
         self.play(Create(tex))
         self.wait(8) # Fully expanding the recursive tree structure leads to all permutation, with the orientation defined by the swap-distance from identity permutation.
         self.play(FadeOut(*self.mobjects))
-        self.play(ReplacementTransform(title, Text("Chapter 2.4: Closed form : Final Result", font_size=32).to_edge(UP + LEFT)))
+        title = update_title("Chapter 2.4 : Closed form : Final Result")
         tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}")
         self.play(Create(tex))
         self.wait(8) # Finally, the entire computation can be represented compactly as a sum of products of signed permutations!

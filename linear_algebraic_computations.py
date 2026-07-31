@@ -17,8 +17,7 @@ class Determinant(Scene):
             Create(matrix),
             Create(arrow),
         )
-        # The determinant measures the size of some very special n-dimensional shapes formed by n-vectors.
-        self.wait(8)
+        self.wait(8) # The determinant measures the size of some very special n-dimensional shapes formed by n-vectors.
         self.play(
             matrix.brackets.animate.set_style(fill_opacity=0, stroke_opacity=0),
             matrix[0][0].animate.set_color(CS[-1]),
@@ -27,26 +26,13 @@ class Determinant(Scene):
             matrix.animate.next_to(brace, UP, buff=0),
             FadeIn(brace)
         )
-        # In the 1-dimensional case, the determinant is simply the value representing the length of the single vector.
-        self.wait(8)
+        self.wait(8) # In the 1-dimensional case, the determinant is simply the value representing the length of the single vector.
         self.play(
             FadeOut(line),
             FadeOut(matrix),
             FadeOut(arrow),
             FadeOut(brace),
         )
-        '''
-        2D version of this measure is area of the parallelogram.
-        This area can be computed by aligning the vectors with coordinate axes without changing the covered area.
-        The shear transformation slides the area as smoothly connected parallel lines.
-        Finally, we are left with just a rectangle with edge lengths in the diagonal matrix.
-        The determinant is the product of these 2 values.
-        Note that the textbook approach for this exact computation is row-reduction,
-        which used left-multiplication by shear matrix and pushes both vectors downwards in the first step.
-
-        The shearing algorithm generalizes efficiently in higher dimensions,
-        sliding continuous copies of parallel n-1 dimensional slices to align edges of n-dimensional parallelotopes with coordinate axes.
-        '''
         get_arrows = lambda arrays: [
             Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(*arrays[0].flatten()), buff=0),
             Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(*arrays[1].flatten()), buff=0),
@@ -97,7 +83,8 @@ class Determinant(Scene):
                 Create(arrows[0][0]),
                 Create(arrows[0][1]),
         )
-        self.wait(8)
+        self.wait(8) # 2D version of this measure is area of the parallelogram.
+        self.wait(8) # This area can be computed by aligning the vectors with coordinate axes without changing the covered area.
         self.play(
                 Create(diff_arrows[0]),
                 Create(secondary_matrices[0]),
@@ -110,7 +97,7 @@ class Determinant(Scene):
             FadeOut(secondary_matrices[0]),
         )
         self.play(FadeOut(diff_arrows[0]))
-        self.wait(8)
+        self.wait(8) # The shear transformation slides the area as smoothly connected parallel lines.
         self.play(
                 Create(diff_arrows[1]),
                 Create(secondary_matrices[1]),
@@ -123,34 +110,31 @@ class Determinant(Scene):
             FadeOut(secondary_matrices[1]),
         )
         self.play(FadeOut(diff_arrows[1]))
-        self.wait(8)
+        self.wait(8) # Finally, we are left with just a rectangle with edge lengths in the diagonal matrix.
+        self.wait(8) # The determinant is the product of these 2 values.
+        self.wait(8) # Note that the textbook approach for this exact computation is row-reduction,
+        self.wait(8) # which uses left-multiplication by shear matrix and pushes both vectors downwards in the first step.
+        self.wait(8) # The shearing algorithm also generalizes efficiently in higher dimensions,
+        self.wait(8) # sliding continuous copies of parallel n-1 dimensional slices to align edges of n-dimensional parallelotopes with coordinate axes.
         self.play(
             FadeOut(grid, lag_ratio=0),
             FadeOut(polygons[2]),
             FadeOut(arrows[2][0]),
             FadeOut(arrows[2][1]),
         )
-        '''
-        We also have a really nice closed form already for 2x2 case,
-        where we're choosing complementary components from two vectors and multiplying them for the result.
-        The most interesting bit is that the two products work against each other.
-        The best analogy I can think of is that one pair is trying to inflate the 2D balloon the default way,
-        while the second pair is trying to inflate it while pushing its skin insides out.
-        '''
         self.play(TransformMatchingShapes(matrices[2], tex))
-        self.wait(8)
+        self.wait(8) # We also have a really nice closed form already for 2x2 case, which can be generalized.
+        self.wait(8) # We're choosing distinct components from two vectors and multiplying them for the result.
+        self.wait(8) # this makes intuitive sense, since picking two components from the same vector or picking the same axis from both vectors will span zero area.
+        self.wait(8) # In higher dimensions, n-distinct orthogonal parts of n-distinct vectors will be required to span n-d volume.
+        self.wait(8) # Picking multiple parts from the same vector or aligned components of different vectors will fall span 0 n-d volume.
+        self.wait(8) # The most interesting bit is that the two products work against each other.
+        self.wait(8) # A good analogy is that one pair is trying to inflate the 2D balloon the default way,
+        self.wait(8) # while the second pair is trying to inflate it while pushing its skin insides out.
+        self.wait(8) # The same concept of two-valued orientation generalizes in higher dimensions.
+        self.wait(8) # It doesn't matter whether we turn a sphere inside-out horizontally or vertically, the inner surface becomes the outer surface.
+        self.wait(8) # While this is much harder to imagine this starting with 3D surface of a 4D volume, the 2D idea working in 4D space can be seen with just a few symbols.
         self.play(FadeOut(tex))
-        '''
-        The same concept of two-valued orientation generalizes in higher dimensions.
-        it doesn't matter whether we turn a sphere inside-out horizontally or vertically, the inner surface becomes the outer surface.
-        While this is much harder to imagine this starting with 3D surface of a 4D volume, we generalize the orientation sign as follows,
-        - let's restrict our focus to 4 4D vectors which are almost diagonal.
-        - In the first case, w & x components are similar to the 2D case, and y2z3 can simply be thought of as uniform weight per unit area.
-          we can see how wxyz and xwyz work against earch other from our previous formula.
-        - In the second case, x & y components are similar to the 2D case, and w0z3 can be though of as uniform density.
-          again, we see that wxyz and wyxz work against each other.
-        Thus, swapping the order of any 2 dimensions flips the sign of the permutations combination!
-        '''
         matrices = [
             Matrix([["w_0","w_1","0","0"],["x_0","x_1","0","0"],["0","0","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
             Matrix([["w_0","0","0","0"],["0","x_1","x_2","0"],["0","y_1","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
@@ -172,11 +156,14 @@ class Determinant(Scene):
                     tex.set_color_by_tex(f"{c}_{i}", CS[i])
         self.play(Create(matrices[0]))
         self.play(Create(texs[0]))
-        self.wait(8)
+        self.wait(8) # Focusing on 4 4D vectors in this nearly diagonal matrix, y2z3 can simply be thought of as uniform weight per unit area.
+        self.wait(8) # wxyz and xwyz work against earch other, as in the 2D formula.
         self.play(
             FadeOut(matrices[0]),
             FadeOut(texs[0]),
         )
+        self.wait(8) # The same idea can be applied to any swapped component pairs. The sign keeps flipping with every pair swap.
+        self.wait(8) # wxyz and wyxz work against each other in this second case.
         self.play(Create(matrices[1]))
         self.play(Create(texs[1]))
         self.wait(8)
@@ -184,14 +171,6 @@ class Determinant(Scene):
             FadeOut(matrices[1]),
             FadeOut(texs[1]),
         )
-        '''
-        Apart from the sign flips on swaps, the only other part we need is that all permutations must play a role in a symmetric way.
-        The intuition for this is that if we can form n-dimensional volume by picking n distinct orthogonal parts
-        of n distinct vectors.
-        Picking multiple parts from the same vector or aligned parts from different vectors does't create n-d volumes.
-        This is also why we don't see x0*y0 or x0*x1 in the 2D determinant formula.
-        More rigorously, the following property can be used to split the first vector into n subproblems, second into n-1, and so on.
-        '''
         grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
         tex = MathTex(
@@ -229,13 +208,13 @@ class Determinant(Scene):
                   Create(polygons[0]),
                   Create(arrows[0]),
                   Create(arrows[1]))
-        self.wait(8)
+        self.wait(8) # To get all the permutations, we can split the computation terms aligned with components of any of the vectors as shown.
         self.play(FadeOut(arrows[1]))
         self.play(Create(arrows[2]))
         self.play(Create(arrows[3]))
         self.play(Create(arrows[4]))
         self.play(ReplacementTransform(polygons[0], polygons[1]))
-        self.wait(8)
+        self.wait(8) # Using this property, the determinant can be expanded level-by-level while clearing rows one-by-one.
         self.play(FadeOut(grid),
                   FadeOut(tex),
                   FadeOut(arrows[0]),
@@ -243,11 +222,6 @@ class Determinant(Scene):
                   FadeOut(arrows[3]),
                   FadeOut(arrows[4]),
                   FadeOut(polygons[1]))
-        '''
-        Using this property, the determinant can be expanded level-by-level while clearing rows one-by-one.
-        Eventually we end up with all the permutations, with the orientation defined by the swap-distance from identity permutation.
-        This finally can be summarized in a single compact equation : sum of all signed permutation products!
-        '''
         from copy import deepcopy
         base_array = [[f"{j}_{i}" for i in range(4)] for j in ["w","x","y","z"]]
         matrice_groups = [[Matrix(base_array, left_bracket="|", right_bracket="|")],[],[],[]]
@@ -298,12 +272,11 @@ class Determinant(Scene):
         tex.scale(0.5)
         tex.next_to(matrix_final, RIGHT)
         self.play(Create(tex))
-        self.wait(8)
+        self.wait(8) # Fully expanding the recursive tree structure leads to all permutation, with the orientation defined by the swap-distance from identity permutation.
         self.play(FadeOut(*self.mobjects))
         tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}")
         self.play(Create(tex))
-        # The entire computation can be represented compactly as a sum of products of signed permutations.
-        self.wait(8)
+        self.wait(8) # Finally, the entire computation can be represented compactly as a sum of products of signed permutations!
         self.play(FadeOut(tex))
 
 

@@ -7,6 +7,8 @@ CS = [GREEN,RED,YELLOW,TEAL,BLUE]
 
 class Determinant(Scene):
    def construct(self):
+        title = Text("Chapter 1: 1D Determinant", font_size=32, color=YELLOW).to_edge(UP + LEFT)
+        self.play(Create(title))
         line = NumberLine(x_range=(-4, 4, 1)).move_to(RIGHT*3)
         matrix = Matrix([["{{x_0}}"]]).move_to(LEFT*4)
         matrix.get_entries()[0].set_color(CS[0])
@@ -33,6 +35,7 @@ class Determinant(Scene):
             FadeOut(arrow),
             FadeOut(brace),
         )
+        self.play(ReplacementTransform(title, Text("Chapter 1: 1D Determinant", font_size=32, color=YELLOW).to_edge(UP + LEFT))
         get_arrows = lambda arrays: [
             Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(*arrays[0].flatten()), buff=0),
             Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(*arrays[1].flatten()), buff=0),
@@ -123,17 +126,12 @@ class Determinant(Scene):
             FadeOut(arrows[2][1]),
         )
         self.play(TransformMatchingShapes(matrices[2], tex))
-        self.wait(8) # We also have a really nice closed form already for 2x2 case, which can be generalized.
+        self.wait(8) # The multiplication leads to a really nice closed form already.
         self.wait(8) # We're choosing distinct components from two vectors and multiplying them for the result.
         self.wait(8) # this makes intuitive sense, since picking two components from the same vector or picking the same axis from both vectors will span zero area.
-        self.wait(8) # In higher dimensions, n-distinct orthogonal parts of n-distinct vectors will be required to span n-d volume.
-        self.wait(8) # Picking multiple parts from the same vector or aligned components of different vectors will fall span 0 n-d volume.
         self.wait(8) # The most interesting bit is that the two products work against each other.
         self.wait(8) # A good analogy is that one pair is trying to inflate the 2D balloon the default way,
         self.wait(8) # while the second pair is trying to inflate it while pushing its skin insides out.
-        self.wait(8) # The same concept of two-valued orientation generalizes in higher dimensions.
-        self.wait(8) # It doesn't matter whether we turn a sphere inside-out horizontally or vertically, the inner surface becomes the outer surface.
-        self.wait(8) # While this is much harder to imagine this starting with 3D surface of a 4D volume, the 2D idea working in 4D space can be seen with just a few symbols.
         self.play(FadeOut(tex))
         matrices = [
             Matrix([["w_0","w_1","0","0"],["x_0","x_1","0","0"],["0","0","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
@@ -162,8 +160,8 @@ class Determinant(Scene):
             FadeOut(matrices[0]),
             FadeOut(texs[0]),
         )
-        self.wait(8) # The same idea can be applied to any swapped component pairs. The sign keeps flipping with every pair swap.
         self.wait(8) # wxyz and wyxz work against each other in this second case.
+        self.wait(8) # The sign flips similarly generalize to any component pair swaps in any number of dimensions.
         self.play(Create(matrices[1]))
         self.play(Create(texs[1]))
         self.wait(8)
@@ -208,7 +206,7 @@ class Determinant(Scene):
                   Create(polygons[0]),
                   Create(arrows[0]),
                   Create(arrows[1]))
-        self.wait(8) # To get all the permutations, we can split the computation terms aligned with components of any of the vectors as shown.
+        self.wait(8) # To get all the permutations, we can split the terms aligned with components of any of the vectors as shown.
         self.play(FadeOut(arrows[1]))
         self.play(Create(arrows[2]))
         self.play(Create(arrows[3]))

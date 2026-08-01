@@ -7,9 +7,9 @@ CS = [GREEN,RED,YELLOW,TEAL,BLUE]
 
 class Determinant(Scene):
    def construct(self):
-        Text.set_default(color=LIGHT_GRAY, font_size=32)
-        def update_title(title, content, edge=UP+LEFT):
-            updated_title = Text(content).to_edge(edge)
+        Text.set_default(color=LIGHT_GRAY, font_size=24)
+        def update_title(title, content):
+            updated_title = Text(content).to_edge(UP+LEFT)
             self.play(ReplacementTransform(title, updated_title))
             return updated_title
         title = update_title(Text(" "), "Introduction")
@@ -46,11 +46,14 @@ class Determinant(Scene):
             Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(*arrays[0].flatten()), buff=0),
             Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(*arrays[1].flatten()), buff=0),
         ]
-        get_polygon = lambda arrays: Polygon(grid.c2p(0, 0),
-                                            grid.c2p(*arrays[0].flatten()),
-                                            grid.c2p(*(arrays[0] + arrays[1]).flatten()),
-                                            grid.c2p(*(arrays[1].flatten())),
-                                            color=BLUE, fill_opacity=0.5)
+        get_polygon = lambda arrays: Polygon(
+            grid.c2p(0, 0),
+            grid.c2p(*arrays[0].flatten()),
+            grid.c2p(*(arrays[0] + arrays[1]).flatten()),
+            grid.c2p(*(arrays[1].flatten())),
+            color=BLUE,
+            fill_opacity=0.5,
+        )
         grid = NumberPlane(x_range=(-4, 4, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
         arrays = [np.array([[1], [0]]), np.array([[0], [2]])]
@@ -87,16 +90,16 @@ class Determinant(Scene):
                 if (m, i) in [(1, 2), (2, 1), (2, 2)]: continue
                 matrix.get_entries()[i].set_color(CS[i%2])
         self.play(
-                Create(matrices[0]),
-                Create(polygons[0]),
-                Create(arrows[0][0]),
-                Create(arrows[0][1]),
+            Create(matrices[0]),
+            Create(polygons[0]),
+            Create(arrows[0][0]),
+            Create(arrows[0][1]),
         )
         self.wait(8) # 2D version of this measure is area of the parallelogram.
         self.wait(8) # This area can be computed by aligning the vectors with coordinate axes without changing the covered area.
         self.play(
-                Create(diff_arrows[0]),
-                Create(secondary_matrices[0]),
+            Create(diff_arrows[0]),
+            Create(secondary_matrices[0]),
         )
         self.play(
             ReplacementTransform(polygons[0], polygons[1]),
@@ -108,8 +111,8 @@ class Determinant(Scene):
         self.play(FadeOut(diff_arrows[0]))
         self.wait(8) # The shear transformation slides the area as smoothly connected parallel lines.
         self.play(
-                Create(diff_arrows[1]),
-                Create(secondary_matrices[1]),
+            Create(diff_arrows[1]),
+            Create(secondary_matrices[1]),
         )
         self.play(
             ReplacementTransform(polygons[1], polygons[2]),
@@ -177,7 +180,7 @@ class Determinant(Scene):
             FadeOut(matrices[1]),
             FadeOut(texs[1]),
         )
-        title = update_title(title, "2.3) Closed form : Deriving permutation terms", UP+RIGHT)
+        title = update_title(title, "2.3) Closed form : Deriving permutation terms")
         grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
         tex = MathTex(
@@ -196,25 +199,33 @@ class Determinant(Scene):
             Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(3, 0), grid.c2p(2, 2)),
         ]
         polygons = [
-            Polygon(grid.c2p(0, 0),
-                    grid.c2p(2, 2),
-                    grid.c2p(3, 3),
-                    grid.c2p(2, 5),
-                    grid.c2p(1, 4),
-                    grid.c2p(-1, 2),
-                    color=BLUE, fill_opacity=0.5),
-            Polygon(grid.c2p(0, 0),
-                    grid.c2p(3, 0),
-                    grid.c2p(3, 3),
-                    grid.c2p(2, 5),
-                    grid.c2p(2, 2),
-                    grid.c2p(-1, 2),
-                    color=BLUE, fill_opacity=0.5),
+            Polygon(
+                grid.c2p(0, 0),
+                grid.c2p(2, 2),
+                grid.c2p(3, 3),
+                grid.c2p(2, 5),
+                grid.c2p(1, 4),
+                grid.c2p(-1, 2),
+                color=BLUE,
+                fill_opacity=0.5,
+            ),
+            Polygon(
+                grid.c2p(0, 0),
+                grid.c2p(3, 0),
+                grid.c2p(3, 3),
+                grid.c2p(2, 5),
+                grid.c2p(2, 2),
+                grid.c2p(-1, 2),
+                color=BLUE,
+                fill_opacity=0.5,
+            ),
         ]
-        self.play(Create(tex),
-                  Create(polygons[0]),
-                  Create(arrows[0]),
-                  Create(arrows[1]))
+        self.play(
+            Create(tex),
+            Create(polygons[0]),
+            Create(arrows[0]),
+            Create(arrows[1]),
+        )
         self.wait(8) # To get all the permutations, we can split the terms aligned with components of any of the vectors as shown.
         self.play(FadeOut(arrows[1]))
         self.play(Create(arrows[2]))
@@ -222,13 +233,16 @@ class Determinant(Scene):
         self.play(Create(arrows[4]))
         self.play(ReplacementTransform(polygons[0], polygons[1]))
         self.wait(8) # Using this property, the determinant can be expanded level-by-level while clearing rows one-by-one.
-        self.play(FadeOut(grid),
-                  FadeOut(tex),
-                  FadeOut(arrows[0]),
-                  FadeOut(arrows[2]),
-                  FadeOut(arrows[3]),
-                  FadeOut(arrows[4]),
-                  FadeOut(polygons[1]))
+        self.play(
+            FadeOut(grid),
+            FadeOut(tex),
+            FadeOut(arrows[0]),
+            FadeOut(arrows[2]),
+            FadeOut(arrows[3]),
+            FadeOut(arrows[4]),
+            FadeOut(polygons[1]),
+            title.animate.to_edge(UP+RIGHT),
+        )
         from copy import deepcopy
         base_array = [[f"{j}_{i}" for i in range(4)] for j in ["w","x","y","z"]]
         matrice_groups = [[Matrix(base_array, left_bracket="|", right_bracket="|")],[],[],[]]

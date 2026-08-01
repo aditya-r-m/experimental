@@ -188,10 +188,11 @@ class Determinant(Scene):
         grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
         tex = MathTex(
-            r'''| {{v_x}} + {{v_y}} \ \ {{w}} | \\
-            &= | {{v_x}} \ \ {{w}} | \\
-            &+ | {{v_y}} \ \ {{w}} |
-            ''').move_to(LEFT*4)
+            r'''
+            &| {{v_x}} + {{v_y}} \ \ {{w}} | \\
+            = &| {{v_x}} \ \ {{w}} | + | {{v_y}} \ \ {{w}} |
+            '''
+        ).move_to(LEFT*4)
         tex.set_color_by_tex("v_x", CS[0])
         tex.set_color_by_tex("v_y", CS[0])
         tex.set_color_by_tex("w", CS[1])

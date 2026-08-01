@@ -12,7 +12,7 @@ class Determinant(Scene):
             updated_title = Text(content).to_edge(UP+LEFT)
             self.play(ReplacementTransform(title, updated_title))
             return updated_title
-        title = update_title(Text(" "), "Introduction")
+        title = Text("Introduction").to_edge(UP+LEFT)
         self.play(Create(title))
         line = NumberLine(x_range=(-4, 4, 1)).move_to(RIGHT*3)
         matrix = Matrix([["{{x_0}}"]]).move_to(LEFT*4)
@@ -25,7 +25,7 @@ class Determinant(Scene):
             Create(arrow),
         )
         self.wait(8) # The determinant measures the size of some very special n-dimensional shapes formed by n-vectors.
-        self.wait(8) # The computation can be performed by an efficient shearing algorithm, as well as an elegant closed form.
+        self.wait(8) # The computation can be performed by a simple efficient shearing algorithm, as well as an elegant closed form.
         self.play(
             matrix.brackets.animate.set_style(fill_opacity=0, stroke_opacity=0),
             matrix[0][0].animate.set_color(CS[-1]),
@@ -101,6 +101,7 @@ class Determinant(Scene):
             Create(diff_arrows[0]),
             Create(secondary_matrices[0]),
         )
+        self.wait(8) # This shear transformation slides the area as smoothly connected parallel lines, by subtracting one vector direction from another.
         self.play(
             ReplacementTransform(polygons[0], polygons[1]),
             ReplacementTransform(arrows[0][0], arrows[1][0]),
@@ -108,12 +109,13 @@ class Determinant(Scene):
             ReplacementTransform(matrices[0], matrices[1]),
             FadeOut(secondary_matrices[0]),
         )
+        self.wait(8) # Note : the standard row-reduction pushes both vectors in the direction of a coordinate axis by a left-shear-multiplication instead.
         self.play(FadeOut(diff_arrows[0]))
-        self.wait(8) # The shear transformation slides the area as smoothly connected parallel lines.
         self.play(
             Create(diff_arrows[1]),
             Create(secondary_matrices[1]),
         )
+        self.wait(8) # Finally, we can get a rectangle with edge lengths in the diagonal matrix, the determinant will be base times height.
         self.play(
             ReplacementTransform(polygons[1], polygons[2]),
             ReplacementTransform(arrows[1][0], arrows[2][0]),
@@ -122,10 +124,6 @@ class Determinant(Scene):
             FadeOut(secondary_matrices[1]),
         )
         self.play(FadeOut(diff_arrows[1]))
-        self.wait(8) # Finally, we are left with just a rectangle with edge lengths in the diagonal matrix.
-        self.wait(8) # The determinant is the product of these 2 values.
-        self.wait(8) # Note that the textbook approach for this exact computation is row-reduction,
-        self.wait(8) # which uses left-multiplication by shear matrix and pushes both vectors downwards in the first step.
         self.wait(8) # The shearing algorithm also generalizes efficiently in higher dimensions,
         self.wait(8) # sliding continuous copies of parallel n-1 dimensional slices to align edges of n-dimensional parallelotopes with coordinate axes.
         self.play(
@@ -136,21 +134,19 @@ class Determinant(Scene):
         )
         title = update_title(title, "2.1) Closed form : 2D Computation")
         self.play(TransformMatchingShapes(matrices[2], tex))
-        self.wait(8) # The multiplication leads to a really nice closed form in the 2D case.
-        self.wait(8) # We're choosing distinct components from two vectors and multiplying them for the result.
-        self.wait(8) # this makes intuitive sense, since picking two components from the same vector or picking the same axis from both vectors will span zero area.
+        self.wait(8) # The multiplication leads to a really nice 2D closed form, sum of signed product of distinct components.
+        self.wait(8) # this makes sense, since picking two components from the same vector or picking the same axis from both vectors will span zero area.
         self.wait(8) # The most interesting bit is that the two products work against each other.
-        self.wait(8) # A good analogy is that one pair is trying to inflate the 2D balloon the default way,
-        self.wait(8) # while the second pair is trying to inflate it while pushing its skin insides out.
+        self.wait(8) # One pair is trying to inflate the 2D balloon the default way, while the second pair is trying to push its skin inside-out.
         self.play(FadeOut(tex))
-        title = update_title(title, "2.2) Closed form : Generalizing Sign flips")
+        title = update_title(title, "2.2) Closed form : Generalizing Permutation sign")
         matrices = [
             Matrix([["w_0","w_1","0","0"],["x_0","x_1","0","0"],["0","0","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
             Matrix([["w_0","0","0","0"],["0","x_1","x_2","0"],["0","y_1","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
         ]
         texs = [
-            MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}}"),
-            MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}"),
+            MathTex("= ({{w_0}} {{x_1}} - {{x_0}} {w_1}) {{y_2}} {{z_3}} \\\\ = {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}}"),
+            MathTex("= {{w_0}} ({{x_0}} {{y_1}} - {{y_0}} {x_1}) {{z_3}} \\\\ = {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}"),
         ]
         texs[0].next_to(matrices[0], RIGHT)
         texs[1].next_to(matrices[1], RIGHT)
@@ -171,16 +167,15 @@ class Determinant(Scene):
             FadeOut(matrices[0]),
             FadeOut(texs[0]),
         )
-        self.wait(8) # wxyz and wyxz work against each other in this second case.
-        self.wait(8) # The sign flips similarly generalize to any component pair swaps in any number of dimensions.
         self.play(Create(matrices[1]))
         self.play(Create(texs[1]))
-        self.wait(8)
+        self.wait(8) # wxyz and wyxz work against each other in this second case.
+        self.wait(8) # The sign flips similarly generalize to any component pair swaps in any number of dimensions.
         self.play(
             FadeOut(matrices[1]),
             FadeOut(texs[1]),
         )
-        title = update_title(title, "2.3) Closed form : Deriving permutation terms")
+        title = update_title(title, "2.3) Closed form : Deriving Permutations")
         grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)
         self.play(Create(grid))
         tex = MathTex(
@@ -284,6 +279,7 @@ class Determinant(Scene):
                         for m in [matrix, matrix_final]:
                             m.next_to(tex, RIGHT)
                 self.play(Create(matrix))
+                if i: self.play(Create(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]), color=YELLOW, buff=0.1)))
             for (matrix, matrix_final) in zip(matrices, matrice_groups_final[i]):
                 self.play(ReplacementTransform(matrix, matrix_final))
         tex = MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{x_1}} {{z_2}} {{y_3}}")

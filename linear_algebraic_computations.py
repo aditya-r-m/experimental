@@ -273,6 +273,7 @@ class Determinant(Scene):
                         for i in range(4):
                             entry.set_color_by_tex(f"{c}_{i}", CS[i])
         for (i, matrices) in enumerate(matrice_groups):
+            rects = []
             for (j, matrix) in enumerate(matrices):
                 matrix_final = matrice_groups_final[i][j]
                 for m in [matrix, matrix_final]:
@@ -292,9 +293,14 @@ class Determinant(Scene):
                         for m in [matrix, matrix_final]:
                             m.next_to(tex, RIGHT)
                 self.play(Create(matrix))
-                if i: self.play(Create(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]), color=BLUE)))
-            for (matrix, matrix_final) in zip(matrices, matrice_groups_final[i]):
-                self.play(ReplacementTransform(matrix, matrix_final))
+                if i:
+                    rects.append(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]), color=BLUE))
+                    self.play(Create(rects[-1]))
+            for (j, (matrix, matrix_final)) in enumerate(zip(matrices, matrice_groups_final[i])):
+                self.play(
+                    ReplacementTransform(matrix, matrix_final),
+                    FadeOut(rects[j]),
+                )
         tex = MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{x_1}} {{z_2}} {{y_3}}")
         for c in ["w","x", "y", "z"]:
             for i in range(4):

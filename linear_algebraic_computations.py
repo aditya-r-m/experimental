@@ -308,7 +308,6 @@ class Determinant(Scene):
         self.play(Create(tex))
         self.wait(8) # Fully expanding the recursive tree structure leads to all permutation, with the orientation defined by the swap-distance from identity permutation.
         self.play(FadeOut(*self.mobjects))
-        title = update_title(title, "2.4) Closed form : Final Result")
         tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}")
         self.play(Create(tex))
         self.wait(8) # Finally, the entire computation can be represented compactly as a sum of products of signed permutations!

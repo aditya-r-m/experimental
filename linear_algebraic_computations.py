@@ -296,11 +296,12 @@ class Determinant(Scene):
                 if i:
                     rects.append(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]), color=BLUE))
                     self.play(Create(rects[-1]))
-            for (j, (matrix, matrix_final)) in enumerate(zip(matrices, matrice_groups_final[i])):
-                self.play(
-                    ReplacementTransform(matrix, matrix_final),
-                    FadeOut(rects[j]),
-                )
+            if i:
+                for (j, (matrix, matrix_final)) in enumerate(zip(matrices, matrice_groups_final[i])):
+                    self.play(
+                        ReplacementTransform(matrix, matrix_final),
+                        FadeOut(rects[j]),
+                    )
         tex = MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{x_1}} {{z_2}} {{y_3}}")
         for c in ["w","x", "y", "z"]:
             for i in range(4):

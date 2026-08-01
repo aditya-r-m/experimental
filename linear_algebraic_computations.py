@@ -25,7 +25,7 @@ class Determinant(Scene):
             Create(arrow),
         )
         self.wait(8) # The determinant measures the size of some very special n-dimensional shapes formed by n-vectors.
-        self.wait(8) # The computation can be performed by a simple efficient shearing algorithm, as well as an elegant closed form.
+        self.wait(8) # The basic computation can be performed by an efficient vector-reduction algorithm, as well as an elegant closed form.
         self.play(
             matrix.brackets.animate.set_style(fill_opacity=0, stroke_opacity=0),
             matrix[0][0].animate.set_color(CS[-1]),
@@ -41,7 +41,7 @@ class Determinant(Scene):
             FadeOut(arrow),
             FadeOut(brace),
         )
-        title = update_title(title, "1) Shearing Algorithm")
+        title = update_title(title, "1) Reducing Columns")
         get_arrows = lambda arrays: [
             Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(*arrays[0].flatten()), buff=0),
             Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(*arrays[1].flatten()), buff=0),
@@ -124,7 +124,7 @@ class Determinant(Scene):
             FadeOut(secondary_matrices[1]),
             FadeOut(diff_arrows[1]),
         )
-        self.wait(8) # The shearing algorithm also generalizes efficiently in higher dimensions,
+        self.wait(8) # The approach also generalizes efficiently in higher dimensions,
         self.wait(8) # sliding continuous copies of parallel n-1 dimensional slices to align edges of n-dimensional parallelotopes with coordinate axes.
         self.play(
             FadeOut(grid, lag_ratio=0),

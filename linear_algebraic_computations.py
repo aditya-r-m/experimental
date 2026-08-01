@@ -96,7 +96,7 @@ class Determinant(Scene):
             Create(arrows[0][1]),
         )
         self.wait(8) # 2D version of this measure is area of the parallelogram.
-        self.wait(8) # This area can be computed by aligning the vectors with coordinate axes without changing the covered area.
+        self.wait(8) # This value can be computed by aligning the vectors with coordinate axes without changing the covered area.
         self.play(
             Create(diff_arrows[0]),
             Create(secondary_matrices[0]),
@@ -134,7 +134,7 @@ class Determinant(Scene):
         )
         title = update_title(title, "2.1) Closed form : 2D Computation")
         self.play(TransformMatchingShapes(matrices[2], tex))
-        self.wait(8) # The multiplication leads to a really nice 2D closed form, sum of signed product of distinct components.
+        self.wait(8) # The multiplication leads to a really nice 2D closed form, sum of signed products of distinct components.
         self.wait(8) # this makes sense, since picking two components from the same vector or picking the same axis from both vectors will span zero area.
         self.wait(8) # The most interesting bit is that the two products work against each other.
         self.wait(8) # One pair is trying to inflate the 2D balloon normally, while the second pair is trying to push its skin inside-out.
@@ -166,7 +166,7 @@ class Determinant(Scene):
                     tex.set_color_by_tex(f"{c}_{i}", CS[i])
         self.play(Create(matrices[0]))
         self.play(Create(texs[0][0]))
-        self.wait(8) # Focusing on 4 4D vectors in this nearly diagonal matrix, y2z3 can simply be thought of as uniform weight per unit area.
+        self.wait(8) # Focusing on 4 4D vectors in this nearly diagonal matrix, yz can simply be thought of as uniform weight per unit area.
         self.play(FadeOut(texs[0][0]))
         self.play(Create(texs[0][1]))
         self.wait(8) # wxyz and xwyz work against earch other, as in the 2D formula.
@@ -189,8 +189,8 @@ class Determinant(Scene):
         self.play(Create(grid))
         tex = MathTex(
             r'''| {{v_x}} + {{v_y}} \ \ {{w}} | \\
-            = | {{v_x}} \ \ {{w}} | \\
-            + | {{v_y}} \ \ {{w}} |
+            &= | {{v_x}} \ \ {{w}} | \\
+            &+ | {{v_y}} \ \ {{w}} |
             ''').move_to(LEFT*4)
         tex.set_color_by_tex("v_x", CS[0])
         tex.set_color_by_tex("v_y", CS[0])
@@ -308,7 +308,7 @@ class Determinant(Scene):
         self.wait(8) # Fully expanding the recursive tree structure leads to all permutation, with the orientation defined by the swap-distance from identity permutation.
         self.play(FadeOut(*self.mobjects))
         title = update_title(title, "2.4) Closed form : Final Result")
-        tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}", color=BLUE)
+        tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}")
         self.play(Create(tex))
         self.wait(8) # Finally, the entire computation can be represented compactly as a sum of products of signed permutations!
         self.play(FadeOut(tex))

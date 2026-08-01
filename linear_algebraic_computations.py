@@ -3,7 +3,7 @@
 import numpy as np
 from manim import *
 
-CS = [GREEN,RED,YELLOW,TEAL,BLUE]
+CS = [GREEN,RED,YELLOW,TEAL]
 
 class Determinant(Scene):
    def construct(self):
@@ -108,9 +108,9 @@ class Determinant(Scene):
             ReplacementTransform(arrows[0][1], arrows[1][1]),
             ReplacementTransform(matrices[0], matrices[1]),
             FadeOut(secondary_matrices[0]),
+            FadeOut(diff_arrows[0])
         )
         self.wait(8) # Note : the standard row-reduction pushes both vectors in the direction of a coordinate axis by a left-shear-multiplication instead.
-        self.play(FadeOut(diff_arrows[0]))
         self.play(
             Create(diff_arrows[1]),
             Create(secondary_matrices[1]),
@@ -122,8 +122,8 @@ class Determinant(Scene):
             ReplacementTransform(arrows[1][1], arrows[2][1]),
             ReplacementTransform(matrices[1], matrices[2]),
             FadeOut(secondary_matrices[1]),
+            FadeOut(diff_arrows[1]),
         )
-        self.play(FadeOut(diff_arrows[1]))
         self.wait(8) # The shearing algorithm also generalizes efficiently in higher dimensions,
         self.wait(8) # sliding continuous copies of parallel n-1 dimensional slices to align edges of n-dimensional parallelotopes with coordinate axes.
         self.play(
@@ -137,7 +137,7 @@ class Determinant(Scene):
         self.wait(8) # The multiplication leads to a really nice 2D closed form, sum of signed product of distinct components.
         self.wait(8) # this makes sense, since picking two components from the same vector or picking the same axis from both vectors will span zero area.
         self.wait(8) # The most interesting bit is that the two products work against each other.
-        self.wait(8) # One pair is trying to inflate the 2D balloon the default way, while the second pair is trying to push its skin inside-out.
+        self.wait(8) # One pair is trying to inflate the 2D balloon normally, while the second pair is trying to push its skin inside-out.
         self.play(FadeOut(tex))
         title = update_title(title, "2.2) Closed form : Generalizing Permutation sign")
         matrices = [
@@ -145,8 +145,8 @@ class Determinant(Scene):
             Matrix([["w_0","0","0","0"],["0","x_1","x_2","0"],["0","y_1","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
         ]
         texs = [
-            MathTex("= ({{w_0}} {{x_1}} - {{x_0}} {w_1}) {{y_2}} {{z_3}} \\\\ = {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}}"),
-            MathTex("= {{w_0}} ({{x_0}} {{y_1}} - {{y_0}} {x_1}) {{z_3}} \\\\ = {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}"),
+            MathTex("&= ({{w_0}} {{x_1}} - {{x_0}} {w_1}) {{y_2}} {{z_3}} \\\\ &= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}}"),
+            MathTex("&= {{w_0}} ({{x_0}} {{y_1}} - {{y_0}} {x_1}) {{z_3}} \\\\ &= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}"),
         ]
         texs[0].next_to(matrices[0], RIGHT)
         texs[1].next_to(matrices[1], RIGHT)
@@ -236,8 +236,8 @@ class Determinant(Scene):
             FadeOut(arrows[3]),
             FadeOut(arrows[4]),
             FadeOut(polygons[1]),
-            title.animate.to_edge(UP+RIGHT),
         )
+        self.play(title.animate.to_edge(UP+RIGHT))
         from copy import deepcopy
         base_array = [[f"{j}_{i}" for i in range(4)] for j in ["w","x","y","z"]]
         matrice_groups = [[Matrix(base_array, left_bracket="|", right_bracket="|")],[],[],[]]
@@ -279,7 +279,7 @@ class Determinant(Scene):
                         for m in [matrix, matrix_final]:
                             m.next_to(tex, RIGHT)
                 self.play(Create(matrix))
-                if i: self.play(Create(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]))))
+                if i: self.play(Create(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]), color=BLUE)))
             for (matrix, matrix_final) in zip(matrices, matrice_groups_final[i]):
                 self.play(ReplacementTransform(matrix, matrix_final))
         tex = MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{x_1}} {{z_2}} {{y_3}}")
@@ -292,7 +292,7 @@ class Determinant(Scene):
         self.wait(8) # Fully expanding the recursive tree structure leads to all permutation, with the orientation defined by the swap-distance from identity permutation.
         self.play(FadeOut(*self.mobjects))
         title = update_title(title, "2.4) Closed form : Final Result")
-        tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}")
+        tex = MathTex(r"\sum_{\sigma \in S_n} sgn(\sigma) \prod_{i=1}^n a_{\sigma(i)i}", color=BLUE)
         self.play(Create(tex))
         self.wait(8) # Finally, the entire computation can be represented compactly as a sum of products of signed permutations!
         self.play(FadeOut(tex))

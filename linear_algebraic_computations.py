@@ -167,7 +167,10 @@ class Determinant(Scene):
         self.play(Create(matrices[0]))
         self.play(Create(texs[0][0]))
         self.wait(8) # Focusing on 4 4D vectors in this nearly diagonal matrix, y2z3 can simply be thought of as uniform weight per unit area.
-        self.play(ReplacementTransform(texs[0][0], texs[0][1]))
+        self.play(
+            FadeOut(texs[0][0]),
+            Create(texs[0][1]),
+        )
         self.wait(8) # wxyz and xwyz work against earch other, as in the 2D formula.
         self.play(
             FadeOut(matrices[0]),
@@ -176,7 +179,10 @@ class Determinant(Scene):
         self.play(Create(matrices[1]))
         self.play(Create(texs[1][0]))
         self.wait(8) # wxyz and wyxz work against each other in this second case.
-        self.play(ReplacementTransform(texs[1][0], texs[1][1]))
+        self.play(
+            FadeOut(texs[1][0]),
+            Create(texs[1][1]),
+        )
         self.wait(8) # The sign flips similarly generalize to any component pair swaps in any number of dimensions.
         self.play(
             FadeOut(matrices[1]),

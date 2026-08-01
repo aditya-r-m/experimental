@@ -279,7 +279,7 @@ class Determinant(Scene):
                         for m in [matrix, matrix_final]:
                             m.next_to(tex, RIGHT)
                 self.play(Create(matrix))
-                if i: self.play(Create(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]), color=YELLOW, buff=0.1)))
+                if i: self.play(Create(SurroundingRectangle(VGroup(*matrix.get_rows()[j+i-1][i-1:]))))
             for (matrix, matrix_final) in zip(matrices, matrice_groups_final[i]):
                 self.play(ReplacementTransform(matrix, matrix_final))
         tex = MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{x_1}} {{z_2}} {{y_3}}")

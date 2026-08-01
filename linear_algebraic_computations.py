@@ -145,35 +145,42 @@ class Determinant(Scene):
             Matrix([["w_0","0","0","0"],["0","x_1","x_2","0"],["0","y_1","y_2","0"],["0","0","0","z_3"]], left_bracket="|", right_bracket="|").move_to(LEFT*2),
         ]
         texs = [
-            MathTex("&= ({{w_0}} {{x_1}} - {{x_0}} {w_1}) {{y_2}} {{z_3}} \\\\ &= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}}"),
-            MathTex("&= {{w_0}} ({{x_0}} {{y_1}} - {{y_0}} {x_1}) {{z_3}} \\\\ &= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}"),
+            [
+                MathTex("= ( {{w_0}} {{x_1}} - {{x_0}} {{w_1}} ) {{y_2}} {{z_3}}"),
+                MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{x_0}} {{w_1}} {{y_2}} {{z_3}}"),
+            ],
+            [
+                MathTex("= {{w_0}} ( {{x_1}} {{y_2}} - {{y_1}} {{x_2}} ) {{z_3}}"),
+                MathTex("= {{w_0}} {{x_1}} {{y_2}} {{z_3}} - {{w_0}} {{y_1}} {{x_2}} {{z_3}}"),
+            ]
         ]
-        texs[0].next_to(matrices[0], RIGHT)
-        texs[1].next_to(matrices[1], RIGHT)
         for matrix in matrices:
             for entry in matrix.get_entries():
                 for c in ["w","x", "y", "z"]:
                     for i in range(4):
                         entry.set_color_by_tex(f"{c}_{i}", CS[i])
-        for tex in texs:
+        for tex in texs[0] + texs[1]:
+            tex.next_to(matrices[0], RIGHT)
             for c in ["w","x", "y", "z"]:
                 for i in range(4):
                     tex.set_color_by_tex(f"{c}_{i}", CS[i])
         self.play(Create(matrices[0]))
-        self.play(Create(texs[0]))
+        self.play(Create(texs[0][0]))
         self.wait(8) # Focusing on 4 4D vectors in this nearly diagonal matrix, y2z3 can simply be thought of as uniform weight per unit area.
+        self.play(ReplacementTransform(texs[0][0], texs[0][1]))
         self.wait(8) # wxyz and xwyz work against earch other, as in the 2D formula.
         self.play(
             FadeOut(matrices[0]),
-            FadeOut(texs[0]),
+            FadeOut(texs[0][1]),
         )
         self.play(Create(matrices[1]))
-        self.play(Create(texs[1]))
+        self.play(Create(texs[1][0]))
         self.wait(8) # wxyz and wyxz work against each other in this second case.
+        self.play(ReplacementTransform(texs[1][0], texs[1][1]))
         self.wait(8) # The sign flips similarly generalize to any component pair swaps in any number of dimensions.
         self.play(
             FadeOut(matrices[1]),
-            FadeOut(texs[1]),
+            FadeOut(texs[1][1]),
         )
         title = update_title(title, "2.3) Closed form : Deriving Permutations")
         grid = NumberPlane(x_range=(-2, 6, 1), y_range=(-2, 6, 1)).move_to(RIGHT*3)

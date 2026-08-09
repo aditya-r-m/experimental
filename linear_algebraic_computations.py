@@ -316,7 +316,6 @@ class Determinant(Scene):
 
 class Projection(Scene):
    def construct(self):
-        # ToC
         # 0. Rotation matrix
         # 1. Projection covectors < 0
         # 2. Rotation transpose < 1

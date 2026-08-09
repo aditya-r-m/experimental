@@ -316,6 +316,17 @@ class Determinant(Scene):
 
 class Projection(Scene):
    def construct(self):
+        # ToC
+        # 0. Rotation matrix
+        # 1. Projection covectors < 0
+        # 2. Rotation transpose < 1
+        # 3. Lagrance multipliers
+        # 4. Spectral Theorem < 0,1,2,3
+        # 5. Eigentvector Algorithm < 4
+        # 6. Singular Value Decomposition < 4
+        # 7. Dimensionality reduction via principal components < 6
+        # 8. Projection matrix < 1,6
+        # 9. Linear regression via least squares < 8
         self.camera.background_color = "#eee8d5"
         # Projection problems
         # 1) Ordinary Linear Regression

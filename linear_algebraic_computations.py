@@ -326,6 +326,7 @@ class Projection(Scene):
         # 7. Dimensionality reduction via principal components < 6
         # 8. Projection matrix < 1,6
         # 9. Linear regression via least squares < 8
+
         self.camera.background_color = "#eee8d5"
 
         # Overview of Dot Prodct

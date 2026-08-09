@@ -316,8 +316,20 @@ class Determinant(Scene):
 
 class Projection(Scene):
    def construct(self):
-        # Overview of Dot Prodct
+        # Projection problems
+        # 1) Ordinary Linear Regression
+        # 2) Principle Component Analysis
         pass
+
+        # Overview of Dot Prodct
+        # Derivation from single axis measurement and rotation covector
+        axes = Axes(x_length=6, y_length=6, x_range=[-4,4,2], y_range=[-4,4,2])
+        axes.move_to(RIGHT*3)
+        self.play(Create(axes))
+        base_arrow = Arrow(color=CS[0]).put_start_and_end_on(axes.c2p(0, 0), axes.c2p(1, 1))
+        self.play(Create(base_arrow))
+        self.wait(8)
+        return
 
         # Overview of QR algorithm
         def qr(A):

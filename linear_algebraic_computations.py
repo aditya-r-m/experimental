@@ -329,8 +329,7 @@ class Projection(Scene):
 
         self.camera.background_color = "#eee8d5"
 
-        # Overview of Dot Prodct
-        # Derivation from single axis measurement and rotation covector
+        # 1. Projection covectors : Derivation from single axis measurement and rotation covector
         axes = Axes(x_length=6, y_length=6, x_range=[-4,4,2], y_range=[-4,4,2], axis_config={"color": BLACK})
         axes.move_to(RIGHT*3)
         self.play(Create(axes))

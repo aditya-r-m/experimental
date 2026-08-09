@@ -327,10 +327,6 @@ class Projection(Scene):
         # 8. Projection matrix < 1,6
         # 9. Linear regression via least squares < 8
         self.camera.background_color = "#eee8d5"
-        # Projection problems
-        # 1) Ordinary Linear Regression
-        # 2) Principle Component Analysis
-        pass
 
         # Overview of Dot Prodct
         # Derivation from single axis measurement and rotation covector

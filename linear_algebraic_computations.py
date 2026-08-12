@@ -316,24 +316,99 @@ class Determinant(Scene):
 
 class Projection(Scene):
    def construct(self):
-        # 0. Rotation matrix
-        # 1. Projection covectors < 0
-        # 2. Rotation transpose < 1
-        # 3. Lagrance multipliers
-        # 4. Spectral Theorem < 0,1,2,3
-        # 5. Eigentvector Algorithm < 4
-        # 6. Singular Value Decomposition < 4
-        # 7. Dimensionality reduction via principal components < 6
-        # 8. Projection matrix < 1,6
-        # 9. Linear regression via least squares < 8
-        table = Table(
-            [
-                ["0", "Rotation Matrix"],
-            ]
-            col_labels=[Text("Topic"), Text("Timestamp")],
-            include_outer_lines=True
-        )
+        title_texts = [
+            "Rotation Matrix",
+            "Projection Vector",
+            "Rotation Transpose",
+            "Constrained Optimization",
+            "Spectral Theorem",
+            "Eigenvector Computation",
+            "Singular Value Decomposition",
+            "PCA Dimension Reduction",
+            "Projection Matrix",
+            "OLS Linear Regression",
+        ]
+        node_texts = list(map(lambda t: Text(t, font="Consolas", font_size=16), title_texts))
+        layout = [
+            np.array([0,3,0]),
+            np.array([5,3,0]),
+            np.array([0,2,0]),
+            np.array([-5,1,0]),
+            np.array([0,1,0]),
+            np.array([0,0,0]),
+            np.array([0,-1,0]),
+            np.array([0,-2,0]),
+            np.array([5,-1,0]),
+            np.array([5,-2,0]),
+        ]
+        edges = [
+            [],
+            [0],
+            [0,1],
+            [],
+            [3,2,1],
+            [4,1],
+            [5],
+            [6],
+            [6],
+            [8],
+        ]
+        for (i, node_text) in enumerate(node_texts):
+            node_text.move_to(layout[i])
+            self.play(Create(node_text))
+            for u in edges[i]:
+                src, dst = node_texts[u], node_text
+                sx, dx = layout[u][0], layout[i][0]
+                if sx == dx:
+                    start = src.get_bottom()
+                    end = dst.get_top()
+                elif sx < dx:
+                    start = src.get_right()
+                    end = dst.get_left()
+                else:
+                    start = src.get_left()
+                    end = dst.get_right()
+                arrow = Arrow(
+                    start=start,
+                    end=end,
+                    stroke_width=2,
+                    tip_length=0.1,
+                )
+                self.play(Create(arrow))
+        self.wait(8)
+        return
 
+        titles = list(map(lambda t: Text(t).scale(0.5), title_texts))
+        titles[0].to_edge(UP)
+        for i in range(1, len(titles)):
+            titles[i].next_to(titles[i-1], DOWN)
+        edges = [
+            [],
+            [0],
+            [1],
+            [],
+            [0,1,2,3],
+            [4],
+            [4],
+            [6],
+            [1,6],
+            [8],
+        ]
+        for title in titles: self.play(Create(title))
+        for (i, vertices) in enumerate(edges):
+            for v in vertices:
+                if v%2:
+                    start=titles[v].get_right()
+                    end=titles[i].get_right()
+                    angle=-PI
+                else:
+                    start=titles[v].get_left()
+                    end=titles[i].get_left()
+                    angle=PI
+                connector = CurvedArrow(start, end, angle=angle)
+                self.play(Create(connector))
+        self.wait(8)
+        return
 
         self.camera.background_color = "#eee8d5"
 

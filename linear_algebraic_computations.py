@@ -394,10 +394,14 @@ class S(Scene):
         r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
         tex_to_color_map = {
             r"\hat{g}": CS[0],
+            r"0": CS[0],
+            r"1": CS[0],
             r"\vec{r}": CS[1],
+            r"r_x": CS[1],
+            r"r_y": CS[1],
         }
         texs = [
-            MathTex(r"\vec{r} \cdot \hat{g}=r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} 1 0 \end{bmatrix} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
         ]
         self.play(
             Create(grid),
@@ -405,7 +409,7 @@ class S(Scene):
             Create(g),
             Create(texs[0]),
         )
-        self.wait(8)
+        self.wait(8) # The projected length of a vector on axis-aligned unit vector is simply the component in that direction.
         return
 
         # Overview of QR algorithm

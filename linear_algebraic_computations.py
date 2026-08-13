@@ -377,39 +377,6 @@ class Projection(Scene):
                 self.play(Create(arrow))
         self.wait(8)
         return
-
-        titles = list(map(lambda t: Text(t).scale(0.5), title_texts))
-        titles[0].to_edge(UP)
-        for i in range(1, len(titles)):
-            titles[i].next_to(titles[i-1], DOWN)
-        edges = [
-            [],
-            [0],
-            [1],
-            [],
-            [0,1,2,3],
-            [4],
-            [4],
-            [6],
-            [1,6],
-            [8],
-        ]
-        for title in titles: self.play(Create(title))
-        for (i, vertices) in enumerate(edges):
-            for v in vertices:
-                if v%2:
-                    start=titles[v].get_right()
-                    end=titles[i].get_right()
-                    angle=-PI
-                else:
-                    start=titles[v].get_left()
-                    end=titles[i].get_left()
-                    angle=PI
-                connector = CurvedArrow(start, end, angle=angle)
-                self.play(Create(connector))
-        self.wait(8)
-        return
-
         self.camera.background_color = "#eee8d5"
 
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector

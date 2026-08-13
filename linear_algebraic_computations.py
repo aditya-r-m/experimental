@@ -383,14 +383,21 @@ class Projection(Scene):
 class S(Scene):
     def construct(self):
         self.camera.background_color = "#eee8d5"
+        Text.set_default(color=BLACK, font_size=24)
+        MathTex.set_default(color=BLACK)
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector
         grid = NumberPlane(
-            x_range=(-4, 4, 1),
+            x_range=(-4,4,1),
             axis_config={"color":BLACK}
         ).move_to(RIGHT*3)
+        g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
+        r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
+        texs = [
+            MathTex(r"< \vec{r}, \hat{g} > = < [r_x, r_y], [1, 0] > = r_x").move_to(LEFT*4),
+        ]
         self.play(Create(grid))
-        base_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 1))
-        self.play(Create(base_arrow))
+        self.play(Create(r), Create(g))
+        self.play(Write(texs[0]))
         self.wait(8)
         return
 

@@ -410,6 +410,9 @@ class S(Scene):
             Create(texs[0]),
         )
         self.wait(8) # The projected length of a vector on axis-aligned unit vector is simply the component in that direction.
+        self.play(FadeOut(texs[0]))
+        self.play(Rotate(g, angle=PI/3, about_point=g.get_start()))
+        self.wait(8) # It's not obvious how the projected length for the same vector on a general unit vector can be computed.
         return
 
         # Overview of QR algorithm

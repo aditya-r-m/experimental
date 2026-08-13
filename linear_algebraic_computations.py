@@ -393,7 +393,7 @@ class S(Scene):
         g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
         r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
         texs = [
-            MathTex(r"< \vec{r}, \hat{g} > = < [r_x, r_y], [1, 0] > = r_x").move_to(LEFT*4),
+            MathTex(r"< \vec{r}, \hat{g} > \\ &= < [r_x, r_y], [1, 0] > \\ &= r_x").move_to(LEFT*4),
         ]
         self.play(Create(grid))
         self.play(Create(r), Create(g))

@@ -392,12 +392,13 @@ class S(Scene):
         ).move_to(RIGHT*3)
         g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
         r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
+        tex_to_color_map = {
+            r"\hat{g}": CS[0],
+            r"\vec{r}": CS[1],
+        }
         texs = [
-            MathTex("<",r"\vec{r}",",",r"\hat{g}",">","=","r_x").move_to(LEFT*4),
+            MathTex(r"\vec{r} \cdot \hat{g}=r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
         ]
-        for tex in texs:
-            tex.set_color_by_tex(r"\hat{g}", CS[0])
-            tex.set_color_by_tex(r"\vec{r}", CS[1])
         self.play(
             Create(grid),
             Create(r),

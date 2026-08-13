@@ -401,7 +401,7 @@ class S(Scene):
             r"r_y": CS[1],
         }
         texs = [
-            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} 1 0 \end{bmatrix} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
         ]
         self.play(
             Create(grid),

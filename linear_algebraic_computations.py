@@ -316,6 +316,7 @@ class Determinant(Scene):
 
 class Projection(Scene):
    def construct(self):
+        self.camera.background_color = "#eee8d5"
         title_texts = [
             "Rotation Matrix",
             "Projection Vector",
@@ -328,7 +329,7 @@ class Projection(Scene):
             "Projection Matrix",
             "OLS Linear Regression",
         ]
-        node_texts = list(map(lambda t: Text(t, font="Consolas", font_size=16), title_texts))
+        node_texts = list(map(lambda t: Text(t, font="Consolas", font_size=16, color=BLACK), title_texts))
         layout = [
             np.array([0,3,0]),
             np.array([5,3,0]),
@@ -350,12 +351,12 @@ class Projection(Scene):
             [4,1],
             [5],
             [6],
-            [6],
+            [6,1],
             [8],
         ]
         for (i, node_text) in enumerate(node_texts):
             node_text.move_to(layout[i])
-            self.play(Create(node_text))
+            arrows = []
             for u in edges[i]:
                 src, dst = node_texts[u], node_text
                 sx, dx = layout[u][0], layout[i][0]
@@ -368,16 +369,16 @@ class Projection(Scene):
                 else:
                     start = src.get_left()
                     end = dst.get_right()
-                arrow = Arrow(
+                arrows.append(Arrow(
                     start=start,
                     end=end,
                     stroke_width=2,
                     tip_length=0.1,
-                )
-                self.play(Create(arrow))
+                    color=BLACK,
+                ))
+            self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
         self.wait(8)
         return
-        self.camera.background_color = "#eee8d5"
 
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector
         axes = Axes(x_length=6, y_length=6, x_range=[-4,4,2], y_range=[-4,4,2], axis_config={"color": BLACK})

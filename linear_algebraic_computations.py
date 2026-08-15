@@ -314,14 +314,13 @@ class Determinant(Scene):
         self.play(FadeOut(tex))
 
 
-class Projection(Scene):
+class S(Scene):
    def construct(self):
         self.camera.background_color = "#eee8d5"
         title_texts = [
             "Rotation Matrix",
             "Projection Vector",
             "Rotation Transpose",
-            "Constrained Optimization",
             "Spectral Theorem",
             "Eigenvector Computation",
             "Singular Value Decomposition",
@@ -331,28 +330,26 @@ class Projection(Scene):
         ]
         node_texts = list(map(lambda t: Text(t, font="Consolas", font_size=16, color=BLACK), title_texts))
         layout = [
-            np.array([0,3,0]),
-            np.array([5,3,0]),
-            np.array([0,2,0]),
-            np.array([-5,1,0]),
-            np.array([0,1,0]),
-            np.array([0,0,0]),
-            np.array([0,-1,0]),
-            np.array([0,-2,0]),
-            np.array([5,-1,0]),
-            np.array([5,-2,0]),
+            np.array([-3,3,0]),
+            np.array([3,3,0]),
+            np.array([-3,2,0]),
+            np.array([-3,1,0]),
+            np.array([-3,0,0]),
+            np.array([-3,-1,0]),
+            np.array([-3,-2,0]),
+            np.array([3,-1,0]),
+            np.array([3,-2,0]),
         ]
         edges = [
             [],
             [0],
             [0,1],
-            [],
-            [3,2,1],
-            [4,1],
+            [2,1],
+            [3,1],
+            [4],
             [5],
-            [6],
-            [6,1],
-            [8],
+            [5,1],
+            [7],
         ]
         for (i, node_text) in enumerate(node_texts):
             node_text.move_to(layout[i])
@@ -374,13 +371,14 @@ class Projection(Scene):
                     end=end,
                     stroke_width=2,
                     tip_length=0.1,
+                    max_stroke_width_to_length_ratio=100,
                     color=BLACK,
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
         self.wait(8)
-        self.play(FadeOut(*self.mobjects))
+        # self.play(FadeOut(*self.mobjects))
 
-class S(Scene):
+class _(Scene):
     def construct(self):
         self.camera.background_color = "#eee8d5"
         Text.set_default(color=BLACK, font_size=24)
@@ -394,6 +392,8 @@ class S(Scene):
         r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
         tex_to_color_map = {
             r"\hat{g}": CS[0],
+            r"g_x": CS[0],
+            r"g_y": CS[0],
             r"0": CS[0],
             r"1": CS[0],
             r"\vec{r}": CS[1],
@@ -402,6 +402,7 @@ class S(Scene):
         }
         texs = [
             MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} g_x \\ g_y \end{bmatrix} = ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
         ]
         self.play(
             Create(grid),
@@ -410,8 +411,9 @@ class S(Scene):
             Create(texs[0]),
         )
         self.wait(8) # The projected length of a vector on axis-aligned unit vector is simply the component in that direction.
-        self.play(FadeOut(texs[0]))
-        self.play(Rotate(g, angle=PI/3, about_point=g.get_start()))
+        self.play(
+            ReplacementTransform(texs[0], texs[1]),
+            Rotate(g, angle=PI/3, about_point=g.get_start()))
         self.wait(8) # It's not obvious how the projected length for the same vector on a general unit vector can be computed.
         return
 

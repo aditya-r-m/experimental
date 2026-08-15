@@ -314,7 +314,7 @@ class Determinant(Scene):
         self.play(FadeOut(tex))
 
 
-class S(Scene):
+class Projection(Scene):
    def construct(self):
         self.camera.background_color = "#eee8d5"
         title_texts = [
@@ -377,9 +377,9 @@ class S(Scene):
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
         self.wait(8)
-        # self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*self.mobjects))
 
-class _(Scene):
+class S(Scene):
     def construct(self):
         self.camera.background_color = "#eee8d5"
         Text.set_default(color=BLACK, font_size=24)

@@ -372,6 +372,7 @@ class S(Scene):
                     stroke_width=2,
                     tip_length=0.1,
                     max_stroke_width_to_length_ratio=100,
+                    max_tip_length_to_length_ratio=100,
                     color=BLACK,
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))

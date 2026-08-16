@@ -394,9 +394,12 @@ class S(Scene):
             axis_config={"color":BLACK}
         ).move_to(RIGHT*3)
         self.play(Create(title), Create(grid))
-        tex_f = MathTex(r"f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} \partial f / \partial x \\ \partial f / \partial y \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4)
+        tex_f = MathTex(r"f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4)
+        tex_g = MathTex(r"g(x,y) = x^2 + y^2 \\ \nabla g(x,y) = \begin{bmatrix} 2x \\ 2y \end{bmatrix}").next_to(tex_f, DOWN)
         tex_f.set_color(CS[0])
+        tex_g.set_color(CS[1])
         self.play(Create(tex_f))
+        self.play(Create(tex_g))
         self.wait(8)
         return
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector

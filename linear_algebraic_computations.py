@@ -384,6 +384,21 @@ class S(Scene):
         self.camera.background_color = "#eee8d5"
         Text.set_default(color=BLACK, font_size=24)
         MathTex.set_default(color=BLACK)
+        def update_title(title, content):
+            updated_title = Text(content).to_edge(UP+LEFT)
+            self.play(ReplacementTransform(title, updated_title))
+            return updated_title
+        title = Text("Optional) Constrained Optimization").to_edge(UP+LEFT)
+        grid = NumberPlane(
+            x_range=(-4,4,1),
+            axis_config={"color":BLACK}
+        ).move_to(RIGHT*3)
+        self.play(Create(title), Create(grid))
+        tex_f = MathTex(r"f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} \partial f / \partial x \\ \partial f / \partial y \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4)
+        tex_f.set_color(CS[0])
+        self.play(Create(tex_f))
+        self.wait(8)
+        return
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector
         grid = NumberPlane(
             x_range=(-4,4,1),

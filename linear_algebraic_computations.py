@@ -391,22 +391,45 @@ class S(Scene):
         title = Text("Optional) Constrained Optimization").to_edge(UP+LEFT)
         grid = NumberPlane(
             x_range=(-4,4,1),
-            axis_config={"color":BLACK}
+            axis_config={"color":BLACK},
+            background_line_style={"stroke_opacity": 0}
         ).move_to(RIGHT*3)
         self.play(Create(title), Create(grid))
-        tex_f = MathTex(r"maximize \ f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} \partial f / \partial x \\ \partial f / \partial y \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4+UP)
+        tex_f = MathTex(r"optimizing \ f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} \partial f / \partial x \\ \partial f / \partial y \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4+UP)
         tex_g = MathTex(r"given \ g(x,y) = x^2 + y^2 = 1 \\ \nabla g(x,y) = \begin{bmatrix} \partial g / \partial x \\ \partial g / \partial y \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \end{bmatrix}").next_to(tex_f, DOWN)
+        tex_s = MathTex(r"requires \ \nabla f(x,y) = \lambda \nabla g(x,y)").next_to(tex_g, DOWN)
         tex_f.set_color(CS[0])
         tex_g.set_color(CS[1])
+        tex_s.set_color(CS[-1])
         lines_f = []
         for i in range(-6,7, 2):
             x, y = max(-4, i - 4),  min(4, i + 4)
             lines_f.append(Line(start=grid.c2p(x,y), end=grid.c2p(y,x), color=CS[0]))
+        arrows_f = []
+        for i in range(-4, 5):
+            for j in range(-4, 5):
+                if (i+j)%2: continue
+                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0]))
         circle_g = Circle(radius=1, color=CS[1]).move_to(grid.c2p(0,0))
+        arrows_g = []
+        import math
+        theta = 0
+        while theta < 2*PI:
+            x, y = math.cos(theta), math.sin(theta)
+            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1]))
+            theta += PI/8
+        circles_s = [
+            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),
+            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI + PI/4),math.sin(PI + PI/4))),
+        ]
         self.play(Create(tex_f))
-        for line in lines_f: self.play(Create(line))
+        self.play(*(FadeIn(line) for line in lines_f))
+        self.play(*(Create(arrow) for arrow in arrows_f))
         self.play(Create(tex_g))
         self.play(Create(circle_g))
+        self.play(*(Create(arrow) for arrow in arrows_g))
+        self.play(Create(tex_s))
+        self.play(*(Create(circle) for circle in circles_s))
         self.wait(8)
         return
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector

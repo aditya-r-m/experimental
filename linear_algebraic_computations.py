@@ -409,14 +409,15 @@ class S(Scene):
         for i in range(-4, 5):
             for j in range(-4, 5):
                 if (i+j)%2: continue
-                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0]))
-        circle_g = Circle(radius=1, color=CS[1]).move_to(grid.c2p(0,0))
+                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0], stroke_opacity=0.5, stroke_width=4, tip_length=0.2))
+                arrows_f[-1].get_tip().set_opacity(0.5)
+        circle_g = Circle(radius=1, color=CS[1], stroke_opacity=0.5).move_to(grid.c2p(0,0))
         arrows_g = []
         import math
         theta = 0
         while theta < 2*PI:
             x, y = math.cos(theta), math.sin(theta)
-            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1]))
+            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1], stroke_width=4, tip_length=0.2))
             theta += PI/8
         circles_s = [
             Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),

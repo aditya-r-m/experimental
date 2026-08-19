@@ -388,7 +388,7 @@ class S(Scene):
             updated_title = Text(content).to_edge(UP+LEFT)
             self.play(ReplacementTransform(title, updated_title))
             return updated_title
-        title = Text("Optional) Constrained Optimization").to_edge(UP+LEFT)
+        title = Text("Constrained Optimization").to_edge(UP+LEFT)
         grid = NumberPlane(
             x_range=(-4,4,1),
             axis_config={"color":BLACK},
@@ -404,7 +404,7 @@ class S(Scene):
         lines_f = []
         for i in range(-6,7, 2):
             x, y = max(-4, i - 4),  min(4, i + 4)
-            lines_f.append(Line(start=grid.c2p(x,y), end=grid.c2p(y,x), color=CS[0]))
+            lines_f.append(Line(start=grid.c2p(x,y), end=grid.c2p(y,x), color=CS[0], stroke_opacity=(i+8)/16))
         arrows_f = []
         for i in range(-4, 5):
             for j in range(-4, 5):

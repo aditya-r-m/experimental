@@ -153,8 +153,8 @@ class Projection(Scene):
         self.play(Create(v_tex), Create(v_arrow))
         self.play(v_tex.animate.move_to(LEFT*3))
         r_tex.next_to(v_tex, LEFT)
-        self.play(Create(r_tex))
         self.play(
+            Create(r_tex),
             Rotate(i_arrow, PI/4, about_point=grid.c2p(0, 0)),
             Rotate(j_arrow, PI/4, about_point=grid.c2p(0, 0)),
             Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),

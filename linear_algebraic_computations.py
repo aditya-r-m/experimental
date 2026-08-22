@@ -66,9 +66,9 @@ class Projection(Scene):
                     max_stroke_width_to_length_ratio=100,
                     max_tip_length_to_length_ratio=100,
                 ))
-            self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        self.wait(8)
-        self.play(FadeOut(*self.mobjects))
+            #self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
+        #self.wait(8)
+        #self.play(FadeOut(*self.mobjects))
         def update_title(title, content):
             updated_title = Text(content).to_edge(UP+LEFT)
             self.play(ReplacementTransform(title, updated_title))
@@ -80,11 +80,19 @@ class Projection(Scene):
             background_line_style={"stroke_opacity": 0}
         ).move_to(RIGHT*3)
         self.play(Create(title), Create(grid))
-        tex_f = MathTex(r"\text{optimizing} \ f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} \partial f / \partial x \\ \partial f / \partial y \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4+UP)
-        tex_g = MathTex(r"\text{given} \ g(x,y) = x^2 + y^2 = 1 \\ \nabla g(x,y) = \begin{bmatrix} \partial g / \partial x \\ \partial g / \partial y \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \end{bmatrix}").next_to(tex_f, DOWN)
-        tex_s = MathTex(r"\text{requires} \ \nabla f(x,y) = \lambda \nabla g(x,y)").next_to(tex_g, DOWN)
-        tex_f.set_color(CS[0])
-        tex_g.set_color(CS[1])
+        tex_f0 = MathTex(r"\text{optimizing} \ f(x,y) = x + y").move_to(LEFT*4+UP*2)
+        tex_f10 = MathTex(r"{{ \nabla f(x,y) = \begin{bmatrix} }} \partial f / \partial x \\ \partial f / \partial y {{ \end{bmatrix} }}").next_to(tex_f0, DOWN)
+        tex_f11 = MathTex(r"{{ \nabla f(x,y) = \begin{bmatrix} }} 1 \\ 1 {{ \end{bmatrix} }}").next_to(tex_f0, DOWN)
+        tex_g0 = MathTex(r"\text{over} \ g(x,y) = x^2 + y^2 = 1").next_to(tex_f11, DOWN)
+        tex_g10 = MathTex(r"{{ \nabla g(x,y) = \begin{bmatrix} }} \partial g / \partial x \\ \partial g / \partial y {{ \end{bmatrix} }}").next_to(tex_g0, DOWN)
+        tex_g11 = MathTex(r"{{ \nabla g(x,y) = \begin{bmatrix} }} 1 \\ 1 {{ \end{bmatrix} }}").next_to(tex_g0, DOWN)
+        tex_s = MathTex(r"\text{requires} \ \nabla f(x,y) = \lambda \nabla g(x,y)").next_to(tex_g11, DOWN)
+        tex_f0.set_color(CS[0])
+        tex_f10.set_color(CS[0])
+        tex_f11.set_color(CS[0])
+        tex_g0.set_color(CS[1])
+        tex_g10.set_color(CS[1])
+        tex_g11.set_color(CS[1])
         tex_s.set_color(CS[-1])
         lines_f = []
         for i in range(-6,7, 2):
@@ -108,10 +116,14 @@ class Projection(Scene):
             Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),
             Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI + PI/4),math.sin(PI + PI/4))),
         ]
-        self.play(Create(tex_f))
+        self.play(Create(tex_f0))
+        self.play(Create(tex_f10))
+        self.play(TransformMatchingTex(tex_f10, tex_f11))
         self.play(*(FadeIn(line) for line in lines_f))
         self.play(*(Create(arrow) for arrow in arrows_f))
-        self.play(Create(tex_g))
+        self.play(Create(tex_g0))
+        self.play(Create(tex_g10))
+        self.play(TransformMatchingTex(tex_g10, tex_g11))
         self.play(Create(circle_g))
         self.play(*(Create(arrow) for arrow in arrows_g))
         self.play(Create(tex_s))

@@ -5,7 +5,7 @@ from manim import *
 
 CS = [GREEN,RED,YELLOW,TEAL]
 
-class S(Scene):
+class Projection(Scene):
    def construct(self):
         Text.set_default(color=LIGHT_GRAY, font_size=24)
         MathTex.set_default(font_size=42)

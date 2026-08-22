@@ -76,7 +76,7 @@ class Projection(Scene):
         title = Text("Constrained Optimization").to_edge(UP+LEFT)
         grid = NumberPlane(
             x_range=(-4,4,1),
-            axis_config={"color":LIGHT_GRAY},
+            axis_config={"stroke_width": 2, "color":LIGHT_GRAY},
             background_line_style={"stroke_opacity": 0}
         ).move_to(RIGHT*3)
         self.play(Create(title), Create(grid))
@@ -94,39 +94,47 @@ class Projection(Scene):
         tex_g10.set_color(CS[1])
         tex_g11.set_color(CS[1])
         tex_s.set_color(CS[-1])
-        lines_f = []
-        for i in range(-6,7, 2):
-            x, y = max(-4, i - 4),  min(4, i + 4)
-            lines_f.append(Line(start=grid.c2p(x,y), end=grid.c2p(y,x), color=CS[0], stroke_opacity=(i+8)/16))
+        line_f0 = Line(start=grid.c2p(-4, -4), end=grid.c2p(-4, -4), color=CS[0], stroke_opacity=0)
+        line_f0_b = line_f0.copy()
+        line_f1 = Line(start=grid.c2p(-4, 4), end=grid.c2p(4, -4), color=CS[0], stroke_opacity=0.5)
+        line_f1_b = line_f1.copy()
+        line_f2 = Line(start=grid.c2p(4, 4), end=grid.c2p(4, 4), color=CS[0], stroke_opacity=1)
         arrows_f = []
         for i in range(-4, 5):
             for j in range(-4, 5):
                 if (i+j)%2: continue
-                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0], stroke_opacity=0.625, stroke_width=4, tip_length=0.2))
+                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0], stroke_opacity=0.625, stroke_width=2, tip_length=0.1))
                 arrows_f[-1].get_tip().set_opacity(0.625)
-        circle_g = Circle(radius=1, color=CS[1], stroke_opacity=0.625).move_to(grid.c2p(0,0))
+        circle_g0 = Circle(radius=0, color=CS[1], stroke_opacity=0).move_to(grid.c2p(0,0))
+        circle_g1 = Circle(radius=1, color=CS[1], stroke_opacity=0.625).move_to(grid.c2p(0,0))
         arrows_g = []
         import math
         theta = 0
         while theta < 2*PI:
             x, y = math.cos(theta), math.sin(theta)
-            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1], stroke_width=4, tip_length=0.2))
+            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1], stroke_width=2, tip_length=0.1))
             theta += PI/8
         circles_s = [
-            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),
-            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI + PI/4),math.sin(PI + PI/4))),
+            Circle(radius=0.1, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),
+            Circle(radius=0.1, color=CS[-1]).move_to(grid.c2p(math.cos(PI + PI/4),math.sin(PI + PI/4))),
         ]
         self.play(Create(tex_f0))
+        self.play(Create(line_f0))
+        self.play(ReplacementTransform(line_f0, line_f1, rate_func=linear))
+        self.play(ReplacementTransform(line_f1, line_f2, rate_func=linear))
         self.play(Create(tex_f10))
         self.play(TransformMatchingTex(tex_f10, tex_f11, transform_mismatches=True))
-        self.play(*(FadeIn(line) for line in lines_f))
         self.play(*(Create(arrow) for arrow in arrows_f))
         self.play(Create(tex_g0))
+        self.play(Create(circle_g0))
+        self.play(ReplacementTransform(circle_g0, circle_g1, rate_func=rate_functions.ease_in_quad))
         self.play(Create(tex_g10))
         self.play(TransformMatchingTex(tex_g10, tex_g11, transform_mismatches=True))
-        self.play(Create(circle_g))
         self.play(*(Create(arrow) for arrow in arrows_g))
         self.play(Create(tex_s))
+        self.play(Create(line_f0_b))
+        self.play(ReplacementTransform(line_f0_b, line_f1_b, rate_func=linear))
+        self.play(ReplacementTransform(line_f1_b, line_f2, rate_func=linear))
         self.play(*(Create(circle) for circle in circles_s))
         self.wait(8)
         return

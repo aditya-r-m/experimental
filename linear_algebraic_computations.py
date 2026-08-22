@@ -141,9 +141,14 @@ class Projection(Scene):
         self.play(Create(grid))
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
         self.play(Create(unit_circle))
-        i_x = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
-        i_y = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
-        self.play(Create(i_x), Create(i_y))
+        i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
+        j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
+        v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
+        v_tex.set_color(CS[2])
+        v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
+        self.play(Create(i_arrow), Create(j_arrow))
+        self.play(Create(v_tex), Create(v_arrow))
+        self.wait(8)
         return
 
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector

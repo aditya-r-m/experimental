@@ -146,8 +146,18 @@ class Projection(Scene):
         v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
         v_tex.set_color(CS[2])
         v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
+        r_tex = Matrix([["x_0","x_1"],["y_0","y_1"]])
+        r_tex.set_column_colors(*CS)
         self.play(Create(i_arrow), Create(j_arrow))
         self.play(Create(v_tex), Create(v_arrow))
+        self.play(v_tex.animate.move_to(LEFT*3))
+        r_tex.next_to(v_tex, LEFT)
+        self.play(Create(r_tex))
+        self.play(
+            Rotate(i_arrow, PI/4, about_point=i_arrow.get_start()),
+            Rotate(j_arrow, PI/4, about_point=j_arrow.get_start()),
+            Rotate(v_arrow, PI/4, about_point=v_arrow.get_start()),
+        )
         self.wait(8)
         return
 

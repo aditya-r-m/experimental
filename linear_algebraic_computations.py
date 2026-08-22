@@ -8,7 +8,7 @@ CS = [GREEN,RED,YELLOW,TEAL]
 
 class Projection(Scene):
    def construct(self):
-        Text.set_default(color=LIGHT_GRAY, font_size=24)
+        Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
         title_texts = [
             "Rotation Matrix",
@@ -143,20 +143,22 @@ class Projection(Scene):
         self.play(Create(unit_circle))
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
+        ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
         v_tex.set_color(CS[2])
         v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
         r_tex = Matrix([["x_0","x_1"],["y_0","y_1"]])
         r_tex.set_column_colors(*CS)
-        self.play(Create(i_arrow), Create(j_arrow))
+        self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
         self.play(Create(v_tex), Create(v_arrow))
         self.play(v_tex.animate.move_to(LEFT*3))
         r_tex.next_to(v_tex, LEFT)
         self.play(Create(r_tex))
         self.play(
-            Rotate(i_arrow, PI/4, about_point=i_arrow.get_start()),
-            Rotate(j_arrow, PI/4, about_point=j_arrow.get_start()),
-            Rotate(v_arrow, PI/4, about_point=v_arrow.get_start()),
+            Rotate(i_arrow, PI/4, about_point=grid.c2p(0, 0)),
+            Rotate(j_arrow, PI/4, about_point=grid.c2p(0, 0)),
+            Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
+            Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
         )
         self.wait(8)
         return

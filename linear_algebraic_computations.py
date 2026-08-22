@@ -43,6 +43,7 @@ class Projection(Scene):
             [5,1],
             [7],
         ]
+        arrow_lists = []
         for (i, node_text) in enumerate(node_texts):
             node_text.move_to(layout[i])
             arrows = []
@@ -66,9 +67,12 @@ class Projection(Scene):
                     max_stroke_width_to_length_ratio=100,
                     max_tip_length_to_length_ratio=100,
                 ))
-            self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        self.wait(8)
-        self.play(FadeOut(*self.mobjects))
+            arrow_lists.append(arrows)
+        if True:
+            for (node_text, arrows) in zip(node_texts, arrows):
+                self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
+            self.wait(8)
+            self.play(FadeOut(*self.mobjects))
         def update_title(title, content):
             updated_title = Text(content).to_edge(UP+LEFT)
             self.play(ReplacementTransform(title, updated_title))

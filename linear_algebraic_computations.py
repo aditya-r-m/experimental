@@ -1,5 +1,6 @@
 # docker run -it --rm -v "$(pwd)":/manim manimcommunity/manim manim linear_algebraic_computations.py
 
+import math
 import numpy as np
 from manim import *
 
@@ -103,7 +104,6 @@ class Projection(Scene):
         circle_g0 = Circle(radius=0, color=CS[1], stroke_opacity=0).move_to(grid.c2p(0,0))
         circle_g1 = Circle(radius=1, color=CS[1], stroke_opacity=0.625).move_to(grid.c2p(0,0))
         arrows_g = []
-        import math
         theta = 0
         while theta < 2*PI:
             x, y = math.cos(theta), math.sin(theta)
@@ -136,6 +136,16 @@ class Projection(Scene):
         # self.wait(8)
         # self.play(FadeOut(*self.mobjects))
 
+        self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
+        grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
+        self.play(Create(grid))
+        unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
+        self.play(Create(unit_circle))
+        i_x = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
+        i_y = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
+        self.play(Create(i_x), Create(i_y))
+        return
+
         # 1. Projection covectors : Derivation from single axis measurement and rotation covector
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
         g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
@@ -165,7 +175,6 @@ class Projection(Scene):
             ReplacementTransform(texs[0], texs[1]),
             Rotate(g, angle=PI/3, about_point=g.get_start()))
         self.wait(8) # It's not obvious how the projected length for the same vector on a general unit vector can be computed.
-        return
 
         # Overview of QR algorithm
         def qr(A):

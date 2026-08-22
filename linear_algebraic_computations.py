@@ -5,6 +5,214 @@ from manim import *
 
 CS = [GREEN,RED,YELLOW,TEAL]
 
+class S(Scene):
+   def construct(self):
+        Text.set_default(color=LIGHT_GRAY, font_size=24)
+        MathTex.set_default(font_size=42)
+        title_texts = [
+            "Rotation Matrix",
+            "Projection Vector",
+            "Rotation Transpose",
+            "Spectral Theorem",
+            "Eigenvector Computation",
+            "Singular Value Decomposition",
+            "PCA Dimension Reduction",
+            "Projection Matrix",
+            "OLS Linear Regression",
+        ]
+        node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
+        layout = [
+            np.array([-3,3,0]),
+            np.array([3,3,0]),
+            np.array([-3,2,0]),
+            np.array([-3,1,0]),
+            np.array([-3,0,0]),
+            np.array([-3,-1,0]),
+            np.array([-3,-2,0]),
+            np.array([3,-1,0]),
+            np.array([3,-2,0]),
+        ]
+        edges = [
+            [],
+            [0],
+            [0,1],
+            [2,1],
+            [3,1],
+            [4],
+            [5],
+            [5,1],
+            [7],
+        ]
+        for (i, node_text) in enumerate(node_texts):
+            node_text.move_to(layout[i])
+            arrows = []
+            for u in edges[i]:
+                src, dst = node_texts[u], node_text
+                sx, dx = layout[u][0], layout[i][0]
+                if sx == dx:
+                    start = src.get_bottom()
+                    end = dst.get_top()
+                elif sx < dx:
+                    start = src.get_right()
+                    end = dst.get_left()
+                else:
+                    start = src.get_left()
+                    end = dst.get_right()
+                arrows.append(Arrow(
+                    start=start,
+                    end=end,
+                    stroke_width=2,
+                    tip_length=0.1,
+                    max_stroke_width_to_length_ratio=100,
+                    max_tip_length_to_length_ratio=100,
+                ))
+            self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
+        self.wait(8)
+        self.play(FadeOut(*self.mobjects))
+        def update_title(title, content):
+            updated_title = Text(content).to_edge(UP+LEFT)
+            self.play(ReplacementTransform(title, updated_title))
+            return updated_title
+        title = Text("Constrained Optimization").to_edge(UP+LEFT)
+        grid = NumberPlane(
+            x_range=(-4,4,1),
+            axis_config={"color":LIGHT_GRAY},
+            background_line_style={"stroke_opacity": 0}
+        ).move_to(RIGHT*3)
+        self.play(Create(title), Create(grid))
+        tex_f = MathTex(r"\text{optimizing} \ f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} \partial f / \partial x \\ \partial f / \partial y \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4+UP)
+        tex_g = MathTex(r"\text{given} \ g(x,y) = x^2 + y^2 = 1 \\ \nabla g(x,y) = \begin{bmatrix} \partial g / \partial x \\ \partial g / \partial y \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \end{bmatrix}").next_to(tex_f, DOWN)
+        tex_s = MathTex(r"\text{requires} \ \nabla f(x,y) = \lambda \nabla g(x,y)").next_to(tex_g, DOWN)
+        tex_f.set_color(CS[0])
+        tex_g.set_color(CS[1])
+        tex_s.set_color(CS[-1])
+        lines_f = []
+        for i in range(-6,7, 2):
+            x, y = max(-4, i - 4),  min(4, i + 4)
+            lines_f.append(Line(start=grid.c2p(x,y), end=grid.c2p(y,x), color=CS[0], stroke_opacity=(i+8)/16))
+        arrows_f = []
+        for i in range(-4, 5):
+            for j in range(-4, 5):
+                if (i+j)%2: continue
+                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0], stroke_opacity=0.625, stroke_width=4, tip_length=0.2))
+                arrows_f[-1].get_tip().set_opacity(0.625)
+        circle_g = Circle(radius=1, color=CS[1], stroke_opacity=0.625).move_to(grid.c2p(0,0))
+        arrows_g = []
+        import math
+        theta = 0
+        while theta < 2*PI:
+            x, y = math.cos(theta), math.sin(theta)
+            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1], stroke_width=4, tip_length=0.2))
+            theta += PI/8
+        circles_s = [
+            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),
+            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI + PI/4),math.sin(PI + PI/4))),
+        ]
+        self.play(Create(tex_f))
+        self.play(*(FadeIn(line) for line in lines_f))
+        self.play(*(Create(arrow) for arrow in arrows_f))
+        self.play(Create(tex_g))
+        self.play(Create(circle_g))
+        self.play(*(Create(arrow) for arrow in arrows_g))
+        self.play(Create(tex_s))
+        self.play(*(Create(circle) for circle in circles_s))
+        self.wait(8)
+        return
+        # 1. Projection covectors : Derivation from single axis measurement and rotation covector
+        grid = NumberPlane(
+            x_range=(-4,4,1),
+            axis_config={"color":BLACK}
+        ).move_to(RIGHT*3)
+        g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
+        r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
+        tex_to_color_map = {
+            r"\hat{g}": CS[0],
+            r"g_x": CS[0],
+            r"g_y": CS[0],
+            r"0": CS[0],
+            r"1": CS[0],
+            r"\vec{r}": CS[1],
+            r"r_x": CS[1],
+            r"r_y": CS[1],
+        }
+        texs = [
+            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} g_x \\ g_y \end{bmatrix} = ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+        ]
+        self.play(
+            Create(grid),
+            Create(r),
+            Create(g),
+            Create(texs[0]),
+        )
+        self.wait(8) # The projected length of a vector on axis-aligned unit vector is simply the component in that direction.
+        self.play(
+            ReplacementTransform(texs[0], texs[1]),
+            Rotate(g, angle=PI/3, about_point=g.get_start()))
+        self.wait(8) # It's not obvious how the projected length for the same vector on a general unit vector can be computed.
+        return
+
+        # Overview of QR algorithm
+        def qr(A):
+            m, n = A.shape
+            Q = np.zeros((m, n))
+            R = np.zeros((n, n))
+            V = A.copy().astype(float)
+            for i in range(n):
+                R[i, i] = np.linalg.norm(V[:, i])
+                Q[:, i] = V[:, i] / R[i, i]
+                for j in range(i + 1, n):
+                    R[i, j] = np.dot(Q[:, i], V[:, j])
+                    V[:, j] -= R[i, j] * Q[:, i]
+            return Q, R
+
+        get_arrows = lambda grid, m, q: [
+            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
+            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
+            Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
+            Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
+        ]
+
+        grid = NumberPlane(x_range=(-4, 4, 1))
+        self.play(Create(grid))
+        m = np.array([[3,1],[1,3]])
+        q = np.array([[1,0],[0,1]])
+        arrows = get_arrows(grid, m, q)
+        self.play(Create(arrows[0]),
+                  Create(arrows[1]),
+                  Create(arrows[2]),
+                  Create(arrows[3]),
+        )
+        for _ in range(10):
+            q = m @ q
+            q, _ = qr(q)
+            new_arrows = get_arrows(grid, m, q)
+            self.play(ReplacementTransform(arrows[0], new_arrows[0]),
+                      ReplacementTransform(arrows[1], new_arrows[1]),
+                      ReplacementTransform(arrows[2], new_arrows[2]),
+                      ReplacementTransform(arrows[3], new_arrows[3]),
+            )
+            arrows = new_arrows
+        # for faster convergence, we can follow a method similar to exponentiation by squaring
+        # A_0 = Q_0 R_0 -> E_0 = Q_0
+        # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
+        # A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
+        pass
+
+        # Proof of Spectral Theorem
+        # - Lagrange multipliers : \nabla xAx optimized over xx=1
+        # - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
+        pass
+
+        # SVD
+        pass
+
+        # PCA
+        pass
+
+        # OLS
+        pass
+
 class Determinant(Scene):
    def construct(self):
         Text.set_default(color=LIGHT_GRAY, font_size=24)
@@ -312,212 +520,3 @@ class Determinant(Scene):
         self.play(Create(tex))
         self.wait(8) # Finally, the entire computation can be represented compactly as a sum of products of signed permutations!
         self.play(FadeOut(tex))
-
-
-class S(Scene):
-   def construct(self):
-        Text.set_default(color=LIGHT_GRAY, font_size=24)
-        MathTex.set_default(font_size=42)
-        title_texts = [
-            "Rotation Matrix",
-            "Projection Vector",
-            "Rotation Transpose",
-            "Spectral Theorem",
-            "Eigenvector Computation",
-            "Singular Value Decomposition",
-            "PCA Dimension Reduction",
-            "Projection Matrix",
-            "OLS Linear Regression",
-        ]
-        node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
-        layout = [
-            np.array([-3,3,0]),
-            np.array([3,3,0]),
-            np.array([-3,2,0]),
-            np.array([-3,1,0]),
-            np.array([-3,0,0]),
-            np.array([-3,-1,0]),
-            np.array([-3,-2,0]),
-            np.array([3,-1,0]),
-            np.array([3,-2,0]),
-        ]
-        edges = [
-            [],
-            [0],
-            [0,1],
-            [2,1],
-            [3,1],
-            [4],
-            [5],
-            [5,1],
-            [7],
-        ]
-        for (i, node_text) in enumerate(node_texts):
-            node_text.move_to(layout[i])
-            arrows = []
-            for u in edges[i]:
-                src, dst = node_texts[u], node_text
-                sx, dx = layout[u][0], layout[i][0]
-                if sx == dx:
-                    start = src.get_bottom()
-                    end = dst.get_top()
-                elif sx < dx:
-                    start = src.get_right()
-                    end = dst.get_left()
-                else:
-                    start = src.get_left()
-                    end = dst.get_right()
-                arrows.append(Arrow(
-                    start=start,
-                    end=end,
-                    stroke_width=2,
-                    tip_length=0.1,
-                    max_stroke_width_to_length_ratio=100,
-                    max_tip_length_to_length_ratio=100,
-                ))
-            self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        self.wait(8)
-        self.play(FadeOut(*self.mobjects))
-        def update_title(title, content):
-            updated_title = Text(content).to_edge(UP+LEFT)
-            self.play(ReplacementTransform(title, updated_title))
-            return updated_title
-        title = Text("Constrained Optimization").to_edge(UP+LEFT)
-        grid = NumberPlane(
-            x_range=(-4,4,1),
-            axis_config={"color":LIGHT_GRAY},
-            background_line_style={"stroke_opacity": 0}
-        ).move_to(RIGHT*3)
-        self.play(Create(title), Create(grid))
-        tex_f = MathTex(r"\text{optimizing} \ f(x,y) = x + y \\ \nabla f(x,y) = \begin{bmatrix} \partial f / \partial x \\ \partial f / \partial y \end{bmatrix} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}").move_to(LEFT*4+UP)
-        tex_g = MathTex(r"\text{given} \ g(x,y) = x^2 + y^2 = 1 \\ \nabla g(x,y) = \begin{bmatrix} \partial g / \partial x \\ \partial g / \partial y \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \end{bmatrix}").next_to(tex_f, DOWN)
-        tex_s = MathTex(r"\text{requires} \ \nabla f(x,y) = \lambda \nabla g(x,y)").next_to(tex_g, DOWN)
-        tex_f.set_color(CS[0])
-        tex_g.set_color(CS[1])
-        tex_s.set_color(CS[-1])
-        lines_f = []
-        for i in range(-6,7, 2):
-            x, y = max(-4, i - 4),  min(4, i + 4)
-            lines_f.append(Line(start=grid.c2p(x,y), end=grid.c2p(y,x), color=CS[0], stroke_opacity=(i+8)/16))
-        arrows_f = []
-        for i in range(-4, 5):
-            for j in range(-4, 5):
-                if (i+j)%2: continue
-                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0], stroke_opacity=0.625, stroke_width=4, tip_length=0.2))
-                arrows_f[-1].get_tip().set_opacity(0.625)
-        circle_g = Circle(radius=1, color=CS[1], stroke_opacity=0.625).move_to(grid.c2p(0,0))
-        arrows_g = []
-        import math
-        theta = 0
-        while theta < 2*PI:
-            x, y = math.cos(theta), math.sin(theta)
-            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1], stroke_width=4, tip_length=0.2))
-            theta += PI/8
-        circles_s = [
-            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),
-            Circle(radius=0.2, color=CS[-1]).move_to(grid.c2p(math.cos(PI + PI/4),math.sin(PI + PI/4))),
-        ]
-        self.play(Create(tex_f))
-        self.play(*(FadeIn(line) for line in lines_f))
-        self.play(*(Create(arrow) for arrow in arrows_f))
-        self.play(Create(tex_g))
-        self.play(Create(circle_g))
-        self.play(*(Create(arrow) for arrow in arrows_g))
-        self.play(Create(tex_s))
-        self.play(*(Create(circle) for circle in circles_s))
-        self.wait(8)
-        return
-        # 1. Projection covectors : Derivation from single axis measurement and rotation covector
-        grid = NumberPlane(
-            x_range=(-4,4,1),
-            axis_config={"color":BLACK}
-        ).move_to(RIGHT*3)
-        g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
-        r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
-        tex_to_color_map = {
-            r"\hat{g}": CS[0],
-            r"g_x": CS[0],
-            r"g_y": CS[0],
-            r"0": CS[0],
-            r"1": CS[0],
-            r"\vec{r}": CS[1],
-            r"r_x": CS[1],
-            r"r_y": CS[1],
-        }
-        texs = [
-            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
-            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} g_x \\ g_y \end{bmatrix} = ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
-        ]
-        self.play(
-            Create(grid),
-            Create(r),
-            Create(g),
-            Create(texs[0]),
-        )
-        self.wait(8) # The projected length of a vector on axis-aligned unit vector is simply the component in that direction.
-        self.play(
-            ReplacementTransform(texs[0], texs[1]),
-            Rotate(g, angle=PI/3, about_point=g.get_start()))
-        self.wait(8) # It's not obvious how the projected length for the same vector on a general unit vector can be computed.
-        return
-
-        # Overview of QR algorithm
-        def qr(A):
-            m, n = A.shape
-            Q = np.zeros((m, n))
-            R = np.zeros((n, n))
-            V = A.copy().astype(float)
-            for i in range(n):
-                R[i, i] = np.linalg.norm(V[:, i])
-                Q[:, i] = V[:, i] / R[i, i]
-                for j in range(i + 1, n):
-                    R[i, j] = np.dot(Q[:, i], V[:, j])
-                    V[:, j] -= R[i, j] * Q[:, i]
-            return Q, R
-
-        get_arrows = lambda grid, m, q: [
-            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
-            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
-            Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
-            Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
-        ]
-
-        grid = NumberPlane(x_range=(-4, 4, 1))
-        self.play(Create(grid))
-        m = np.array([[3,1],[1,3]])
-        q = np.array([[1,0],[0,1]])
-        arrows = get_arrows(grid, m, q)
-        self.play(Create(arrows[0]),
-                  Create(arrows[1]),
-                  Create(arrows[2]),
-                  Create(arrows[3]),
-        )
-        for _ in range(10):
-            q = m @ q
-            q, _ = qr(q)
-            new_arrows = get_arrows(grid, m, q)
-            self.play(ReplacementTransform(arrows[0], new_arrows[0]),
-                      ReplacementTransform(arrows[1], new_arrows[1]),
-                      ReplacementTransform(arrows[2], new_arrows[2]),
-                      ReplacementTransform(arrows[3], new_arrows[3]),
-            )
-            arrows = new_arrows
-        # for faster convergence, we can follow a method similar to exponentiation by squaring
-        # A_0 = Q_0 R_0 -> E_0 = Q_0
-        # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
-        # A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
-        pass
-
-        # Proof of Spectral Theorem
-        # - Lagrange multipliers : \nabla xAx optimized over xx=1
-        # - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
-        pass
-
-        # SVD
-        pass
-
-        # PCA
-        pass
-
-        # OLS
-        pass

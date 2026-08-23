@@ -207,7 +207,7 @@ class Projection(Scene):
             v_tex_1.animate.next_to(r_tex_1.get_entries()[0].target, RIGHT),
             v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1].target, RIGHT),
         )
-        r_tex_1.get_brackets()[1].set_x(v_tex_1.get_x() + r_tex_0.get_entries()[0].get_x() - r_tex_0.get_brackets()[0].get_x())
+        r_tex_1.get_brackets()[1].set_x(v_tex_1.get_right()[0] + MED_SMALL_BUFF)
         self.play(
             FadeIn(r_tex_0.get_brackets()[0]),
             FadeIn(r_tex_1.get_brackets()[1]),

@@ -192,6 +192,8 @@ class Projection(Scene):
         self.play(
             FadeOut(r_tex_0.get_brackets()),
             FadeOut(r_tex_1.get_brackets()),
+        )
+        self.play(
             v_tex_0.animate.next_to(r_tex_0.get_entries()[0], RIGHT),
             v_tex_0_c.animate.next_to(r_tex_0.get_entries()[1], RIGHT),
             v_tex_1.animate.next_to(r_tex_1.get_entries()[0], RIGHT),
@@ -211,6 +213,23 @@ class Projection(Scene):
         self.play(
             FadeIn(r_tex_0.get_brackets()[0]),
             FadeIn(r_tex_1.get_brackets()[1]),
+        )
+        brace = BraceBetweenPoints(
+            np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
+            np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
+            direction=UP,
+            buff=0,
+            color=CS[2]
+        )
+        self.play(
+            FadeIn(brace),
+            FadeOut(r_tex_0.get_brackets()[0]),
+            FadeOut(r_tex_1.get_brackets()[1]),
+            FadeOut(r_tex_0.get_entries()[1]),
+            FadeOut(r_tex_1.get_entries()[1]),
+            FadeOut(p_tex_c),
+            FadeOut(v_tex_0_c),
+            FadeOut(v_tex_1_c),
         )
         self.wait(8)
         return

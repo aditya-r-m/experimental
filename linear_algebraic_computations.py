@@ -160,6 +160,30 @@ class Projection(Scene):
             Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
             Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
         )
+        v_tex_1 = MathTex("y").move_to(LEFT*2)
+        v_tex_1.set_color(CS[2])
+        r_tex_1 = Matrix([["x_1"],["y_1"]]).next_to(v_tex_1, LEFT)
+        r_tex_1.set_column_colors(CS[1])
+        p_tex = MathTex("+").next_to(r_tex_1, LEFT)
+        v_tex_0 = MathTex("x").next_to(p_tex, LEFT)
+        v_tex_0.set_color(CS[2])
+        r_tex_0 = Matrix([["x_0"],["y_0"]]).next_to(v_tex_0, LEFT)
+        r_tex_0.set_column_colors(CS[0])
+        self.play(
+            FadeOut(r_tex.get_brackets()),
+            FadeOut(v_tex.get_brackets())
+        )
+        self.play(
+            ReplacementTransform(r_tex.get_columns()[0], r_tex_0.get_columns()[0]),
+            ReplacementTransform(r_tex.get_columns()[1], r_tex_1.get_columns()[0]),
+            ReplacementTransform(v_tex.get_rows()[0], v_tex_0),
+            ReplacementTransform(v_tex.get_rows()[1], v_tex_1),
+            Create(p_tex),
+        )
+        self.play(
+            FadeIn(r_tex_0.get_brackets()),
+            FadeIn(r_tex_1.get_brackets()),
+        )
         self.wait(8)
         return
 

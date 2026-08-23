@@ -164,11 +164,13 @@ class Projection(Scene):
         v_tex_1.set_color(CS[2])
         r_tex_1 = Matrix([["x_1"],["y_1"]]).next_to(v_tex_1, LEFT)
         r_tex_1.set_column_colors(CS[1])
+        r_tex_1.get_brackets().set_color(CS[2])
         p_tex = MathTex("+").next_to(r_tex_1, LEFT)
         v_tex_0 = MathTex("x").next_to(p_tex, LEFT)
         v_tex_0.set_color(CS[2])
         r_tex_0 = Matrix([["x_0"],["y_0"]]).next_to(v_tex_0, LEFT)
         r_tex_0.set_column_colors(CS[0])
+        r_tex_0.get_brackets().set_color(CS[2])
         self.play(
             FadeOut(r_tex.get_brackets()),
             FadeOut(v_tex.get_brackets())
@@ -183,6 +185,32 @@ class Projection(Scene):
         self.play(
             FadeIn(r_tex_0.get_brackets()),
             FadeIn(r_tex_1.get_brackets()),
+        )
+        v_tex_0_c = v_tex_0.copy()
+        v_tex_1_c = v_tex_1.copy()
+        p_tex_c = p_tex.copy()
+        self.play(
+            FadeOut(r_tex_0.get_brackets()),
+            FadeOut(r_tex_1.get_brackets()),
+            v_tex_0.animate.next_to(r_tex_0.get_entries()[0], RIGHT),
+            v_tex_0_c.animate.next_to(r_tex_0.get_entries()[1], RIGHT),
+            v_tex_1.animate.next_to(r_tex_1.get_entries()[0], RIGHT),
+            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1], RIGHT),
+            p_tex.animate.next_to(r_tex_1.get_entries()[0], LEFT),
+            p_tex_c.animate.next_to(r_tex_1.get_entries()[1], LEFT),
+        )
+        self.play(
+            p_tex.animate.next_to(v_tex_0, RIGHT),
+            p_tex_c.animate.next_to(v_tex_0_c, RIGHT),
+            r_tex_1.get_entries()[0].animate.next_to(p_tex.target, RIGHT),
+            r_tex_1.get_entries()[1].animate.next_to(p_tex_c.target, RIGHT),
+            v_tex_1.animate.next_to(r_tex_1.get_entries()[0].target, RIGHT),
+            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1].target, RIGHT),
+        )
+        r_tex_1.get_brackets()[1].set_x(v_tex_1.get_x() + r_tex_0.get_entries()[0].get_x() - r_tex_0.get_brackets()[0].get_x())
+        self.play(
+            FadeIn(r_tex_0.get_brackets()[0]),
+            FadeIn(r_tex_1.get_brackets()[1]),
         )
         self.wait(8)
         return

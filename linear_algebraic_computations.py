@@ -231,6 +231,20 @@ class Projection(Scene):
             FadeOut(v_tex_0_c),
             FadeOut(v_tex_1_c),
         )
+        v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
+        v_tex.set_color(CS[2])
+        r_tex = Matrix([["x_0","x_1"]], h_buff=0.9)
+        r_tex.set_column_colors(*CS)
+        p_tex = MathTex("=")
+        p_tex.set_x(r_tex_0.get_entries()[0].get_x() - 0.9)
+        p_tex.set_y(r_tex_0.get_entries()[0].get_y() - LARGE_BUFF)
+        r_tex.next_to(p_tex, RIGHT)
+        v_tex.next_to(r_tex, RIGHT, aligned_edge=UP)
+        self.play(
+            Create(p_tex),
+            Create(r_tex),
+            Create(v_tex),
+        )
         self.wait(8)
         return
 

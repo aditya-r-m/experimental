@@ -136,11 +136,11 @@ class Projection(Scene):
         # self.wait(8)
         # self.play(FadeOut(*self.mobjects))
 
-        self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
+        # self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
-        self.play(Create(grid))
+        # self.play(Create(grid))
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
-        self.play(Create(unit_circle))
+        # self.play(Create(unit_circle))
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
@@ -149,17 +149,17 @@ class Projection(Scene):
         v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
         r_tex = Matrix([["x_0","x_1"],["y_0","y_1"]])
         r_tex.set_column_colors(*CS)
-        self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
-        self.play(Create(v_tex), Create(v_arrow))
-        self.play(v_tex.animate.move_to(LEFT*3))
+        # self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
+        # self.play(Create(v_tex), Create(v_arrow))
+        # self.play(v_tex.animate.move_to(LEFT*3))
         r_tex.next_to(v_tex, LEFT)
-        self.play(
-            Create(r_tex),
-            Rotate(i_arrow, PI/4, about_point=grid.c2p(0, 0)),
-            Rotate(j_arrow, PI/4, about_point=grid.c2p(0, 0)),
-            Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
-            Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
-        )
+        # self.play(
+        #     Create(r_tex),
+        #     Rotate(i_arrow, PI/4, about_point=grid.c2p(0, 0)),
+        #     Rotate(j_arrow, PI/4, about_point=grid.c2p(0, 0)),
+        #     Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
+        #     Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
+        # )
         v_tex_1 = MathTex("y").move_to(LEFT*2)
         v_tex_1.set_color(CS[2])
         r_tex_1 = Matrix([["x_1"],["y_1"]]).next_to(v_tex_1, LEFT)
@@ -171,49 +171,49 @@ class Projection(Scene):
         r_tex_0 = Matrix([["x_0"],["y_0"]]).next_to(v_tex_0, LEFT)
         r_tex_0.set_column_colors(CS[0])
         r_tex_0.get_brackets().set_color(CS[2])
-        self.play(
-            FadeOut(r_tex.get_brackets()),
-            FadeOut(v_tex.get_brackets())
-        )
-        self.play(
-            ReplacementTransform(r_tex.get_columns()[0], r_tex_0.get_columns()[0]),
-            ReplacementTransform(r_tex.get_columns()[1], r_tex_1.get_columns()[0]),
-            ReplacementTransform(v_tex.get_rows()[0], v_tex_0),
-            ReplacementTransform(v_tex.get_rows()[1], v_tex_1),
-            Create(p_tex),
-        )
-        self.play(
-            FadeIn(r_tex_0.get_brackets()),
-            FadeIn(r_tex_1.get_brackets()),
-        )
+        # self.play(
+        #     FadeOut(r_tex.get_brackets()),
+        #     FadeOut(v_tex.get_brackets())
+        # )
+        # self.play(
+        #     ReplacementTransform(r_tex.get_columns()[0], r_tex_0.get_columns()[0]),
+        #     ReplacementTransform(r_tex.get_columns()[1], r_tex_1.get_columns()[0]),
+        #     ReplacementTransform(v_tex.get_rows()[0], v_tex_0),
+        #     ReplacementTransform(v_tex.get_rows()[1], v_tex_1),
+        #     Create(p_tex),
+        # )
+        # self.play(
+        #     FadeIn(r_tex_0.get_brackets()),
+        #     FadeIn(r_tex_1.get_brackets()),
+        # )
         v_tex_0_c = v_tex_0.copy()
         v_tex_1_c = v_tex_1.copy()
         p_tex_c = p_tex.copy()
-        self.play(
-            FadeOut(r_tex_0.get_brackets()),
-            FadeOut(r_tex_1.get_brackets()),
-        )
-        self.play(
-            v_tex_0.animate.next_to(r_tex_0.get_entries()[0], RIGHT),
-            v_tex_0_c.animate.next_to(r_tex_0.get_entries()[1], RIGHT),
-            v_tex_1.animate.next_to(r_tex_1.get_entries()[0], RIGHT),
-            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1], RIGHT),
-            p_tex.animate.next_to(r_tex_1.get_entries()[0], LEFT),
-            p_tex_c.animate.next_to(r_tex_1.get_entries()[1], LEFT),
-        )
-        self.play(
-            p_tex.animate.next_to(v_tex_0, RIGHT),
-            p_tex_c.animate.next_to(v_tex_0_c, RIGHT),
-            r_tex_1.get_entries()[0].animate.next_to(p_tex.target, RIGHT),
-            r_tex_1.get_entries()[1].animate.next_to(p_tex_c.target, RIGHT),
-            v_tex_1.animate.next_to(r_tex_1.get_entries()[0].target, RIGHT),
-            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1].target, RIGHT),
-        )
+        # self.play(
+        #     FadeOut(r_tex_0.get_brackets()),
+        #     FadeOut(r_tex_1.get_brackets()),
+        # )
+        # self.play(
+        #     v_tex_0.animate.next_to(r_tex_0.get_entries()[0], RIGHT),
+        #     v_tex_0_c.animate.next_to(r_tex_0.get_entries()[1], RIGHT),
+        #     v_tex_1.animate.next_to(r_tex_1.get_entries()[0], RIGHT),
+        #     v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1], RIGHT),
+        #     p_tex.animate.next_to(r_tex_1.get_entries()[0], LEFT),
+        #     p_tex_c.animate.next_to(r_tex_1.get_entries()[1], LEFT),
+        # )
+        # self.play(
+        #     p_tex.animate.next_to(v_tex_0, RIGHT),
+        #     p_tex_c.animate.next_to(v_tex_0_c, RIGHT),
+        #     r_tex_1.get_entries()[0].animate.next_to(p_tex.target, RIGHT),
+        #     r_tex_1.get_entries()[1].animate.next_to(p_tex_c.target, RIGHT),
+        #     v_tex_1.animate.next_to(r_tex_1.get_entries()[0].target, RIGHT),
+        #     v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1].target, RIGHT),
+        # )
         r_tex_1.get_brackets()[1].set_x(v_tex_1.get_right()[0] + MED_SMALL_BUFF)
-        self.play(
-            FadeIn(r_tex_0.get_brackets()[0]),
-            FadeIn(r_tex_1.get_brackets()[1]),
-        )
+        # self.play(
+        #     FadeIn(r_tex_0.get_brackets()[0]),
+        #     FadeIn(r_tex_1.get_brackets()[1]),
+        # )
         brace = BraceBetweenPoints(
             np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
             np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
@@ -221,16 +221,16 @@ class Projection(Scene):
             buff=0,
             color=CS[2]
         )
-        self.play(
-            FadeIn(brace),
-            FadeOut(r_tex_0.get_brackets()[0]),
-            FadeOut(r_tex_1.get_brackets()[1]),
-            FadeOut(r_tex_0.get_entries()[1]),
-            FadeOut(r_tex_1.get_entries()[1]),
-            FadeOut(p_tex_c),
-            FadeOut(v_tex_0_c),
-            FadeOut(v_tex_1_c),
-        )
+        # self.play(
+        #     FadeIn(brace),
+        #     FadeOut(r_tex_0.get_brackets()[0]),
+        #     FadeOut(r_tex_1.get_brackets()[1]),
+        #     FadeOut(r_tex_0.get_entries()[1]),
+        #     FadeOut(r_tex_1.get_entries()[1]),
+        #     FadeOut(p_tex_c),
+        #     FadeOut(v_tex_0_c),
+        #     FadeOut(v_tex_1_c),
+        # )
         v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
         v_tex.set_color(CS[2])
         r_tex = Matrix([["x_0","x_1"]], h_buff=0.9)
@@ -240,15 +240,15 @@ class Projection(Scene):
         p_tex.set_y(r_tex_0.get_entries()[0].get_y() - LARGE_BUFF)
         r_tex.next_to(p_tex, RIGHT)
         v_tex.next_to(r_tex, RIGHT, aligned_edge=UP)
-        self.play(
-            Create(p_tex),
-            Create(r_tex),
-            Create(v_tex),
-        )
-        self.wait(8)
-        return
+        # self.play(
+        #     Create(p_tex),
+        #     Create(r_tex),
+        #     Create(v_tex),
+        # )
+        # self.wait(8)
+        # self.play(FadeOut(*self.mobjects))
 
-        # 1. Projection covectors : Derivation from single axis measurement and rotation covector
+        self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
         g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
         r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
@@ -277,6 +277,7 @@ class Projection(Scene):
             ReplacementTransform(texs[0], texs[1]),
             Rotate(g, angle=PI/3, about_point=g.get_start()))
         self.wait(8) # It's not obvious how the projected length for the same vector on a general unit vector can be computed.
+        return
 
         # Overview of QR algorithm
         def qr(A):

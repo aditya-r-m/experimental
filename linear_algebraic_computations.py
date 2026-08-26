@@ -265,20 +265,22 @@ class Projection(Scene):
             r"r_y": CS[1],
         }
         texs = [
-            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} }} 1 \\ 0 {{ \end{bmatrix} }} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
-            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} }} g_x \\ g_y {{ \end{bmatrix} }} = \ ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot }} {{ \begin{bmatrix} }} 1 \\ 0 {{ \end{bmatrix} }} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot }} {{ \begin{bmatrix} }} g_x \\ g_y {{ \end{bmatrix} }} = \ ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"R {{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot }} R {{ \begin{bmatrix} }} g_x \\ g_y {{ \end{bmatrix} }} = \ ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
         ]
         self.play(
             Create(r),
             Create(g),
             Create(texs[0]),
         )
-        self.wait(8)
         self.play(
             TransformMatchingTex(texs[0], texs[1], transform_mismatches=True),
             Rotate(g, angle=PI/3, about_point=g.get_start()),
         )
-        self.wait(8)
+        self.play(
+            TransformMatchingTex(texs[1], texs[2]),
+        )
         return
 
         # Overview of QR algorithm

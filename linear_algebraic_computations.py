@@ -250,6 +250,8 @@ class Projection(Scene):
 
         self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
         g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
         r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
         tex_to_color_map = {
@@ -263,20 +265,20 @@ class Projection(Scene):
             r"r_y": CS[1],
         }
         texs = [
-            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} 1 \\ 0 \end{bmatrix} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
-            MathTex(r"\vec{r} \cdot \hat{g} = \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} g_x \\ g_y \end{bmatrix} = ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} }} 1 \\ 0 {{ \end{bmatrix} }} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
+            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot \begin{bmatrix} }} g_x \\ g_y {{ \end{bmatrix} }} = \ ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
         ]
         self.play(
-            Create(grid),
             Create(r),
             Create(g),
             Create(texs[0]),
         )
-        self.wait(8) # The projected length of a vector on axis-aligned unit vector is simply the component in that direction.
+        self.wait(8)
         self.play(
-            ReplacementTransform(texs[0], texs[1]),
-            Rotate(g, angle=PI/3, about_point=g.get_start()))
-        self.wait(8) # It's not obvious how the projected length for the same vector on a general unit vector can be computed.
+            TransformMatchingTex(texs[0], texs[1], transform_mismatches=True),
+            Rotate(g, angle=PI/3, about_point=g.get_start()),
+        )
+        self.wait(8)
         return
 
         # Overview of QR algorithm

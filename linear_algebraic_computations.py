@@ -68,7 +68,6 @@ class Projection(Scene):
                     max_tip_length_to_length_ratio=100,
                 ))
             # self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        # self.wait(8)
         # self.play(FadeOut(*self.mobjects))
         
         grid = NumberPlane(
@@ -133,7 +132,6 @@ class Projection(Scene):
         # self.play(ReplacementTransform(line_f0_b, line_f1_b, rate_func=linear))
         # self.play(ReplacementTransform(line_f1_b, line_f2, rate_func=linear))
         # self.play(*(Create(circle) for circle in circles_s))
-        # self.wait(8)
         # self.play(FadeOut(*self.mobjects))
 
         # self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
@@ -145,7 +143,7 @@ class Projection(Scene):
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
-        v_tex.set_color(CS[2])
+        v_tex.set_column_colors(CS[2])
         v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
         r_tex = Matrix([["x_0","x_1"],["y_0","y_1"]])
         r_tex.set_column_colors(*CS)
@@ -245,7 +243,6 @@ class Projection(Scene):
         #     Create(r_tex),
         #     Create(v_tex),
         # )
-        # self.wait(8)
         # self.play(FadeOut(*self.mobjects))
 
         self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))

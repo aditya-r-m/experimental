@@ -250,7 +250,14 @@ class Projection(Scene):
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
         g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
+        g_matrix = Matrix([["1"], ["0"]]).move_to(LEFT*4)
+        g_matrix_rotated = Matrix([["g_x"], ["g_y"]]).move_to(LEFT*4)
+        g_matrix.set_column_colors(CS[0])
+        g_matrix_rotated.set_column_colors(CS[0])
+        dot = MathTex(r"\cdot").next_to(g_matrix, LEFT)
         v_arrow = Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
+        v_matrix = Matrix([["v_x"], ["v_y"]]).next_to(dot, LEFT)
+        v_matrix.set_column_colors(CS[2])
         v_dots = DashedLine(color=CS[2]).put_start_and_end_on(v_arrow.get_end(), [v_arrow.get_end()[0], 0, 0])
         v_brace = BraceBetweenPoints(
             np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
@@ -259,14 +266,45 @@ class Projection(Scene):
             buff=0,
             color=CS[2]
         )
+        equals = MathTex(r"=").next_to(g_matrix, RIGHT)
+        result = MathTex(r"v_x").next_to(equals, RIGHT)
+        question = MathTex(r"?").next_to(equals, RIGHT)
         self.play(
             Create(g_arrow),
             Create(v_arrow),
         )
-        self.play(FadeIn(v_brace))
-        self.play(FadeOut(v_brace))
+        self.play(Create(v_matrix))
+        self.play(Create(dot))
+        self.play(Create(g_matrix))
+        self.play(Create(equals))
+        self.play(
+            Create(result),
+            FadeIn(v_brace),
+        )
+        self.play(
+            FadeOut(v_brace),
+            FadeOut(result),
+        )
         self.play(
             Rotate(g_arrow, angle=PI/3, about_point=g_arrow.get_start()),
+            ReplacementTransform(g_matrix, g_matrix_rotated),
+            dot.animate.next_to(g_matrix_rotated, LEFT),
+            v_matrix.animate.next_to(dot.target, LEFT),
+            equals.animate.next_to(g_matrix_rotated, RIGHT),
+            question.animate.next_to(equals.target, RIGHT),
+        )
+        rotation_matrix_1 = MathTex(r"R").next_to(dot, RIGHT)
+        rotation_matrix_0 = MathTex(r"R").next_to(v_matrix, LEFT)
+        self.play(
+            g_matrix_rotated.animate.next_to(rotation_matrix_1, RIGHT),
+            equals.animate.next_to(g_matrix_rotated.target, RIGHT),
+            question.animate.next_to(equals.target, RIGHT),
+        )
+        self.play(
+            Create(rotation_matrix_0),
+            Create(rotation_matrix_1),
+            Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
+            Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
         )
         return
 

@@ -249,34 +249,24 @@ class Projection(Scene):
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
-        g = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
-        r = Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
-        tex_to_color_map = {
-            r"\hat{g}": CS[0],
-            r"g_x": CS[0],
-            r"g_y": CS[0],
-            r"0": CS[0],
-            r"1": CS[0],
-            r"\vec{r}": CS[1],
-            r"r_x": CS[1],
-            r"r_y": CS[1],
-        }
-        texs = [
-            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot }} {{ \begin{bmatrix} }} 1 \\ 0 {{ \end{bmatrix} }} = r_x", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
-            MathTex(r"{{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot }} {{ \begin{bmatrix} }} g_x \\ g_y {{ \end{bmatrix} }} = \ ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
-            MathTex(r"R {{ \begin{bmatrix} r_x \\ r_y \end{bmatrix} \cdot }} R {{ \begin{bmatrix} }} g_x \\ g_y {{ \end{bmatrix} }} = \ ?", tex_to_color_map=tex_to_color_map).move_to(LEFT*4),
-        ]
-        self.play(
-            Create(r),
-            Create(g),
-            Create(texs[0]),
+        g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
+        v_arrow = Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
+        v_dots = DashedLine(color=CS[2]).put_start_and_end_on(v_arrow.get_end(), [v_arrow.get_end()[0], 0, 0])
+        v_brace = BraceBetweenPoints(
+            np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
+            np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
+            direction=UP,
+            buff=0,
+            color=CS[2]
         )
         self.play(
-            TransformMatchingTex(texs[0], texs[1], transform_mismatches=True),
-            Rotate(g, angle=PI/3, about_point=g.get_start()),
+            Create(g_arrow),
+            Create(v_arrow),
         )
+        self.play(FadeIn(v_brace))
+        self.play(FadeOut(v_brace))
         self.play(
-            TransformMatchingTex(texs[1], texs[2]),
+            Rotate(g_arrow, angle=PI/3, about_point=g_arrow.get_start()),
         )
         return
 

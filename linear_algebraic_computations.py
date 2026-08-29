@@ -10,65 +10,67 @@ class Projection(Scene):
    def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        # title_texts = [
-        #     "Rotation Matrix",
-        #     "Projection Vector",
-        #     "Rotation Transpose",
-        #     "Spectral Theorem",
-        #     "Eigenvector Computation",
-        #     "Singular Value Decomposition",
-        #     "PCA Dimension Reduction",
-        #     "Projection Matrix",
-        #     "OLS Linear Regression",
-        # ]
-        # node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
-        # layout = [
-        #     np.array([-3,3,0]),
-        #     np.array([3,3,0]),
-        #     np.array([-3,2,0]),
-        #     np.array([-3,1,0]),
-        #     np.array([-3,0,0]),
-        #     np.array([-3,-1,0]),
-        #     np.array([-3,-2,0]),
-        #     np.array([3,-1,0]),
-        #     np.array([3,-2,0]),
-        # ]
-        # edges = [
-        #     [],
-        #     [],
-        #     [0,1],
-        #     [2,1],
-        #     [3,1],
-        #     [4],
-        #     [5],
-        #     [5,1],
-        #     [7],
-        # ]
-        # for (i, node_text) in enumerate(node_texts):
-        #     node_text.move_to(layout[i])
-        #     arrows = []
-        #     for u in edges[i]:
-        #         src, dst = node_texts[u], node_text
-        #         sx, dx = layout[u][0], layout[i][0]
-        #         if sx == dx:
-        #             start = src.get_bottom()
-        #             end = dst.get_top()
-        #         elif sx < dx:
-        #             start = src.get_right()
-        #             end = dst.get_left()
-        #         else:
-        #             start = src.get_left()
-        #             end = dst.get_right()
-        #         arrows.append(Arrow(
-        #             start=start,
-        #             end=end,
-        #             stroke_width=2,
-        #             tip_length=0.1,
-        #             max_stroke_width_to_length_ratio=100,
-        #             max_tip_length_to_length_ratio=100,
-        #         ))
-        #     self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        # self.play(FadeOut(*self.mobjects))
+        '''
+        title_texts = [
+            "Rotation Matrix",
+            "Projection Vector",
+            "Rotation Transpose",
+            "Spectral Theorem",
+            "Eigenvector Computation",
+            "Singular Value Decomposition",
+            "PCA Dimension Reduction",
+            "Projection Matrix",
+            "OLS Linear Regression",
+        ]
+        node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
+        layout = [
+            np.array([-3,3,0]),
+            np.array([3,3,0]),
+            np.array([-3,2,0]),
+            np.array([-3,1,0]),
+            np.array([-3,0,0]),
+            np.array([-3,-1,0]),
+            np.array([-3,-2,0]),
+            np.array([3,-1,0]),
+            np.array([3,-2,0]),
+        ]
+        edges = [
+            [],
+            [],
+            [0,1],
+            [2,1],
+            [3,1],
+            [4],
+            [5],
+            [5,1],
+            [7],
+        ]
+        for (i, node_text) in enumerate(node_texts):
+            node_text.move_to(layout[i])
+            arrows = []
+            for u in edges[i]:
+                src, dst = node_texts[u], node_text
+                sx, dx = layout[u][0], layout[i][0]
+                if sx == dx:
+                    start = src.get_bottom()
+                    end = dst.get_top()
+                elif sx < dx:
+                    start = src.get_right()
+                    end = dst.get_left()
+                else:
+                    start = src.get_left()
+                    end = dst.get_right()
+                arrows.append(Arrow(
+                    start=start,
+                    end=end,
+                    stroke_width=2,
+                    tip_length=0.1,
+                    max_stroke_width_to_length_ratio=100,
+                    max_tip_length_to_length_ratio=100,
+                ))
+            self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
+        self.play(FadeOut(*self.mobjects))
+        '''
         
         self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)

@@ -10,135 +10,71 @@ class Projection(Scene):
    def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        title_texts = [
-            "Rotation Matrix",
-            "Projection Vector",
-            "Rotation Transpose",
-            "Spectral Theorem",
-            "Eigenvector Computation",
-            "Singular Value Decomposition",
-            "PCA Dimension Reduction",
-            "Projection Matrix",
-            "OLS Linear Regression",
-        ]
-        node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
-        layout = [
-            np.array([-3,3,0]),
-            np.array([3,3,0]),
-            np.array([-3,2,0]),
-            np.array([-3,1,0]),
-            np.array([-3,0,0]),
-            np.array([-3,-1,0]),
-            np.array([-3,-2,0]),
-            np.array([3,-1,0]),
-            np.array([3,-2,0]),
-        ]
-        edges = [
-            [],
-            [0],
-            [0,1],
-            [2,1],
-            [3,1],
-            [4],
-            [5],
-            [5,1],
-            [7],
-        ]
-        for (i, node_text) in enumerate(node_texts):
-            node_text.move_to(layout[i])
-            arrows = []
-            for u in edges[i]:
-                src, dst = node_texts[u], node_text
-                sx, dx = layout[u][0], layout[i][0]
-                if sx == dx:
-                    start = src.get_bottom()
-                    end = dst.get_top()
-                elif sx < dx:
-                    start = src.get_right()
-                    end = dst.get_left()
-                else:
-                    start = src.get_left()
-                    end = dst.get_right()
-                arrows.append(Arrow(
-                    start=start,
-                    end=end,
-                    stroke_width=2,
-                    tip_length=0.1,
-                    max_stroke_width_to_length_ratio=100,
-                    max_tip_length_to_length_ratio=100,
-                ))
-            # self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
+        # title_texts = [
+        #     "Rotation Matrix",
+        #     "Projection Vector",
+        #     "Rotation Transpose",
+        #     "Spectral Theorem",
+        #     "Eigenvector Computation",
+        #     "Singular Value Decomposition",
+        #     "PCA Dimension Reduction",
+        #     "Projection Matrix",
+        #     "OLS Linear Regression",
+        # ]
+        # node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
+        # layout = [
+        #     np.array([-3,3,0]),
+        #     np.array([3,3,0]),
+        #     np.array([-3,2,0]),
+        #     np.array([-3,1,0]),
+        #     np.array([-3,0,0]),
+        #     np.array([-3,-1,0]),
+        #     np.array([-3,-2,0]),
+        #     np.array([3,-1,0]),
+        #     np.array([3,-2,0]),
+        # ]
+        # edges = [
+        #     [],
+        #     [0],
+        #     [0,1],
+        #     [2,1],
+        #     [3,1],
+        #     [4],
+        #     [5],
+        #     [5,1],
+        #     [7],
+        # ]
+        # for (i, node_text) in enumerate(node_texts):
+        #     node_text.move_to(layout[i])
+        #     arrows = []
+        #     for u in edges[i]:
+        #         src, dst = node_texts[u], node_text
+        #         sx, dx = layout[u][0], layout[i][0]
+        #         if sx == dx:
+        #             start = src.get_bottom()
+        #             end = dst.get_top()
+        #         elif sx < dx:
+        #             start = src.get_right()
+        #             end = dst.get_left()
+        #         else:
+        #             start = src.get_left()
+        #             end = dst.get_right()
+        #         arrows.append(Arrow(
+        #             start=start,
+        #             end=end,
+        #             stroke_width=2,
+        #             tip_length=0.1,
+        #             max_stroke_width_to_length_ratio=100,
+        #             max_tip_length_to_length_ratio=100,
+        #         ))
+        #     self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
         # self.play(FadeOut(*self.mobjects))
         
-        grid = NumberPlane(
-            x_range=(-4,4,1),
-            axis_config={"stroke_width": 2, "color":LIGHT_GRAY},
-            background_line_style={"stroke_opacity": 0}
-        ).move_to(RIGHT*3)
-        tex_f0 = MathTex(r"\text{optimizing} \ f(x,y) = x + y").move_to(LEFT*4+UP*2)
-        tex_f10 = MathTex(r"{{ \nabla f(x,y) = \begin{bmatrix} }} \partial f / \partial x \\ \partial f / \partial y {{ \end{bmatrix} }}").next_to(tex_f0, DOWN)
-        tex_f11 = MathTex(r"{{ \nabla f(x,y) = \begin{bmatrix} }} 1 \\ 1 {{ \end{bmatrix} }}").next_to(tex_f0, DOWN)
-        tex_g0 = MathTex(r"\text{over} \ g(x,y) = x^2 + y^2 = 1").next_to(tex_f11, DOWN)
-        tex_g10 = MathTex(r"{{ \nabla g(x,y) = \begin{bmatrix} }} \partial g / \partial x \\ \partial g / \partial y {{ \end{bmatrix} }}").next_to(tex_g0, DOWN)
-        tex_g11 = MathTex(r"{{ \nabla g(x,y) = \begin{bmatrix} }} 1 \\ 1 {{ \end{bmatrix} }}").next_to(tex_g0, DOWN)
-        tex_s = MathTex(r"\text{requires} \ \nabla f(x,y) = \lambda \nabla g(x,y)").next_to(tex_g11, DOWN)
-        tex_f0.set_color(CS[0])
-        tex_f10.set_color(CS[0])
-        tex_f11.set_color(CS[0])
-        tex_g0.set_color(CS[1])
-        tex_g10.set_color(CS[1])
-        tex_g11.set_color(CS[1])
-        tex_s.set_color(CS[-1])
-        line_f0 = Line(start=grid.c2p(-4, -4), end=grid.c2p(-4, -4), color=CS[0], stroke_opacity=0)
-        line_f0_b = line_f0.copy()
-        line_f1 = Line(start=grid.c2p(-4, 4), end=grid.c2p(4, -4), color=CS[0], stroke_opacity=0.5)
-        line_f1_b = line_f1.copy()
-        line_f2 = Line(start=grid.c2p(4, 4), end=grid.c2p(4, 4), color=CS[0], stroke_opacity=1)
-        arrows_f = []
-        for i in range(-4, 5):
-            for j in range(-4, 5):
-                if (i+j)%2: continue
-                arrows_f.append(Arrow(start=grid.c2p(i,j), end=grid.c2p(i+1,j+1), color=CS[0], stroke_opacity=0.625, stroke_width=2, tip_length=0.1))
-                arrows_f[-1].get_tip().set_opacity(0.625)
-        circle_g0 = Circle(radius=0, color=CS[1], stroke_opacity=0).move_to(grid.c2p(0,0))
-        circle_g1 = Circle(radius=1, color=CS[1], stroke_opacity=0.625).move_to(grid.c2p(0,0))
-        arrows_g = []
-        theta = 0
-        while theta < 2*PI:
-            x, y = math.cos(theta), math.sin(theta)
-            arrows_g.append(Arrow(start=grid.c2p(x,y), end=grid.c2p(3*x,3*y), color=CS[1], stroke_width=2, tip_length=0.1))
-            theta += PI/8
-        circles_s = [
-            Circle(radius=0.1, color=CS[-1]).move_to(grid.c2p(math.cos(PI/4),math.sin(PI/4))),
-            Circle(radius=0.1, color=CS[-1]).move_to(grid.c2p(math.cos(PI + PI/4),math.sin(PI + PI/4))),
-        ]
-        # self.play(Create(Text("Constrained Optimization").to_edge(UP+LEFT)))
-        # self.play(Create(grid))
-        # self.play(Create(tex_f0))
-        # self.play(Create(line_f0))
-        # self.play(ReplacementTransform(line_f0, line_f1, rate_func=linear))
-        # self.play(ReplacementTransform(line_f1, line_f2, rate_func=linear))
-        # self.play(Create(tex_f10))
-        # self.play(TransformMatchingTex(tex_f10, tex_f11, transform_mismatches=True))
-        # self.play(*(Create(arrow) for arrow in arrows_f))
-        # self.play(Create(tex_g0))
-        # self.play(Create(circle_g0))
-        # self.play(ReplacementTransform(circle_g0, circle_g1, rate_func=rate_functions.ease_in_quad))
-        # self.play(Create(tex_g10))
-        # self.play(TransformMatchingTex(tex_g10, tex_g11, transform_mismatches=True))
-        # self.play(*(Create(arrow) for arrow in arrows_g))
-        # self.play(Create(tex_s))
-        # self.play(Create(line_f0_b))
-        # self.play(ReplacementTransform(line_f0_b, line_f1_b, rate_func=linear))
-        # self.play(ReplacementTransform(line_f1_b, line_f2, rate_func=linear))
-        # self.play(*(Create(circle) for circle in circles_s))
-        # self.play(FadeOut(*self.mobjects))
-
-        # self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
+        self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
-        # self.play(Create(grid))
+        self.play(Create(grid))
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
-        # self.play(Create(unit_circle))
+        self.play(Create(unit_circle))
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
@@ -147,17 +83,17 @@ class Projection(Scene):
         v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
         r_tex = Matrix([["x_0","x_1"],["y_0","y_1"]])
         r_tex.set_column_colors(*CS)
-        # self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
-        # self.play(Create(v_tex), Create(v_arrow))
-        # self.play(v_tex.animate.move_to(LEFT*3))
+        self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
+        self.play(Create(v_tex), Create(v_arrow))
+        self.play(v_tex.animate.move_to(LEFT*3))
         r_tex.next_to(v_tex, LEFT)
-        # self.play(
-        #     Create(r_tex),
-        #     Rotate(i_arrow, PI/4, about_point=grid.c2p(0, 0)),
-        #     Rotate(j_arrow, PI/4, about_point=grid.c2p(0, 0)),
-        #     Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
-        #     Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
-        # )
+        self.play(
+            Create(r_tex),
+            Rotate(i_arrow, PI/4, about_point=grid.c2p(0, 0)),
+            Rotate(j_arrow, PI/4, about_point=grid.c2p(0, 0)),
+            Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
+            Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
+        )
         v_tex_1 = MathTex("y").move_to(LEFT*2)
         v_tex_1.set_color(CS[2])
         r_tex_1 = Matrix([["x_1"],["y_1"]]).next_to(v_tex_1, LEFT)
@@ -169,49 +105,49 @@ class Projection(Scene):
         r_tex_0 = Matrix([["x_0"],["y_0"]]).next_to(v_tex_0, LEFT)
         r_tex_0.set_column_colors(CS[0])
         r_tex_0.get_brackets().set_color(CS[2])
-        # self.play(
-        #     FadeOut(r_tex.get_brackets()),
-        #     FadeOut(v_tex.get_brackets())
-        # )
-        # self.play(
-        #     ReplacementTransform(r_tex.get_columns()[0], r_tex_0.get_columns()[0]),
-        #     ReplacementTransform(r_tex.get_columns()[1], r_tex_1.get_columns()[0]),
-        #     ReplacementTransform(v_tex.get_rows()[0], v_tex_0),
-        #     ReplacementTransform(v_tex.get_rows()[1], v_tex_1),
-        #     Create(p_tex),
-        # )
-        # self.play(
-        #     FadeIn(r_tex_0.get_brackets()),
-        #     FadeIn(r_tex_1.get_brackets()),
-        # )
+        self.play(
+            FadeOut(r_tex.get_brackets()),
+            FadeOut(v_tex.get_brackets())
+        )
+        self.play(
+            ReplacementTransform(r_tex.get_columns()[0], r_tex_0.get_columns()[0]),
+            ReplacementTransform(r_tex.get_columns()[1], r_tex_1.get_columns()[0]),
+            ReplacementTransform(v_tex.get_rows()[0], v_tex_0),
+            ReplacementTransform(v_tex.get_rows()[1], v_tex_1),
+            Create(p_tex),
+        )
+        self.play(
+            FadeIn(r_tex_0.get_brackets()),
+            FadeIn(r_tex_1.get_brackets()),
+        )
         v_tex_0_c = v_tex_0.copy()
         v_tex_1_c = v_tex_1.copy()
         p_tex_c = p_tex.copy()
-        # self.play(
-        #     FadeOut(r_tex_0.get_brackets()),
-        #     FadeOut(r_tex_1.get_brackets()),
-        # )
-        # self.play(
-        #     v_tex_0.animate.next_to(r_tex_0.get_entries()[0], RIGHT),
-        #     v_tex_0_c.animate.next_to(r_tex_0.get_entries()[1], RIGHT),
-        #     v_tex_1.animate.next_to(r_tex_1.get_entries()[0], RIGHT),
-        #     v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1], RIGHT),
-        #     p_tex.animate.next_to(r_tex_1.get_entries()[0], LEFT),
-        #     p_tex_c.animate.next_to(r_tex_1.get_entries()[1], LEFT),
-        # )
-        # self.play(
-        #     p_tex.animate.next_to(v_tex_0, RIGHT),
-        #     p_tex_c.animate.next_to(v_tex_0_c, RIGHT),
-        #     r_tex_1.get_entries()[0].animate.next_to(p_tex.target, RIGHT),
-        #     r_tex_1.get_entries()[1].animate.next_to(p_tex_c.target, RIGHT),
-        #     v_tex_1.animate.next_to(r_tex_1.get_entries()[0].target, RIGHT),
-        #     v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1].target, RIGHT),
-        # )
+        self.play(
+            FadeOut(r_tex_0.get_brackets()),
+            FadeOut(r_tex_1.get_brackets()),
+        )
+        self.play(
+            v_tex_0.animate.next_to(r_tex_0.get_entries()[0], RIGHT),
+            v_tex_0_c.animate.next_to(r_tex_0.get_entries()[1], RIGHT),
+            v_tex_1.animate.next_to(r_tex_1.get_entries()[0], RIGHT),
+            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1], RIGHT),
+            p_tex.animate.next_to(r_tex_1.get_entries()[0], LEFT),
+            p_tex_c.animate.next_to(r_tex_1.get_entries()[1], LEFT),
+        )
+        self.play(
+            p_tex.animate.next_to(v_tex_0, RIGHT),
+            p_tex_c.animate.next_to(v_tex_0_c, RIGHT),
+            r_tex_1.get_entries()[0].animate.next_to(p_tex.target, RIGHT),
+            r_tex_1.get_entries()[1].animate.next_to(p_tex_c.target, RIGHT),
+            v_tex_1.animate.next_to(r_tex_1.get_entries()[0].target, RIGHT),
+            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1].target, RIGHT),
+        )
         r_tex_1.get_brackets()[1].set_x(v_tex_1.get_right()[0] + MED_SMALL_BUFF)
-        # self.play(
-        #     FadeIn(r_tex_0.get_brackets()[0]),
-        #     FadeIn(r_tex_1.get_brackets()[1]),
-        # )
+        self.play(
+            FadeIn(r_tex_0.get_brackets()[0]),
+            FadeIn(r_tex_1.get_brackets()[1]),
+        )
         brace = BraceBetweenPoints(
             np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
             np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
@@ -219,16 +155,16 @@ class Projection(Scene):
             buff=0,
             color=CS[2]
         )
-        # self.play(
-        #     FadeIn(brace),
-        #     FadeOut(r_tex_0.get_brackets()[0]),
-        #     FadeOut(r_tex_1.get_brackets()[1]),
-        #     FadeOut(r_tex_0.get_entries()[1]),
-        #     FadeOut(r_tex_1.get_entries()[1]),
-        #     FadeOut(p_tex_c),
-        #     FadeOut(v_tex_0_c),
-        #     FadeOut(v_tex_1_c),
-        # )
+        self.play(
+            FadeIn(brace),
+            FadeOut(r_tex_0.get_brackets()[0]),
+            FadeOut(r_tex_1.get_brackets()[1]),
+            FadeOut(r_tex_0.get_entries()[1]),
+            FadeOut(r_tex_1.get_entries()[1]),
+            FadeOut(p_tex_c),
+            FadeOut(v_tex_0_c),
+            FadeOut(v_tex_1_c),
+        )
         v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
         v_tex.set_color(CS[2])
         r_tex = Matrix([["x_0","x_1"]], h_buff=0.9)
@@ -238,136 +174,127 @@ class Projection(Scene):
         p_tex.set_y(r_tex_0.get_entries()[0].get_y() - LARGE_BUFF)
         r_tex.next_to(p_tex, RIGHT)
         v_tex.next_to(r_tex, RIGHT, aligned_edge=UP)
-        # self.play(
-        #     Create(p_tex),
-        #     Create(r_tex),
-        #     Create(v_tex),
+        self.play(
+            Create(p_tex),
+            Create(r_tex),
+            Create(v_tex),
+        )
+        self.play(FadeOut(*self.mobjects))
+
+        # self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
+        # grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
+        # unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
+        # self.play(Create(grid), Create(unit_circle))
+        # g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
+        # g_matrix = Matrix([["1"], ["0"]]).move_to(LEFT*4)
+        # g_matrix_rotated = Matrix([["g_x"], ["g_y"]]).move_to(LEFT*4)
+        # g_matrix.set_column_colors(CS[0])
+        # g_matrix_rotated.set_column_colors(CS[0])
+        # dot = MathTex(r"\cdot").next_to(g_matrix, LEFT)
+        # v_arrow = Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
+        # v_matrix = Matrix([["v_x"], ["v_y"]]).next_to(dot, LEFT)
+        # v_matrix.set_column_colors(CS[2])
+        # v_dots = DashedLine(color=CS[2]).put_start_and_end_on(v_arrow.get_end(), [v_arrow.get_end()[0], 0, 0])
+        # v_brace = BraceBetweenPoints(
+        #     np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
+        #     np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
+        #     direction=UP,
+        #     buff=0,
+        #     color=CS[2]
         # )
+        # equals = MathTex(r"=").next_to(g_matrix, RIGHT)
+        # result = MathTex(r"v_x").next_to(equals, RIGHT)
+        # question = MathTex(r"?").next_to(equals, RIGHT)
+        # self.play(
+        #     Create(g_arrow),
+        #     Create(v_arrow),
+        # )
+        # self.play(Create(v_matrix))
+        # self.play(Create(dot))
+        # self.play(Create(g_matrix))
+        # self.play(Create(equals))
+        # self.play(
+        #     Create(result),
+        #     FadeIn(v_brace),
+        # )
+        # self.play(
+        #     FadeOut(v_brace),
+        #     FadeOut(result),
+        # )
+        # self.play(
+        #     Rotate(g_arrow, angle=PI/3, about_point=g_arrow.get_start()),
+        #     ReplacementTransform(g_matrix, g_matrix_rotated),
+        #     dot.animate.next_to(g_matrix_rotated, LEFT),
+        #     v_matrix.animate.next_to(dot.target, LEFT),
+        #     equals.animate.next_to(g_matrix_rotated, RIGHT),
+        #     question.animate.next_to(equals.target, RIGHT),
+        # )
+        # rotation_matrix_1 = MathTex(r"R").next_to(dot, RIGHT)
+        # rotation_matrix_0 = MathTex(r"R").next_to(v_matrix, LEFT)
+        # self.play(
+        #     g_matrix_rotated.animate.next_to(rotation_matrix_1, RIGHT),
+        #     equals.animate.next_to(g_matrix_rotated.target, RIGHT),
+        #     question.animate.next_to(equals.target, RIGHT),
+        # )
+        # self.play(
+        #     Create(rotation_matrix_0),
+        #     Create(rotation_matrix_1),
+        #     Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
+        #     Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
+        # )
+
+        # self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))
+        # - Lagrange multipliers : \nabla xAx optimized over xx=1
+        # - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
         # self.play(FadeOut(*self.mobjects))
 
-        self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
-        grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
-        unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
-        g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
-        g_matrix = Matrix([["1"], ["0"]]).move_to(LEFT*4)
-        g_matrix_rotated = Matrix([["g_x"], ["g_y"]]).move_to(LEFT*4)
-        g_matrix.set_column_colors(CS[0])
-        g_matrix_rotated.set_column_colors(CS[0])
-        dot = MathTex(r"\cdot").next_to(g_matrix, LEFT)
-        v_arrow = Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
-        v_matrix = Matrix([["v_x"], ["v_y"]]).next_to(dot, LEFT)
-        v_matrix.set_column_colors(CS[2])
-        v_dots = DashedLine(color=CS[2]).put_start_and_end_on(v_arrow.get_end(), [v_arrow.get_end()[0], 0, 0])
-        v_brace = BraceBetweenPoints(
-            np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
-            np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
-            direction=UP,
-            buff=0,
-            color=CS[2]
-        )
-        equals = MathTex(r"=").next_to(g_matrix, RIGHT)
-        result = MathTex(r"v_x").next_to(equals, RIGHT)
-        question = MathTex(r"?").next_to(equals, RIGHT)
-        self.play(
-            Create(g_arrow),
-            Create(v_arrow),
-        )
-        self.play(Create(v_matrix))
-        self.play(Create(dot))
-        self.play(Create(g_matrix))
-        self.play(Create(equals))
-        self.play(
-            Create(result),
-            FadeIn(v_brace),
-        )
-        self.play(
-            FadeOut(v_brace),
-            FadeOut(result),
-        )
-        self.play(
-            Rotate(g_arrow, angle=PI/3, about_point=g_arrow.get_start()),
-            ReplacementTransform(g_matrix, g_matrix_rotated),
-            dot.animate.next_to(g_matrix_rotated, LEFT),
-            v_matrix.animate.next_to(dot.target, LEFT),
-            equals.animate.next_to(g_matrix_rotated, RIGHT),
-            question.animate.next_to(equals.target, RIGHT),
-        )
-        rotation_matrix_1 = MathTex(r"R").next_to(dot, RIGHT)
-        rotation_matrix_0 = MathTex(r"R").next_to(v_matrix, LEFT)
-        self.play(
-            g_matrix_rotated.animate.next_to(rotation_matrix_1, RIGHT),
-            equals.animate.next_to(g_matrix_rotated.target, RIGHT),
-            question.animate.next_to(equals.target, RIGHT),
-        )
-        self.play(
-            Create(rotation_matrix_0),
-            Create(rotation_matrix_1),
-            Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
-            Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
-        )
-        return
+        # self.play(Create(Text("Eigenvector Computation").to_edge(UP+LEFT)))
+        # def qr(A):
+        #     m, n = A.shape
+        #     Q = np.zeros((m, n))
+        #     R = np.zeros((n, n))
+        #     V = A.copy().astype(float)
+        #     for i in range(n):
+        #         R[i, i] = np.linalg.norm(V[:, i])
+        #         Q[:, i] = V[:, i] / R[i, i]
+        #         for j in range(i + 1, n):
+        #             R[i, j] = np.dot(Q[:, i], V[:, j])
+        #             V[:, j] -= R[i, j] * Q[:, i]
+        #     return Q, R
 
-        # Overview of QR algorithm
-        def qr(A):
-            m, n = A.shape
-            Q = np.zeros((m, n))
-            R = np.zeros((n, n))
-            V = A.copy().astype(float)
-            for i in range(n):
-                R[i, i] = np.linalg.norm(V[:, i])
-                Q[:, i] = V[:, i] / R[i, i]
-                for j in range(i + 1, n):
-                    R[i, j] = np.dot(Q[:, i], V[:, j])
-                    V[:, j] -= R[i, j] * Q[:, i]
-            return Q, R
+        # get_arrows = lambda grid, m, q: [
+        #     Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
+        #     Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
+        #     Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
+        #     Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
+        # ]
 
-        get_arrows = lambda grid, m, q: [
-            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
-            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
-            Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
-            Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
-        ]
-
-        grid = NumberPlane(x_range=(-4, 4, 1))
-        self.play(Create(grid))
-        m = np.array([[3,1],[1,3]])
-        q = np.array([[1,0],[0,1]])
-        arrows = get_arrows(grid, m, q)
-        self.play(Create(arrows[0]),
-                  Create(arrows[1]),
-                  Create(arrows[2]),
-                  Create(arrows[3]),
-        )
-        for _ in range(10):
-            q = m @ q
-            q, _ = qr(q)
-            new_arrows = get_arrows(grid, m, q)
-            self.play(ReplacementTransform(arrows[0], new_arrows[0]),
-                      ReplacementTransform(arrows[1], new_arrows[1]),
-                      ReplacementTransform(arrows[2], new_arrows[2]),
-                      ReplacementTransform(arrows[3], new_arrows[3]),
-            )
-            arrows = new_arrows
+        # grid = NumberPlane(x_range=(-4, 4, 1))
+        # self.play(Create(grid))
+        # m = np.array([[3,1],[1,3]])
+        # q = np.array([[1,0],[0,1]])
+        # arrows = get_arrows(grid, m, q)
+        # self.play(Create(arrows[0]),
+        #           Create(arrows[1]),
+        #           Create(arrows[2]),
+        #           Create(arrows[3]),
+        # )
+        # for _ in range(10):
+        #     q = m @ q
+        #     q, _ = qr(q)
+        #     new_arrows = get_arrows(grid, m, q)
+        #     self.play(ReplacementTransform(arrows[0], new_arrows[0]),
+        #               ReplacementTransform(arrows[1], new_arrows[1]),
+        #               ReplacementTransform(arrows[2], new_arrows[2]),
+        #               ReplacementTransform(arrows[3], new_arrows[3]),
+        #     )
+        #     arrows = new_arrows
         # for faster convergence, we can follow a method similar to exponentiation by squaring
         # A_0 = Q_0 R_0 -> E_0 = Q_0
         # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
         # A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
-        pass
+        # self.play(FadeOut(*self.mobjects))
 
-        # Proof of Spectral Theorem
-        # - Lagrange multipliers : \nabla xAx optimized over xx=1
-        # - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
-        pass
-
-        # SVD
-        pass
-
-        # PCA
-        pass
-
-        # OLS
-        pass
 
 class Determinant(Scene):
    def construct(self):

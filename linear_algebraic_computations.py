@@ -35,7 +35,7 @@ class Projection(Scene):
         # ]
         # edges = [
         #     [],
-        #     [0],
+        #     [],
         #     [0,1],
         #     [2,1],
         #     [3,1],
@@ -78,10 +78,10 @@ class Projection(Scene):
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
-        v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
+        v_tex = Matrix([["v_g"],["v_r"]]).move_to(LEFT*4)
         v_tex.set_column_colors(CS[2])
         v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
-        r_tex = Matrix([["x_0","x_1"],["y_0","y_1"]])
+        r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]])
         r_tex.set_column_colors(*CS)
         self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
         self.play(Create(v_tex), Create(v_arrow))
@@ -94,17 +94,15 @@ class Projection(Scene):
             Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
             Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
         )
-        v_tex_1 = MathTex("y").move_to(LEFT*2)
+        v_tex_1 = MathTex("v_r").move_to(LEFT*2)
         v_tex_1.set_color(CS[2])
-        r_tex_1 = Matrix([["x_1"],["y_1"]]).next_to(v_tex_1, LEFT)
+        r_tex_1 = Matrix([["r_x"],["r_y"]]).next_to(v_tex_1, LEFT)
         r_tex_1.set_column_colors(CS[1])
-        r_tex_1.get_brackets().set_color(CS[2])
         p_tex = MathTex("+").next_to(r_tex_1, LEFT)
-        v_tex_0 = MathTex("x").next_to(p_tex, LEFT)
+        v_tex_0 = MathTex("v_g").next_to(p_tex, LEFT)
         v_tex_0.set_color(CS[2])
-        r_tex_0 = Matrix([["x_0"],["y_0"]]).next_to(v_tex_0, LEFT)
+        r_tex_0 = Matrix([["g_x"],["g_y"]]).next_to(v_tex_0, LEFT)
         r_tex_0.set_column_colors(CS[0])
-        r_tex_0.get_brackets().set_color(CS[2])
         self.play(
             FadeOut(r_tex.get_brackets()),
             FadeOut(v_tex.get_brackets())
@@ -153,7 +151,6 @@ class Projection(Scene):
             np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
             direction=UP,
             buff=0,
-            color=CS[2]
         )
         self.play(
             FadeIn(brace),
@@ -165,9 +162,9 @@ class Projection(Scene):
             FadeOut(v_tex_0_c),
             FadeOut(v_tex_1_c),
         )
-        v_tex = Matrix([["x"],["y"]]).move_to(LEFT*4)
-        v_tex.set_color(CS[2])
-        r_tex = Matrix([["x_0","x_1"]], h_buff=0.9)
+        v_tex = Matrix([["v_g"],["v_r"]]).move_to(LEFT*4)
+        v_tex.set_column_colors(CS[2])
+        r_tex = Matrix([["g_x","r_x"]], h_buff=0.9)
         r_tex.set_column_colors(*CS)
         p_tex = MathTex("=")
         p_tex.set_x(r_tex_0.get_entries()[0].get_x() - 0.9)

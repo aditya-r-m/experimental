@@ -10,7 +10,7 @@ class Projection(Scene):
    def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        '''
+        # '''
         title_texts = [
             "Rotation Matrix",
             "Projection Vector",
@@ -70,8 +70,9 @@ class Projection(Scene):
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
         self.play(FadeOut(*self.mobjects))
+        # '''
+
         '''
-        
         self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
         self.play(Create(grid))
@@ -179,6 +180,7 @@ class Projection(Scene):
             Create(v_tex),
         )
         self.play(FadeOut(*self.mobjects))
+        '''
 
         '''
         self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
@@ -242,12 +244,16 @@ class Projection(Scene):
             Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
             Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
         )
+        '''
 
+        '''
         self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))
         - Lagrange multipliers : \nabla xAx optimized over xx=1
         - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
         self.play(FadeOut(*self.mobjects))
+        '''
 
+        '''
         self.play(Create(Text("Eigenvector Computation").to_edge(UP+LEFT)))
         def qr(A):
             m, n = A.shape
@@ -268,7 +274,6 @@ class Projection(Scene):
             Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
             Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
         ]
-
         grid = NumberPlane(x_range=(-4, 4, 1))
         self.play(Create(grid))
         m = np.array([[3,1],[1,3]])

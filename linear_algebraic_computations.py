@@ -10,7 +10,7 @@ class Projection(Scene):
    def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        # '''
+        '''
         title_texts = [
             "Rotation Matrix",
             "Projection Vector",
@@ -36,7 +36,7 @@ class Projection(Scene):
         ]
         edges = [
             [],
-            [],
+            [0],
             [0,1],
             [2,1],
             [3,1],
@@ -70,10 +70,11 @@ class Projection(Scene):
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
         self.play(FadeOut(*self.mobjects))
-        # '''
-
         '''
-        self.play(Create(Text("Rotation Matrix").to_edge(UP+LEFT)))
+
+        # '''
+        title = Text("Rotation Matrix").to_edge(UP+LEFT)
+        self.play(Create(title))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
         self.play(Create(grid))
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
@@ -92,10 +93,7 @@ class Projection(Scene):
         r_tex.next_to(v_tex, LEFT)
         self.play(
             Create(r_tex),
-            Rotate(i_arrow, PI/4, about_point=grid.c2p(0, 0)),
-            Rotate(j_arrow, PI/4, about_point=grid.c2p(0, 0)),
-            Rotate(ij_angle, PI/4, about_point=grid.c2p(0, 0)),
-            Rotate(v_arrow, PI/4, about_point=grid.c2p(0, 0)),
+            *(Rotate(obj, PI/4, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
         )
         v_tex_1 = MathTex("v_r").move_to(LEFT*2)
         v_tex_1.set_color(CS[2])
@@ -179,8 +177,36 @@ class Projection(Scene):
             Create(r_tex),
             Create(v_tex),
         )
+        self.play(
+            FadeOut(*[mob for mob in self.mobjects if mob not in [grid, title, i_arrow, j_arrow, ij_angle, v_arrow]]),
+            *(Rotate(obj, -PI/4, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
+        )
+        matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)
+        matrix_180.set_column_colors(*CS)
+        tex_180 = MathTex(r"x \rightarrow -x,\ y \rightarrow -y").next_to(matrix_180, UP)
+        self.play(
+            Create(matrix_180),
+            Create(tex_180),
+        )
+        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, -PI, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
+        matrix_90.set_column_colors(*CS)
+        tex_90 = MathTex(r"x \leftrightarrow y,\ y \rightarrow -y").next_to(matrix_90, UP)
+        self.play(
+            FadeOut(matrix_180),
+            FadeOut(tex_180),
+        )
+        self.play(
+            Create(matrix_90),
+            Create(tex_90),
+        )
+        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(FadeOut(*self.mobjects))
-        '''
+        # '''
 
         '''
         self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))

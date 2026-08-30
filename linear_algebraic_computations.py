@@ -180,119 +180,121 @@ class Projection(Scene):
         )
         self.play(FadeOut(*self.mobjects))
 
-        # self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
-        # grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
-        # unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
-        # self.play(Create(grid), Create(unit_circle))
-        # g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
-        # g_matrix = Matrix([["1"], ["0"]]).move_to(LEFT*4)
-        # g_matrix_rotated = Matrix([["g_x"], ["g_y"]]).move_to(LEFT*4)
-        # g_matrix.set_column_colors(CS[0])
-        # g_matrix_rotated.set_column_colors(CS[0])
-        # dot = MathTex(r"\cdot").next_to(g_matrix, LEFT)
-        # v_arrow = Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
-        # v_matrix = Matrix([["v_x"], ["v_y"]]).next_to(dot, LEFT)
-        # v_matrix.set_column_colors(CS[2])
-        # v_dots = DashedLine(color=CS[2]).put_start_and_end_on(v_arrow.get_end(), [v_arrow.get_end()[0], 0, 0])
-        # v_brace = BraceBetweenPoints(
-        #     np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
-        #     np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
-        #     direction=UP,
-        #     buff=0,
-        #     color=CS[2]
-        # )
-        # equals = MathTex(r"=").next_to(g_matrix, RIGHT)
-        # result = MathTex(r"v_x").next_to(equals, RIGHT)
-        # question = MathTex(r"?").next_to(equals, RIGHT)
-        # self.play(
-        #     Create(g_arrow),
-        #     Create(v_arrow),
-        # )
-        # self.play(Create(v_matrix))
-        # self.play(Create(dot))
-        # self.play(Create(g_matrix))
-        # self.play(Create(equals))
-        # self.play(
-        #     Create(result),
-        #     FadeIn(v_brace),
-        # )
-        # self.play(
-        #     FadeOut(v_brace),
-        #     FadeOut(result),
-        # )
-        # self.play(
-        #     Rotate(g_arrow, angle=PI/3, about_point=g_arrow.get_start()),
-        #     ReplacementTransform(g_matrix, g_matrix_rotated),
-        #     dot.animate.next_to(g_matrix_rotated, LEFT),
-        #     v_matrix.animate.next_to(dot.target, LEFT),
-        #     equals.animate.next_to(g_matrix_rotated, RIGHT),
-        #     question.animate.next_to(equals.target, RIGHT),
-        # )
-        # rotation_matrix_1 = MathTex(r"R").next_to(dot, RIGHT)
-        # rotation_matrix_0 = MathTex(r"R").next_to(v_matrix, LEFT)
-        # self.play(
-        #     g_matrix_rotated.animate.next_to(rotation_matrix_1, RIGHT),
-        #     equals.animate.next_to(g_matrix_rotated.target, RIGHT),
-        #     question.animate.next_to(equals.target, RIGHT),
-        # )
-        # self.play(
-        #     Create(rotation_matrix_0),
-        #     Create(rotation_matrix_1),
-        #     Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
-        #     Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
-        # )
+        '''
+        self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
+        grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
+        g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
+        g_matrix = Matrix([["1"], ["0"]]).move_to(LEFT*4)
+        g_matrix_rotated = Matrix([["g_x"], ["g_y"]]).move_to(LEFT*4)
+        g_matrix.set_column_colors(CS[0])
+        g_matrix_rotated.set_column_colors(CS[0])
+        dot = MathTex(r"\cdot").next_to(g_matrix, LEFT)
+        v_arrow = Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
+        v_matrix = Matrix([["v_x"], ["v_y"]]).next_to(dot, LEFT)
+        v_matrix.set_column_colors(CS[2])
+        v_dots = DashedLine(color=CS[2]).put_start_and_end_on(v_arrow.get_end(), [v_arrow.get_end()[0], 0, 0])
+        v_brace = BraceBetweenPoints(
+            np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
+            np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
+            direction=UP,
+            buff=0,
+            color=CS[2]
+        )
+        equals = MathTex(r"=").next_to(g_matrix, RIGHT)
+        result = MathTex(r"v_x").next_to(equals, RIGHT)
+        question = MathTex(r"?").next_to(equals, RIGHT)
+        self.play(
+            Create(g_arrow),
+            Create(v_arrow),
+        )
+        self.play(Create(v_matrix))
+        self.play(Create(dot))
+        self.play(Create(g_matrix))
+        self.play(Create(equals))
+        self.play(
+            Create(result),
+            FadeIn(v_brace),
+        )
+        self.play(
+            FadeOut(v_brace),
+            FadeOut(result),
+        )
+        self.play(
+            Rotate(g_arrow, angle=PI/3, about_point=g_arrow.get_start()),
+            ReplacementTransform(g_matrix, g_matrix_rotated),
+            dot.animate.next_to(g_matrix_rotated, LEFT),
+            v_matrix.animate.next_to(dot.target, LEFT),
+            equals.animate.next_to(g_matrix_rotated, RIGHT),
+            question.animate.next_to(equals.target, RIGHT),
+        )
+        rotation_matrix_1 = MathTex(r"R").next_to(dot, RIGHT)
+        rotation_matrix_0 = MathTex(r"R").next_to(v_matrix, LEFT)
+        self.play(
+            g_matrix_rotated.animate.next_to(rotation_matrix_1, RIGHT),
+            equals.animate.next_to(g_matrix_rotated.target, RIGHT),
+            question.animate.next_to(equals.target, RIGHT),
+        )
+        self.play(
+            Create(rotation_matrix_0),
+            Create(rotation_matrix_1),
+            Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
+            Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
+        )
 
-        # self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))
-        # - Lagrange multipliers : \nabla xAx optimized over xx=1
-        # - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
-        # self.play(FadeOut(*self.mobjects))
+        self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))
+        - Lagrange multipliers : \nabla xAx optimized over xx=1
+        - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
+        self.play(FadeOut(*self.mobjects))
 
-        # self.play(Create(Text("Eigenvector Computation").to_edge(UP+LEFT)))
-        # def qr(A):
-        #     m, n = A.shape
-        #     Q = np.zeros((m, n))
-        #     R = np.zeros((n, n))
-        #     V = A.copy().astype(float)
-        #     for i in range(n):
-        #         R[i, i] = np.linalg.norm(V[:, i])
-        #         Q[:, i] = V[:, i] / R[i, i]
-        #         for j in range(i + 1, n):
-        #             R[i, j] = np.dot(Q[:, i], V[:, j])
-        #             V[:, j] -= R[i, j] * Q[:, i]
-        #     return Q, R
+        self.play(Create(Text("Eigenvector Computation").to_edge(UP+LEFT)))
+        def qr(A):
+            m, n = A.shape
+            Q = np.zeros((m, n))
+            R = np.zeros((n, n))
+            V = A.copy().astype(float)
+            for i in range(n):
+                R[i, i] = np.linalg.norm(V[:, i])
+                Q[:, i] = V[:, i] / R[i, i]
+                for j in range(i + 1, n):
+                    R[i, j] = np.dot(Q[:, i], V[:, j])
+                    V[:, j] -= R[i, j] * Q[:, i]
+            return Q, R
 
-        # get_arrows = lambda grid, m, q: [
-        #     Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
-        #     Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
-        #     Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
-        #     Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
-        # ]
+        get_arrows = lambda grid, m, q: [
+            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
+            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
+            Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
+            Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
+        ]
 
-        # grid = NumberPlane(x_range=(-4, 4, 1))
-        # self.play(Create(grid))
-        # m = np.array([[3,1],[1,3]])
-        # q = np.array([[1,0],[0,1]])
-        # arrows = get_arrows(grid, m, q)
-        # self.play(Create(arrows[0]),
-        #           Create(arrows[1]),
-        #           Create(arrows[2]),
-        #           Create(arrows[3]),
-        # )
-        # for _ in range(10):
-        #     q = m @ q
-        #     q, _ = qr(q)
-        #     new_arrows = get_arrows(grid, m, q)
-        #     self.play(ReplacementTransform(arrows[0], new_arrows[0]),
-        #               ReplacementTransform(arrows[1], new_arrows[1]),
-        #               ReplacementTransform(arrows[2], new_arrows[2]),
-        #               ReplacementTransform(arrows[3], new_arrows[3]),
-        #     )
-        #     arrows = new_arrows
-        # for faster convergence, we can follow a method similar to exponentiation by squaring
-        # A_0 = Q_0 R_0 -> E_0 = Q_0
-        # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
-        # A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
-        # self.play(FadeOut(*self.mobjects))
+        grid = NumberPlane(x_range=(-4, 4, 1))
+        self.play(Create(grid))
+        m = np.array([[3,1],[1,3]])
+        q = np.array([[1,0],[0,1]])
+        arrows = get_arrows(grid, m, q)
+        self.play(Create(arrows[0]),
+                  Create(arrows[1]),
+                  Create(arrows[2]),
+                  Create(arrows[3]),
+        )
+        for _ in range(10):
+            q = m @ q
+            q, _ = qr(q)
+            new_arrows = get_arrows(grid, m, q)
+            self.play(ReplacementTransform(arrows[0], new_arrows[0]),
+                      ReplacementTransform(arrows[1], new_arrows[1]),
+                      ReplacementTransform(arrows[2], new_arrows[2]),
+                      ReplacementTransform(arrows[3], new_arrows[3]),
+            )
+            arrows = new_arrows
+        for faster convergence, we can follow a method similar to exponentiation by squaring
+        A_0 = Q_0 R_0 -> E_0 = Q_0
+        A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
+        A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
+        self.play(FadeOut(*self.mobjects))
+        '''
 
 
 class Determinant(Scene):

@@ -211,8 +211,23 @@ class Projection(Scene):
         # '''
         self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
+        self.play(Create(grid))
+        u_coarrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(1, 2), buff=0, tip_shape=ArrowSquareTip)
+        u_comatrix = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
+        u_comatrix.set_column_colors(CS[0], CS[0])
+        u_arrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(1, 2), buff=0)
+        u_matrix = Matrix([["x_u"], ["y_u"]]).next_to(u_comatrix)
+        u_matrix.set_column_colors(CS[0])
+        self.play(
+            Create(u_matrix),
+            Create(u_arrow),
+            Create(u_comatrix),
+            Create(u_coarrow),
+        )
+        self.wait()
+        return
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
+        self.play(Create(unit_circle))
         g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
         g_matrix = Matrix([["1"], ["0"]]).move_to(LEFT*4)
         g_matrix_rotated = Matrix([["g_x"], ["g_y"]]).move_to(LEFT*4)

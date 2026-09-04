@@ -72,7 +72,7 @@ class Projection(Scene):
         self.play(FadeOut(*self.mobjects))
         '''
 
-        # '''
+        '''
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -205,26 +205,26 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(FadeOut(*self.mobjects))
-        # '''
-
         '''
-        self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
+
+        # '''
+        # self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
-        circle = Circle(color=CS[1]).move_to(grid.c2p(1, 2))
         covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
         covector.set_column_colors(CS[1], CS[1])
-        arrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(1, 2), buff=0)
-        vector = Matrix([["x_v"], ["y_v"]]).next_to(covector)
+        arrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(math.cos(PI/3), math.sin(PI/3)), buff=0)
+        line = Line(color=CS[1], start=grid.c2p(1, -0.2), end=grid.c2p(1, 0.2)).rotate(PI/3, about_point=(grid.c2p(0, 0)))
+        vector = Matrix([["x_u"], ["y_u"]]).next_to(covector)
         vector.set_column_colors(CS[0])
         self.play(
             Create(covector),
-            Create(circle),
         )
         self.play(
             Create(vector),
             Create(arrow),
+            Create(line),
         )
         self.wait()
         return
@@ -288,7 +288,7 @@ class Projection(Scene):
             Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
         )
         self.play(FadeOut(*self.mobjects))
-        '''
+        # '''
 
         '''
         self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))

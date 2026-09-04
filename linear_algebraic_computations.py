@@ -72,13 +72,12 @@ class Projection(Scene):
         self.play(FadeOut(*self.mobjects))
         '''
 
-        '''
+        # '''
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
-        grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
-        self.play(Create(grid))
-        unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
-        self.play(Create(unit_circle))
+        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
@@ -178,7 +177,7 @@ class Projection(Scene):
             Create(v_tex),
         )
         self.play(
-            FadeOut(*[mob for mob in self.mobjects if mob not in [grid, title, i_arrow, j_arrow, ij_angle, v_arrow]]),
+            FadeOut(*[mob for mob in self.mobjects if mob not in [grid, title, i_arrow, j_arrow, ij_angle, v_arrow, unit_circle]]),
             *(Rotate(obj, -PI/4, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
         )
         matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)
@@ -206,23 +205,26 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(FadeOut(*self.mobjects))
-        '''
-
         # '''
+
+        '''
         self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
-        grid = NumberPlane(x_range=(-4,4,1)).move_to(RIGHT*3)
-        self.play(Create(grid))
-        u_coarrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(1, 2), buff=0, tip_shape=ArrowSquareTip)
-        u_comatrix = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
-        u_comatrix.set_column_colors(CS[0], CS[0])
-        u_arrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(1, 2), buff=0)
-        u_matrix = Matrix([["x_u"], ["y_u"]]).next_to(u_comatrix)
-        u_matrix.set_column_colors(CS[0])
+        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
+        circle = Circle(color=CS[1]).move_to(grid.c2p(1, 2))
+        covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
+        covector.set_column_colors(CS[1], CS[1])
+        arrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(1, 2), buff=0)
+        vector = Matrix([["x_v"], ["y_v"]]).next_to(covector)
+        vector.set_column_colors(CS[0])
         self.play(
-            Create(u_matrix),
-            Create(u_arrow),
-            Create(u_comatrix),
-            Create(u_coarrow),
+            Create(covector),
+            Create(circle),
+        )
+        self.play(
+            Create(vector),
+            Create(arrow),
         )
         self.wait()
         return
@@ -285,7 +287,8 @@ class Projection(Scene):
             Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
             Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
         )
-        # '''
+        self.play(FadeOut(*self.mobjects))
+        '''
 
         '''
         self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))

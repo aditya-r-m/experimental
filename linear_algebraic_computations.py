@@ -275,15 +275,15 @@ class Projection(Scene):
             FadeOut(vector_0),
             FadeOut(tex_0_l),
         )
+        tex_1_l.next_to(vector_01, DOWN)
+        tex_1_l.set_color(CS[-1])
         self.play(
             Create(vector_01),
             Create(line_c),
             Create(angle_1c),
-        )
-        tex_1_l.next_to(vector_01, DOWN)
-        tex_1_l.set_color(CS[-1])
-        self.play(
             FadeIn(tex_1_l),
+        )
+        self.play(
             tex_1.animate.set_color(CS[-1]),
             arrow_1.animate.set_color(CS[-1]),
             FadeOut(angle_01),
@@ -323,7 +323,40 @@ class Projection(Scene):
             )
             circle_c = new_circle_c
             line_c = new_line_c
-        # TODO: 4D generalization
+        self.play(FadeOut(*self.mobjects))
+        covector_4 = Matrix([["w_c","x_c","y_c","z_c"]])
+        covector_4.get_entries()[:].set_color(CS[2])
+        vector_4 = Matrix([["w"],["x"],["y"],["z"]]).next_to(covector_4, RIGHT)
+        vector_4.get_entries()[:].set_color(CS[-1])
+        self.play(Create(covector_4))
+        self.play(Create(vector_4))
+        tex_p = MathTex("+")
+        vector_4_l = Matrix([["w"],["x"],[0],[0]])
+        vector_4_l.get_entries()[:2].set_color(CS[-1])
+        vector_4_l.next_to(tex_p, LEFT)
+        covector_4_l = covector_4.copy().next_to(vector_4_l, LEFT)
+        covector_4_r = covector_4.copy().next_to(tex_p, RIGHT)
+        vector_4_r = Matrix([[0],[0],["y"],["z"]])
+        vector_4_r.get_entries()[2:].set_color(CS[-1])
+        vector_4_r.next_to(covector_4_r, RIGHT)
+        self.play(
+            Create(tex_p),
+            ReplacementTransform(vector_4, vector_4_l),
+            ReplacementTransform(vector_4.copy(), vector_4_r),
+            ReplacementTransform(covector_4, covector_4_l),
+            ReplacementTransform(covector_4.copy(), covector_4_r),
+        )
+        covector_4_l_f = Matrix([["w_c","x_c",0,0]]).next_to(vector_4_l, LEFT)
+        covector_4_l_f.get_entries()[:2].set_color(CS[2])
+        covector_4_r_f = Matrix([[0,0,"y_c","z_c"]]).next_to(vector_4_r, LEFT)
+        covector_4_r_f.get_entries()[2:].set_color(CS[2])
+        self.play(
+            ReplacementTransform(covector_4_l, covector_4_l_f),
+            ReplacementTransform(covector_4_r, covector_4_r_f),
+        )
+        self.play(FadeOut(*self.mobjects))
+        # TODO: 4D formula
+        # TODO: vector projection formula
         # '''
 
         '''

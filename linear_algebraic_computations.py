@@ -277,9 +277,26 @@ class Projection(Scene):
             FadeOut(arrow_1),
             FadeOut(tex_0),
             FadeOut(tex_1),
+            FadeOut(x_line),
+            FadeOut(y_line),
+            FadeOut(x_brace),
+            FadeOut(y_brace),
+            FadeOut(x_tex),
+            FadeOut(y_tex),
         )
         self.play(covector.animate.move_to(LEFT*4))
-        # TODO: non-unit covectors
+        for diff in [(1, 0), (0, -0.5), (-1, 0), (0, 0.5)]:
+            x += diff[0]
+            y += diff[1]
+            new_circle_c = circle_c.copy().move_to(grid.c2p(x, y))
+            new_line_c = Line(color=color_c, start=grid.c2p(-8*x, -8*y), end=grid.c2p(8*x, 8*y))
+            new_line_c.rotate(PI/2, about_point=grid.c2p(x / (x*x + y*y), y / (x*x + y*y)))
+            self.play(
+                ReplacementTransform(circle_c, new_circle_c),
+                ReplacementTransform(line_c, new_line_c),
+            )
+            circle_c = new_circle_c
+            line_c = new_line_c
         # TODO: 4D generalization
         # '''
 

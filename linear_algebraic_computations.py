@@ -212,11 +212,22 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
+        x_u, y_u = math.cos(PI/3), math.sin(PI/3)
+        x_brace = BraceBetweenPoints(grid.c2p(0, 0), grid.c2p(x_u, 0), direction=DOWN, buff=0, color=LIGHT_GRAY)
+        y_brace = BraceBetweenPoints(grid.c2p(x_u, 0), grid.c2p(x_u, y_u), direction=RIGHT, buff=0, color=LIGHT_GRAY)
+        x_tex = MathTex("x_u", color=LIGHT_GRAY, font_size=32).next_to(x_brace, DOWN)
+        y_tex = MathTex("y_u", color=LIGHT_GRAY, font_size=32).next_to(y_brace, RIGHT)
         color_1, color_0, color_c = CS[0:3]
         covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
-        self.play(Create(covector))
-        arrow_1 = Arrow(color=color_1, start=grid.c2p(0, 0), end=grid.c2p(math.cos(PI/3), math.sin(PI/3)), buff=0)
+        self.play(
+            Create(covector),
+            Create(x_brace),
+            Create(y_brace),
+            Create(x_tex),
+            Create(y_tex),
+        )
+        arrow_1 = Arrow(color=color_1, start=grid.c2p(0, 0), end=grid.c2p(x_u, y_u), buff=0)
         vector_1 = Matrix([["x_u"], ["y_u"]]).next_to(covector)
         vector_1.set_column_colors(color_1)
         tex_1 = MathTex("1", color=color_c).next_to(arrow_1.get_end(), UP)
@@ -225,7 +236,7 @@ class Projection(Scene):
             Create(arrow_1),
             Create(tex_1),
         )
-        arrow_0 = Arrow(color=color_0, start=grid.c2p(0, 0), end=grid.c2p(math.cos(PI/2+PI/3), math.sin(PI/2+PI/3)), buff=0)
+        arrow_0 = Arrow(color=color_0, start=grid.c2p(0, 0), end=grid.c2p(-y_u, x_u), buff=0)
         angle_01 = RightAngle(arrow_0, arrow_1, length=0.2, color=LIGHT_GRAY)
         vector_0 = Matrix([["-y_u"], ["x_u"]]).next_to(covector)
         vector_0.set_column_colors(color_0)

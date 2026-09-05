@@ -355,7 +355,18 @@ class Projection(Scene):
             ReplacementTransform(covector_4_r, covector_4_r_f),
         )
         self.play(FadeOut(*self.mobjects))
-        # TODO: 4D formula
+        vector_4 = Matrix([["w"],["x"],["y"],["z"]])
+        vector_4.get_entries()[:].set_color(CS[-1])
+        covector_4 = Matrix([["w_c","x_c","y_c","z_c"]]).next_to(vector_4, LEFT)
+        covector_4.get_entries()[:].set_color(CS[2])
+        tex = MathTex(r"= {{w_c}} {{w}} + {{x_c}} {{x}} + {{y_c}} {{y}} + {{z_c}} {{z}}").next_to(vector_4, RIGHT)
+        for c in ["w","x","y","z"]:
+            tex.set_color_by_tex(f"{c}_c", CS[2])
+            tex.set_color_by_tex(c, CS[-1])
+        self.play(Create(covector_4))
+        self.play(Create(vector_4))
+        self.play(Create(tex))
+        self.play(FadeOut(*self.mobjects))
         # TODO: vector projection formula
         # '''
 

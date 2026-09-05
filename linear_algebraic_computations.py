@@ -215,14 +215,18 @@ class Projection(Scene):
         color_1, color_0, color_c = CS[0:3]
         theta = PI/3
         x_u, y_u = math.cos(theta), math.sin(theta)
-        x_brace = BraceBetweenPoints(grid.c2p(0, 0), grid.c2p(x_u, 0), direction=DOWN, buff=0, color=LIGHT_GRAY)
-        y_brace = BraceBetweenPoints(grid.c2p(x_u, 0), grid.c2p(x_u, y_u), direction=RIGHT, buff=0, color=LIGHT_GRAY)
+        x_line = DashedLine(start=grid.c2p(x_u, y_u), end=grid.c2p(x_u, -1), color=color_c)
+        y_line = DashedLine(start=grid.c2p(x_u, y_u), end=grid.c2p(2, y_u), color=color_c)
+        x_brace = BraceBetweenPoints(grid.c2p(0, -1), grid.c2p(x_u, -1), direction=DOWN, buff=0, color=color_c)
+        y_brace = BraceBetweenPoints(grid.c2p(2, 0), grid.c2p(2, y_u), direction=RIGHT, buff=0, color=color_c)
         x_tex = MathTex("x_u", color=color_c, font_size=32).next_to(x_brace, 0.5 * DOWN)
         y_tex = MathTex("y_u", color=color_c, font_size=32).next_to(y_brace, 0.5 * RIGHT)
         covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
         self.play(
             Create(covector),
+            Create(x_line),
+            Create(y_line),
             Create(x_brace),
             Create(y_brace),
             Create(x_tex),

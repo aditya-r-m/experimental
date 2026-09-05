@@ -239,8 +239,10 @@ class Projection(Scene):
         vector_1 = Matrix([["x"], ["y"]]).next_to(covector)
         vector_1.set_column_colors(color_1)
         tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
+        tex_1_l = MathTex("= 1", color=color_1).next_to(vector_1, RIGHT)
         self.play(
             Create(vector_1),
+            Create(tex_1_l),
             Create(arrow_1),
             Create(tex_1),
         )
@@ -249,34 +251,58 @@ class Projection(Scene):
         vector_0 = Matrix([["-y"], ["x"]]).next_to(covector)
         vector_0.set_column_colors(color_0)
         tex_0 = MathTex("0", color=color_0).next_to(arrow_0.get_end(), LEFT)
-        self.play(FadeOut(vector_1))
+        tex_0_l = MathTex("= 0", color=color_0).next_to(vector_0, RIGHT)
+        self.play(
+            FadeOut(vector_1),
+            FadeOut(tex_1_l),
+        )
         self.play(
             Create(vector_0),
+            Create(tex_0_l),
             Create(arrow_0),
             Create(angle_01),
             Create(tex_0),
         )
         line_c = Line(color=color_c, start=grid.c2p(1, -8), end=grid.c2p(1, 8)).rotate(theta, about_point=grid.c2p(0, 0))
         angle_1c = RightAngle(arrow_1, line_c, length=0.25, quadrant=(-1,1), color=LIGHT_GRAY)
-        vector_01 = Matrix([["x - c\ y"], ["y + c\ x"]]).next_to(covector)
+        vector_01 = Matrix([["x - cy"], ["y + cx"]]).next_to(covector)
         vector_01.get_entries()[0][0][0:2].set_color(color_1)
         vector_01.get_entries()[0][0][2:].set_color(color_0)
         vector_01.get_entries()[1][0][0:2].set_color(color_1)
         vector_01.get_entries()[1][0][2:].set_color(color_0)
-        self.play(FadeOut(vector_0))
+        vector_01.get_brackets().set_color(CS[-1])
+        self.play(
+            FadeOut(vector_0),
+            FadeOut(tex_0_l),
+        )
         self.play(
             Create(vector_01),
             Create(line_c),
             Create(angle_1c),
         )
+        tex_1_l.next_to(vector_01, DOWN)
+        tex_1_l.set_color(CS[-1])
+        self.play(
+            FadeIn(tex_1_l),
+            tex_1.animate.set_color(CS[-1]),
+            arrow_1.animate.set_color(CS[-1]),
+            FadeOut(angle_01),
+            FadeOut(angle_1c),
+        )
+        ax, ay = x, y
+        for diff in [(-4*y, 4*x), (8*y, -8*x), (-4*y, 4*x)]:
+            ax, ay = ax + diff[0], ay + diff[1]
+            self.play(
+                arrow_1.animate.put_start_and_end_on(grid.c2p(0, 0), grid.c2p(ax, ay)),
+                tex_1.animate.next_to(arrow_1.target.get_end(), UP),
+        )
         self.play(
             FadeOut(vector_01),
-            FadeOut(angle_1c),
-            FadeOut(angle_01),
             FadeOut(arrow_0),
             FadeOut(arrow_1),
             FadeOut(tex_0),
             FadeOut(tex_1),
+            FadeOut(tex_1_l),
             FadeOut(x_line),
             FadeOut(y_line),
             FadeOut(x_brace),

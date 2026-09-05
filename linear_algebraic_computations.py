@@ -72,13 +72,39 @@ class Projection(Scene):
         self.play(FadeOut(*self.mobjects))
         '''
 
-        '''
-        # TODO: Defining circles via right triangles
+        # '''
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
+        lines = [
+            Line(color=LIGHT_GRAY, start=grid.c2p(0, 0), end=grid.c2p(3/5, 4/5)),
+            Line(color=LIGHT_GRAY, start=grid.c2p(3/5, 0), end=grid.c2p(3/5, 4/5)),
+        ]
+        texs = [
+            MathTex(r"{{A_x}} + {{A_y}} = {{A_1}}").move_to(LEFT*4),
+            MathTex(r"{{c \cdot x^2}} + {{c \cdot y^2}} = {{c \cdot 1^2}}").move_to(LEFT*4),
+            MathTex(r"{{x^2}} + {{y^2}} = {{1}}").move_to(LEFT*4),
+        ]
+        triangles = [
+            Polygon(grid.c2p(0, 0), grid.c2p(3/5 * 3/5 * 3/5, 3/5 * 4/5 * 3/5), grid.c2p(3/5, 0), color=CS[0], fill_color=CS[0], fill_opacity=0.5),
+            Polygon(grid.c2p(3/5, 0), grid.c2p(3/5 * 3/5 * 3/5, 3/5 * 4/5 * 3/5), grid.c2p(3/5, 4/5), color=CS[1], fill_color=CS[1], fill_opacity=0.5),
+            Polygon(grid.c2p(0, 0), grid.c2p(3/5, 0), grid.c2p(3/5, 4/5), color=CS[2], fill_color=CS[2], fill_opacity=0.5),
+        ]
+        for tex in texs:
+            for i in range(3):
+                tex[i*2].set_color(CS[i])
+        self.play(Create(lines[0]))
+        self.play(Create(lines[1]))
+        self.play(Create(texs[0]))
+        self.play(Create(triangles[0]), run_time=4)
+        self.play(Create(triangles[1]), run_time=4)
+        self.play(Create(triangles[2]), run_time=4)
+        self.play(ReplacementTransform(texs[0], texs[1]))
+        self.play(ReplacementTransform(texs[1], texs[2]))
+        self.wait()
+        return
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
@@ -206,10 +232,10 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(FadeOut(*self.mobjects))
-        '''
-
         # '''
-        # self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
+
+        '''
+        self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -367,7 +393,9 @@ class Projection(Scene):
         self.play(Create(vector_4))
         self.play(Create(tex))
         self.play(FadeOut(*self.mobjects))
-        # TODO: vector projection formula
+        '''
+        # '''
+        # TODO: projecting vectors
         # '''
 
         '''

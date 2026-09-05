@@ -215,16 +215,16 @@ class Projection(Scene):
         self.play(Create(grid), Create(unit_circle))
         color_1, color_0, color_c = CS[0:3]
         theta = PI/3
-        x_u, y_u = math.cos(theta), math.sin(theta)
-        x_line = DashedLine(start=grid.c2p(x_u, y_u - 0.1), end=grid.c2p(x_u, -1), color=color_c)
-        y_line = DashedLine(start=grid.c2p(x_u + 0.1, y_u), end=grid.c2p(2, y_u), color=color_c)
-        x_brace = BraceBetweenPoints(grid.c2p(0, -1), grid.c2p(x_u, -1), direction=DOWN, buff=0, color=color_c)
-        y_brace = BraceBetweenPoints(grid.c2p(2, 0), grid.c2p(2, y_u), direction=RIGHT, buff=0, color=color_c)
-        x_tex = MathTex("x_u", color=color_c, font_size=32).next_to(x_brace, 0.5 * DOWN)
-        y_tex = MathTex("y_u", color=color_c, font_size=32).next_to(y_brace, 0.5 * RIGHT)
-        covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
+        x, y = math.cos(theta), math.sin(theta)
+        x_line = DashedLine(start=grid.c2p(x, y - 0.1), end=grid.c2p(x, -1), color=color_c)
+        y_line = DashedLine(start=grid.c2p(x + 0.1, y), end=grid.c2p(2, y), color=color_c)
+        x_brace = BraceBetweenPoints(grid.c2p(0, -1), grid.c2p(x, -1), direction=DOWN, buff=0, color=color_c)
+        y_brace = BraceBetweenPoints(grid.c2p(2, 0), grid.c2p(2, y), direction=RIGHT, buff=0, color=color_c)
+        x_tex = MathTex("x", color=color_c, font_size=32).next_to(x_brace, 0.5 * DOWN)
+        y_tex = MathTex("y", color=color_c, font_size=32).next_to(y_brace, 0.5 * RIGHT)
+        covector = Matrix([["x", "y"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
-        circle_c = Circle(radius=0.1, color=color_c).move_to(grid.c2p(x_u, y_u))
+        circle_c = Circle(radius=0.1, color=color_c).move_to(grid.c2p(x, y))
         self.play(
             Create(covector),
             Create(x_line),
@@ -235,8 +235,8 @@ class Projection(Scene):
             Create(y_tex),
             Create(circle_c),
         )
-        arrow_1 = Arrow(color=color_1, start=grid.c2p(0, 0), end=grid.c2p(x_u, y_u), buff=0)
-        vector_1 = Matrix([["x_u"], ["y_u"]]).next_to(covector)
+        arrow_1 = Arrow(color=color_1, start=grid.c2p(0, 0), end=grid.c2p(x, y), buff=0)
+        vector_1 = Matrix([["x"], ["y"]]).next_to(covector)
         vector_1.set_column_colors(color_1)
         tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
         self.play(
@@ -244,9 +244,9 @@ class Projection(Scene):
             Create(arrow_1),
             Create(tex_1),
         )
-        arrow_0 = Arrow(color=color_0, start=grid.c2p(0, 0), end=grid.c2p(-y_u, x_u), buff=0)
+        arrow_0 = Arrow(color=color_0, start=grid.c2p(0, 0), end=grid.c2p(-y, x), buff=0)
         angle_01 = RightAngle(arrow_0, arrow_1, length=0.25, color=LIGHT_GRAY)
-        vector_0 = Matrix([["-y_u"], ["x_u"]]).next_to(covector)
+        vector_0 = Matrix([["-y"], ["x"]]).next_to(covector)
         vector_0.set_column_colors(color_0)
         tex_0 = MathTex("0", color=color_0).next_to(arrow_0.get_end(), LEFT)
         self.play(FadeOut(vector_1))
@@ -258,7 +258,7 @@ class Projection(Scene):
         )
         line_c = Line(color=color_c, start=grid.c2p(1, -8), end=grid.c2p(1, 8)).rotate(theta, about_point=grid.c2p(0, 0))
         angle_1c = RightAngle(arrow_1, line_c, length=0.25, quadrant=(-1,1), color=LIGHT_GRAY)
-        vector_01 = Matrix([["x_u - c\ y_u"], ["y_u + c\ x_u"]]).next_to(covector)
+        vector_01 = Matrix([["x - c\ y"], ["y + c\ x"]]).next_to(covector)
         vector_01.get_entries()[0][0][0:2].set_color(color_1)
         vector_01.get_entries()[0][0][2:].set_color(color_0)
         vector_01.get_entries()[1][0][0:2].set_color(color_1)
@@ -269,7 +269,16 @@ class Projection(Scene):
             Create(line_c),
             Create(angle_1c),
         )
-        self.wait()
+        self.play(
+            FadeOut(vector_01),
+            FadeOut(angle_1c),
+            FadeOut(angle_01),
+            FadeOut(arrow_0),
+            FadeOut(arrow_1),
+            FadeOut(tex_0),
+            FadeOut(tex_1),
+        )
+        self.play(covector.animate.move_to(LEFT*4))
         # TODO: non-unit covectors
         # TODO: 4D generalization
         # '''

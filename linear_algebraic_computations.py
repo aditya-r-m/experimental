@@ -212,19 +212,30 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
+        color_1, color_0, color_c = CS[0:3]
         covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
-        covector.set_column_colors(CS[1], CS[1])
-        arrow = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(math.cos(PI/3), math.sin(PI/3)), buff=0)
-        line = Line(color=CS[1], start=grid.c2p(1, -0.2), end=grid.c2p(1, 0.2)).rotate(PI/3, about_point=(grid.c2p(0, 0)))
-        vector = Matrix([["x_u"], ["y_u"]]).next_to(covector)
-        vector.set_column_colors(CS[0])
+        covector.set_column_colors(color_c, color_c)
+        self.play(Create(covector))
+        arrow_1 = Arrow(color=color_1, start=grid.c2p(0, 0), end=grid.c2p(math.cos(PI/3), math.sin(PI/3)), buff=0)
+        vector_1 = Matrix([["x_u"], ["y_u"]]).next_to(covector)
+        vector_1.set_column_colors(color_1)
+        tex_1 = MathTex("1", color=color_c).next_to(arrow_1.get_end(), UP)
         self.play(
-            Create(covector),
+            Create(vector_1),
+            Create(arrow_1),
+            Create(tex_1),
         )
+        arrow_0 = Arrow(color=color_0, start=grid.c2p(0, 0), end=grid.c2p(math.cos(PI/2+PI/3), math.sin(PI/2+PI/3)), buff=0)
+        angle_01 = RightAngle(arrow_0, arrow_1, length=0.2, color=LIGHT_GRAY)
+        vector_0 = Matrix([["-y_u"], ["x_u"]]).next_to(covector)
+        vector_0.set_column_colors(color_0)
+        tex_0 = MathTex("0", color=color_c).next_to(arrow_0.get_end(), LEFT)
+        self.play(FadeOut(vector_1))
         self.play(
-            Create(vector),
-            Create(arrow),
-            Create(line),
+            Create(vector_0),
+            Create(arrow_0),
+            Create(angle_01),
+            Create(tex_0),
         )
         self.wait()
         return

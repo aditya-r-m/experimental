@@ -72,7 +72,7 @@ class Projection(Scene):
         self.play(FadeOut(*self.mobjects))
         '''
 
-        # '''
+        '''
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -247,9 +247,9 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(FadeOut(*self.mobjects))
-        # '''
-
         '''
+
+        # '''
         self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -408,8 +408,6 @@ class Projection(Scene):
         self.play(Create(vector_4))
         self.play(Create(tex))
         self.play(FadeOut(*self.mobjects))
-        '''
-        # '''
         # TODO: projecting vectors
         # '''
 

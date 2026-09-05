@@ -73,6 +73,7 @@ class Projection(Scene):
         '''
 
         '''
+        # TODO: Defining circles via right triangles
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -255,12 +256,23 @@ class Projection(Scene):
         )
         line_c = Line(color=color_c, start=grid.c2p(1, -8), end=grid.c2p(1, 8)).rotate(theta, about_point=grid.c2p(0, 0))
         angle_1c = RightAngle(arrow_1, line_c, length=0.25, quadrant=(-1,1), color=LIGHT_GRAY)
+        vector_01 = Matrix([["x_u - c\ y_u"], ["y_u + c\ x_u"]]).next_to(covector)
+        vector_01.get_entries()[0][0][0:2].set_color(color_1)
+        vector_01.get_entries()[0][0][2:].set_color(color_0)
+        vector_01.get_entries()[1][0][0:2].set_color(color_1)
+        vector_01.get_entries()[1][0][2:].set_color(color_0)
+        self.play(FadeOut(vector_0))
         self.play(
+            Create(vector_01),
             Create(line_c),
             Create(angle_1c),
         )
-        self.wait()
-        return
+        # TODO: 4D generalization
+        # '''
+
+        '''
+        self.play(Create(Text("Rotation Transpose").to_edge(UP+LEFT)))
+        # TODO: transpose based inverse
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
         self.play(Create(unit_circle))
         g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
@@ -321,7 +333,7 @@ class Projection(Scene):
             Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
         )
         self.play(FadeOut(*self.mobjects))
-        # '''
+        '''
 
         '''
         self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))

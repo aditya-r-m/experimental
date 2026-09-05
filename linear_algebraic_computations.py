@@ -80,8 +80,10 @@ class Projection(Scene):
         self.play(Create(grid), Create(unit_circle))
         lines = [
             Line(color=LIGHT_GRAY, start=grid.c2p(0, 0), end=grid.c2p(3/5, 4/5)),
-            Line(color=LIGHT_GRAY, start=grid.c2p(3/5, 0), end=grid.c2p(3/5, 4/5)),
+            Line(color=LIGHT_GRAY, start=grid.c2p(3/5, 4/5), end=grid.c2p(3/5, 0)),
         ]
+        self.play(Create(lines[0]))
+        self.play(Create(lines[1]))
         texs = [
             MathTex(r"{{A_x}} + {{A_y}} = {{A_1}}").move_to(LEFT*4),
             MathTex(r"{{c \cdot x^2}} + {{c \cdot y^2}} = {{c \cdot 1^2}}").move_to(LEFT*4),
@@ -92,19 +94,32 @@ class Projection(Scene):
             Polygon(grid.c2p(3/5, 0), grid.c2p(3/5 * 3/5 * 3/5, 3/5 * 4/5 * 3/5), grid.c2p(3/5, 4/5), color=CS[1], fill_color=CS[1], fill_opacity=0.5),
             Polygon(grid.c2p(0, 0), grid.c2p(3/5, 0), grid.c2p(3/5, 4/5), color=CS[2], fill_color=CS[2], fill_opacity=0.5),
         ]
+        braces = [
+            BraceBetweenPoints(grid.c2p(0, 0), grid.c2p(3/5, 0), direction=DOWN, buff=0, color=CS[0]),
+            BraceBetweenPoints(grid.c2p(3/5, 0), grid.c2p(3/5, 4/5), direction=RIGHT, buff=0, color=CS[1]),
+            BraceBetweenPoints(grid.c2p(3/5, 4/5), grid.c2p(0, 0), buff=0, color=CS[2]),
+        ]
+        labels = [
+            MathTex("x", color=CS[0]),
+            MathTex("y", color=CS[1]),
+            MathTex("1", color=CS[2]),
+        ]
+        for (brace, label) in zip(braces, labels):
+            brace.put_at_tip(label, buff=0.125)
+            self.play(
+                Create(brace),
+                Create(label),
+            )
         for tex in texs:
             for i in range(3):
                 tex[i*2].set_color(CS[i])
-        self.play(Create(lines[0]))
-        self.play(Create(lines[1]))
         self.play(Create(texs[0]))
         self.play(Create(triangles[0]), run_time=4)
         self.play(Create(triangles[1]), run_time=4)
         self.play(Create(triangles[2]), run_time=4)
         self.play(ReplacementTransform(texs[0], texs[1]))
         self.play(ReplacementTransform(texs[1], texs[2]))
-        self.wait()
-        return
+        self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[2]]))
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)

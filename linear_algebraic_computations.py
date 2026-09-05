@@ -212,12 +212,13 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
-        x_u, y_u = math.cos(PI/3), math.sin(PI/3)
+        color_1, color_0, color_c = CS[0:3]
+        theta = PI/3
+        x_u, y_u = math.cos(theta), math.sin(theta)
         x_brace = BraceBetweenPoints(grid.c2p(0, 0), grid.c2p(x_u, 0), direction=DOWN, buff=0, color=LIGHT_GRAY)
         y_brace = BraceBetweenPoints(grid.c2p(x_u, 0), grid.c2p(x_u, y_u), direction=RIGHT, buff=0, color=LIGHT_GRAY)
-        x_tex = MathTex("x_u", color=LIGHT_GRAY, font_size=32).next_to(x_brace, DOWN)
-        y_tex = MathTex("y_u", color=LIGHT_GRAY, font_size=32).next_to(y_brace, RIGHT)
-        color_1, color_0, color_c = CS[0:3]
+        x_tex = MathTex("x_u", color=color_c, font_size=32).next_to(x_brace, 0.5 * DOWN)
+        y_tex = MathTex("y_u", color=color_c, font_size=32).next_to(y_brace, 0.5 * RIGHT)
         covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
         self.play(
@@ -237,7 +238,7 @@ class Projection(Scene):
             Create(tex_1),
         )
         arrow_0 = Arrow(color=color_0, start=grid.c2p(0, 0), end=grid.c2p(-y_u, x_u), buff=0)
-        angle_01 = RightAngle(arrow_0, arrow_1, length=0.2, color=LIGHT_GRAY)
+        angle_01 = RightAngle(arrow_0, arrow_1, length=0.25, color=LIGHT_GRAY)
         vector_0 = Matrix([["-y_u"], ["x_u"]]).next_to(covector)
         vector_0.set_column_colors(color_0)
         tex_0 = MathTex("0", color=color_c).next_to(arrow_0.get_end(), LEFT)
@@ -247,6 +248,12 @@ class Projection(Scene):
             Create(arrow_0),
             Create(angle_01),
             Create(tex_0),
+        )
+        line_c = Line(color=color_c, start=grid.c2p(1, -8), end=grid.c2p(1, 8)).rotate(theta, about_point=grid.c2p(0, 0))
+        angle_1c = RightAngle(arrow_1, line_c, length=0.25, quadrant=(-1,1), color=LIGHT_GRAY)
+        self.play(
+            Create(line_c),
+            Create(angle_1c),
         )
         self.wait()
         return

@@ -216,14 +216,15 @@ class Projection(Scene):
         color_1, color_0, color_c = CS[0:3]
         theta = PI/3
         x_u, y_u = math.cos(theta), math.sin(theta)
-        x_line = DashedLine(start=grid.c2p(x_u, y_u), end=grid.c2p(x_u, -1), color=color_c)
-        y_line = DashedLine(start=grid.c2p(x_u, y_u), end=grid.c2p(2, y_u), color=color_c)
+        x_line = DashedLine(start=grid.c2p(x_u, y_u - 0.1), end=grid.c2p(x_u, -1), color=color_c)
+        y_line = DashedLine(start=grid.c2p(x_u + 0.1, y_u), end=grid.c2p(2, y_u), color=color_c)
         x_brace = BraceBetweenPoints(grid.c2p(0, -1), grid.c2p(x_u, -1), direction=DOWN, buff=0, color=color_c)
         y_brace = BraceBetweenPoints(grid.c2p(2, 0), grid.c2p(2, y_u), direction=RIGHT, buff=0, color=color_c)
         x_tex = MathTex("x_u", color=color_c, font_size=32).next_to(x_brace, 0.5 * DOWN)
         y_tex = MathTex("y_u", color=color_c, font_size=32).next_to(y_brace, 0.5 * RIGHT)
         covector = Matrix([["x_u", "y_u"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
+        circle_c = Circle(radius=0.1, color=color_c).move_to(grid.c2p(x_u, y_u))
         self.play(
             Create(covector),
             Create(x_line),
@@ -232,11 +233,12 @@ class Projection(Scene):
             Create(y_brace),
             Create(x_tex),
             Create(y_tex),
+            Create(circle_c),
         )
         arrow_1 = Arrow(color=color_1, start=grid.c2p(0, 0), end=grid.c2p(x_u, y_u), buff=0)
         vector_1 = Matrix([["x_u"], ["y_u"]]).next_to(covector)
         vector_1.set_column_colors(color_1)
-        tex_1 = MathTex("1", color=color_c).next_to(arrow_1.get_end(), UP)
+        tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
         self.play(
             Create(vector_1),
             Create(arrow_1),
@@ -246,7 +248,7 @@ class Projection(Scene):
         angle_01 = RightAngle(arrow_0, arrow_1, length=0.25, color=LIGHT_GRAY)
         vector_0 = Matrix([["-y_u"], ["x_u"]]).next_to(covector)
         vector_0.set_column_colors(color_0)
-        tex_0 = MathTex("0", color=color_c).next_to(arrow_0.get_end(), LEFT)
+        tex_0 = MathTex("0", color=color_0).next_to(arrow_0.get_end(), LEFT)
         self.play(FadeOut(vector_1))
         self.play(
             Create(vector_0),
@@ -267,6 +269,8 @@ class Projection(Scene):
             Create(line_c),
             Create(angle_1c),
         )
+        self.wait()
+        # TODO: non-unit covectors
         # TODO: 4D generalization
         # '''
 

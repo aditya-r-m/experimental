@@ -324,25 +324,29 @@ class Projection(Scene):
             Create(angle_1c),
             FadeIn(tex_1_l),
         )
+        arrow_1_c = arrow_1.copy()
+        tex_1_c = tex_1.copy()
         self.play(
-            tex_1.animate.set_color(CS[-1]),
-            arrow_1.animate.set_color(CS[-1]),
-            FadeOut(angle_01),
-            FadeOut(angle_1c),
+            tex_1_c.animate.set_color(CS[-1]),
+            arrow_1_c.animate.set_color(CS[-1]),
         )
         ax, ay = x, y
         for diff in [(-4*y, 4*x), (8*y, -8*x), (-4*y, 4*x)]:
             ax, ay = ax + diff[0], ay + diff[1]
             self.play(
-                arrow_1.animate.put_start_and_end_on(grid.c2p(0, 0), grid.c2p(ax, ay)),
-                tex_1.animate.next_to(arrow_1.target.get_end(), UP),
+                arrow_1_c.animate.put_start_and_end_on(grid.c2p(0, 0), grid.c2p(ax, ay)),
+                tex_1_c.animate.next_to(arrow_1_c.target.get_end(), UP),
         )
         self.play(
+            FadeOut(angle_01),
+            FadeOut(angle_1c),
             FadeOut(vector_01),
             FadeOut(arrow_0),
             FadeOut(arrow_1),
+            FadeOut(arrow_1_c),
             FadeOut(tex_0),
             FadeOut(tex_1),
+            FadeOut(tex_1_c),
             FadeOut(tex_1_l),
             FadeOut(x_line),
             FadeOut(y_line),

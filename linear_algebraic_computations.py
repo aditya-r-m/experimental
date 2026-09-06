@@ -503,15 +503,18 @@ class Projection(Scene):
         i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
-        r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]]).move_to(LEFT*3)
+        r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]]).move_to(LEFT*4)
         r_tex.set_column_colors(*CS)
-        t_tex = Matrix([["g_x","g_y"],["r_x","r_y"]]).next_to(r_tex, LEFT)
-        t_tex.set_row_colors(*CS)
         self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
         self.play(
             Create(r_tex),
             *(Rotate(obj, theta, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle]),
         )
+        self.play(r_tex.animate.shift(RIGHT*1.5))
+        s_tex = MathTex("-1").next_to(r_tex, RIGHT+UP)
+        e_tex = MathTex("=").next_to(r_tex, LEFT)
+        t_tex = Matrix([["g_x","g_y"],["r_x","r_y"]]).next_to(e_tex, LEFT)
+        t_tex.set_row_colors(*CS)
         i_circle = Circle(radius=0.1, color=CS[0]).move_to(grid.c2p(x, y))
         i_line = Line(color=CS[0], start=grid.c2p(-8*x, -8*y), end=grid.c2p(8*x, 8*y))
         i_line.rotate(PI/2, about_point=grid.c2p(x / (x*x + y*y), y / (x*x + y*y)))
@@ -519,6 +522,8 @@ class Projection(Scene):
         j_line = Line(color=CS[1], start=grid.c2p(8*y, -8*x), end=grid.c2p(-8*y, 8*x))
         j_line.rotate(PI/2, about_point=grid.c2p(-y / (x*x + y*y), x / (x*x + y*y)))
         self.play(
+            Create(s_tex),
+            Create(e_tex),
             Create(t_tex),
             i_arrow.animate.set_opacity(0.5),
             ReplacementTransform(i_arrow.copy(), i_circle),
@@ -531,14 +536,6 @@ class Projection(Scene):
             i_arrow.animate.set_opacity(1),
             j_arrow.animate.set_opacity(1),
         )
-        self.play(
-            r_tex.animate.shift(UP),
-            t_tex.animate.shift(UP),
-        )
-        tr_tex = Matrix([[1,0],[0,1]]).next_to(r_tex, DOWN)
-        e_tex = MathTex("=").next_to(tr_tex, LEFT)
-        self.play(Create(e_tex))
-        self.play(Create(tr_tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
         # TODO : align subsection formatting
         g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))

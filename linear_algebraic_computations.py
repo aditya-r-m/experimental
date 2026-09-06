@@ -10,6 +10,8 @@ class Projection(Scene):
    def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
+        title = Text("Topics").to_edge(UP+LEFT)
+        self.play(Create(title))
         '''
         title_texts = [
             "Rotation Matrix",
@@ -69,7 +71,7 @@ class Projection(Scene):
                     max_tip_length_to_length_ratio=100,
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
         '''
@@ -219,7 +221,7 @@ class Projection(Scene):
             Create(v_tex),
         )
         self.play(
-            FadeOut(*[mob for mob in self.mobjects if mob not in [grid, title, i_arrow, j_arrow, ij_angle, v_arrow, unit_circle]]),
+            FadeOut(*(mob for mob in self.mobjects if mob not in [grid, title, i_arrow, j_arrow, ij_angle, v_arrow, unit_circle])),
             *(Rotate(obj, -PI/4, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
         )
         matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)
@@ -246,11 +248,11 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
         # '''
-        self.play(Create(Text("Projection Vector").to_edge(UP+LEFT)))
+        self.play(title.animate.become(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -368,7 +370,7 @@ class Projection(Scene):
             )
             circle_c = new_circle_c
             line_c = new_line_c
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         covector_4 = Matrix([["w_c","x_c","y_c","z_c"]])
         covector_4.get_entries()[:].set_color(CS[2])
         vector_4 = Matrix([["w"],["x"],["y"],["z"]]).next_to(covector_4, RIGHT)
@@ -399,7 +401,7 @@ class Projection(Scene):
             ReplacementTransform(covector_4_l, covector_4_l_f),
             ReplacementTransform(covector_4_r, covector_4_r_f),
         )
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         vector_4 = Matrix([["w"],["x"],["y"],["z"]])
         vector_4.get_entries()[:].set_color(CS[-1])
         covector_4 = Matrix([["w_c","x_c","y_c","z_c"]]).next_to(vector_4, LEFT)
@@ -411,12 +413,12 @@ class Projection(Scene):
         self.play(Create(covector_4))
         self.play(Create(vector_4))
         self.play(Create(tex))
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: projecting vectors
         # '''
 
         '''
-        self.play(Create(Text("Rotation Transpose").to_edge(UP+LEFT)))
+        self.play(title.animate.become(Text("Rotation Transpose").to_edge(UP+LEFT)))
         # TODO: transpose based inverse
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
         self.play(Create(unit_circle))
@@ -477,18 +479,18 @@ class Projection(Scene):
             Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
             Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
         )
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
         '''
-        self.play(Create(Text("Spectral Theorem").to_edge(UP+LEFT)))
+        self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
         - Lagrange multipliers : \nabla xAx optimized over xx=1
         - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
         '''
-        self.play(Create(Text("Eigenvector Computation").to_edge(UP+LEFT)))
+        self.play(title.animate.become(Text("Eigenvector Computation").to_edge(UP+LEFT)))
         def qr(A):
             m, n = A.shape
             Q = np.zeros((m, n))
@@ -532,7 +534,7 @@ class Projection(Scene):
         A_0 = Q_0 R_0 -> E_0 = Q_0
         A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
         A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
-        self.play(FadeOut(*self.mobjects))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
 

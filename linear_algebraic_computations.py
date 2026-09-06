@@ -14,7 +14,7 @@ class Projection(Scene):
         title_texts = [
             "Rotation Matrix",
             "Projection Vector",
-            "Rotation Transpose",
+            "Rotation Inverse",
             "Spectral Theorem",
             "Eigenvector Computation\n     (QR Iteration)",
             "Singular Value Decomposition",
@@ -478,7 +478,7 @@ class Projection(Scene):
         '''
 
         '''
-        self.play(title.animate.become(Text("Rotation Transpose").to_edge(UP+LEFT)))
+        self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
         # TODO: transpose based inverse
         unit_circle = Circle(radius=1, color=CS[-1]).move_to(grid.c2p(0, 0))
         self.play(Create(unit_circle))

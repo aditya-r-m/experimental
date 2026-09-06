@@ -10,39 +10,37 @@ class Projection(Scene):
    def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        title = Text("Topics").to_edge(UP+LEFT)
-        self.play(Create(title))
-        '''
+        # '''
         title_texts = [
             "Rotation Matrix",
             "Projection Vector",
             "Rotation Transpose",
             "Spectral Theorem",
-            "Eigenvector Computation",
+            "Eigenvector Computation\n     (QR Iteration)",
             "Singular Value Decomposition",
-            "PCA Dimension Reduction",
+            "      Dimension Reduction\n(Principal Component Analysis)",
             "Projection Matrix",
-            "OLS Linear Regression",
+            "    Linear Regression\n(Ordinary Least Squares)",
         ]
         node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
         layout = [
-            np.array([-3,3,0]),
-            np.array([3,3,0]),
-            np.array([-3,2,0]),
-            np.array([-3,1,0]),
-            np.array([-3,0,0]),
-            np.array([-3,-1,0]),
-            np.array([-3,-2,0]),
-            np.array([3,-1,0]),
-            np.array([3,-2,0]),
+            np.array([-5,3,0]),
+            np.array([5,3,0]),
+            np.array([-5,1,0]),
+            np.array([-5,-1,0]),
+            np.array([-5,-3,0]),
+            np.array([0,-1,0]),
+            np.array([0,-3,0]),
+            np.array([5,-1,0]),
+            np.array([5,-3,0]),
         ]
         edges = [
             [],
             [0],
             [0,1],
             [2,1],
+            [3],
             [3,1],
-            [4],
             [5],
             [5,1],
             [7],
@@ -71,12 +69,12 @@ class Projection(Scene):
                     max_tip_length_to_length_ratio=100,
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        '''
+        self.play(FadeOut(*self.mobjects))
+        # '''
 
-        '''
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
+        '''
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -251,7 +249,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
-        # '''
+        '''
         self.play(title.animate.become(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -477,7 +475,7 @@ class Projection(Scene):
         )
         self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        # '''
+        '''
 
         '''
         self.play(title.animate.become(Text("Rotation Transpose").to_edge(UP+LEFT)))

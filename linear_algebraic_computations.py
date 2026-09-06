@@ -511,7 +511,7 @@ class Projection(Scene):
             *(Rotate(obj, theta, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle]),
         )
         self.play(r_tex.animate.shift(RIGHT*1.5))
-        s_tex = MathTex("-1").next_to(r_tex, RIGHT+UP)
+        s_tex = MathTex("-1").next_to(r_tex, RIGHT+UP, buff=0)
         e_tex = MathTex("=").next_to(r_tex, LEFT)
         t_tex = Matrix([["g_x","g_y"],["r_x","r_y"]]).next_to(e_tex, LEFT)
         t_tex.set_row_colors(*CS)
@@ -537,64 +537,28 @@ class Projection(Scene):
             j_arrow.animate.set_opacity(1),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
-        # TODO : align subsection formatting
-        g_arrow = Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(1, 0))
-        g_matrix = Matrix([["1"], ["0"]]).move_to(LEFT*4)
-        g_matrix_rotated = Matrix([["g_x"], ["g_y"]]).move_to(LEFT*4)
-        g_matrix.set_column_colors(CS[0])
-        g_matrix_rotated.set_column_colors(CS[0])
-        dot = MathTex(r"\cdot").next_to(g_matrix, LEFT)
-        v_arrow = Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(3, 1))
-        v_matrix = Matrix([["v_x"], ["v_y"]]).next_to(dot, LEFT)
-        v_matrix.set_column_colors(CS[2])
-        v_dots = DashedLine(color=CS[2]).put_start_and_end_on(v_arrow.get_end(), [v_arrow.get_end()[0], 0, 0])
-        v_brace = BraceBetweenPoints(
-            np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
-            np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
-            direction=UP,
-            buff=0,
-            color=CS[2]
-        )
-        equals = MathTex(r"=").next_to(g_matrix, RIGHT)
-        result = MathTex(r"v_x").next_to(equals, RIGHT)
-        question = MathTex(r"?").next_to(equals, RIGHT)
+        theta = PI/3
+        x, y = math.cos(theta), math.sin(theta)
+        g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(x, y), color=CS[0], buff=0)
+        y_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(3, 1), color=CS[2], buff=0)
+        g_matrix = Matrix([["g_x","g_y"],["-","-"]]).move_to(LEFT*5)
+        g_matrix.set_row_colors(CS[0])
+        y_matrix = Matrix([["v_x"],["v_y"]]).next_to(g_matrix, RIGHT)
+        y_matrix.set_column_colors(CS[2])
         self.play(
             Create(g_arrow),
-            Create(v_arrow),
-        )
-        self.play(Create(v_matrix))
-        self.play(Create(dot))
-        self.play(Create(g_matrix))
-        self.play(Create(equals))
-        self.play(
-            Create(result),
-            FadeIn(v_brace),
+            Create(y_arrow),
+            Create(g_matrix),
+            Create(y_matrix),
         )
         self.play(
-            FadeOut(v_brace),
-            FadeOut(result),
+            Rotate(g_arrow, -theta, about_point=grid.c2p(0, 0)),
+            Rotate(y_arrow, -theta, about_point=grid.c2p(0, 0)),
         )
-        self.play(
-            Rotate(g_arrow, angle=PI/3, about_point=g_arrow.get_start()),
-            ReplacementTransform(g_matrix, g_matrix_rotated),
-            dot.animate.next_to(g_matrix_rotated, LEFT),
-            v_matrix.animate.next_to(dot.target, LEFT),
-            equals.animate.next_to(g_matrix_rotated, RIGHT),
-            question.animate.next_to(equals.target, RIGHT),
-        )
-        rotation_matrix_1 = MathTex(r"R").next_to(dot, RIGHT)
-        rotation_matrix_0 = MathTex(r"R").next_to(v_matrix, LEFT)
-        self.play(
-            g_matrix_rotated.animate.next_to(rotation_matrix_1, RIGHT),
-            equals.animate.next_to(g_matrix_rotated.target, RIGHT),
-            question.animate.next_to(equals.target, RIGHT),
-        )
-        self.play(
-            Create(rotation_matrix_0),
-            Create(rotation_matrix_1),
-            Rotate(g_arrow, angle=-PI/3, about_point=g_arrow.get_start()),
-            Rotate(v_arrow, angle=-PI/3, about_point=v_arrow.get_start()),
-        )
+        y_line = DashedLine(start=y_arrow.get_end(), end=[y_arrow.get_end()[0], y_arrow.get_start()[1], 0], color=CS[2])
+        self.play(Create(y_line))
+        r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
+        self.play(Create(r_tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 

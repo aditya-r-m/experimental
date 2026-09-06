@@ -427,7 +427,6 @@ class Projection(Scene):
             covector_4_r_f.get_entries()[3].animate.next_to(tex_p_r, RIGHT),
             vector_4_r.get_entries()[3].animate.next_to(covector_4_r_f.get_entries()[3].target, RIGHT),
         )
-        self.wait()
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))

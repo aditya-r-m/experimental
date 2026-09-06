@@ -251,7 +251,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
-        '''
+        # '''
         self.play(title.animate.become(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -414,8 +414,6 @@ class Projection(Scene):
         self.play(Create(vector_4))
         self.play(Create(tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        '''
-        # TODO: projecting vectors
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -462,21 +460,21 @@ class Projection(Scene):
             ReplacementTransform(circle_u, circle_uu),
             ReplacementTransform(line_u, line_uu),
         )
-        self.play(
-            tex_0.animate.shift(UP),
-            tex_1.animate.shift(UP),
-        )
         tex_2 = MathTex(
-            r"{{ v_u }} = ( {{ \hat{u}^T }} {{ v }}) {{ \hat{u} }} = \frac{u^T v}{u^T u} u",
+            r"{{ v_u }} = \left( {{ \hat{u}^T }} {{ v }} \right) {{ \hat{u} }} = \left( \frac{u^T v}{u^T u} \right) u",
             tex_to_color_map={"v_u": CS[-1], r"\hat{u}^T": CS[0], "v": CS[1], r"\hat{u}": CS[0], r"u^T": CS[0], "u": CS[0]},
         ).next_to(tex_1, DOWN)
         self.play(Create(tex_2))
-        self.play(FadeIn(arrow_vu, arrow_vup, angle_v))
+        self.play(Create(arrow_vu.set_opacity(1)))
         tex_3 = MathTex(
-            r"{{v_{u^\perp}}} = {{ v_u }} - \frac{u^T v}{u^T u} u",
-            tex_to_color_map={r"v_{u^\perp}":CS[2], "v_u": CS[-1], r"u^T": CS[0], "v": CS[1], "u": CS[0]},
-        ).next_to(tex_2, DOWN)
+            r"\implies {{v_{u^\perp}}} = {{v}} - {{v_u}}",
+            tex_to_color_map={"v": CS[1], "v_u": CS[-1], r"v_{u^\perp}": CS[2]},
+        ).next_to(tex_0, RIGHT)
         self.play(Create(tex_3))
+        self.play(
+            Create(arrow_vup.set_opacity(1)),
+            Create(angle_v.set_stroke_opacity(1)),
+        )
         self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''

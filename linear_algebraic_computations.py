@@ -322,7 +322,7 @@ class Projection(Scene):
         tex_1_l.set_color(CS[-1])
         self.play(
             Create(vector_01),
-            Create(line_c),
+            GrowFromPoint(line_c, grid.c2p(0, 0)),
             Create(angle_1c),
             FadeIn(tex_1_l),
         )
@@ -419,17 +419,46 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
-        tex_0 = MathTex(r"\vec{v} = \vec{v}_u + \vec{v}_{u^\perp}").move_to(LEFT*4)
-        tex_0[0][:2].set_color(CS[1])
-        tex_0[0][3:6].set_color(CS[-1])
-        tex_0[0][7:].set_color(CS[2])
+        tex_0 = MathTex(r"v = v_u + v_{u^\perp}").move_to(LEFT*4)
+        tex_0[0][:1].set_color(CS[1])
+        tex_0[0][2:4].set_color(CS[-1])
+        tex_0[0][5:].set_color(CS[2])
         arrow_u = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2, 1), buff=0)
         arrow_v = Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(2, 4), buff=0)
+        arrow_vu = Arrow(color=CS[-1], start=grid.c2p(0, 0), end=grid.c2p(2*8/5, 1*8/5), buff=0, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
+        arrow_vup = Arrow(color=CS[2], start=grid.c2p(2*8/5, 1*8/5), end=grid.c2p(2, 4), buff=0, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
+        angle_v = RightAngle(arrow_vu, arrow_vup, length=0.4, quadrant=(-1, 1), color=LIGHT_GRAY, stroke_opacity=0.5)
         self.play(
             Create(tex_0),
             Create(arrow_u),
             Create(arrow_v),
         )
+        self.play(Create(arrow_vu))
+        self.play(
+            Create(arrow_vup),
+            Create(angle_v)
+        )
+        self.play(FadeOut(arrow_vu, arrow_vup, angle_v))
+        self.play(tex_0.animate.shift(UP))
+        tex_1 = MathTex(r"\hat{u} = \frac{u}{\sqrt{u^T u}}").next_to(tex_0, DOWN)
+        tex_1[0][:2].set_color(CS[0])
+        tex_1[0][3:].set_color(CS[0])
+        self.play(Create(tex_1))
+        circle_u = Circle(radius=0.1, color=CS[0]).move_to(grid.c2p(2, 1))
+        line_u = Line(color=CS[0], start=grid.c2p(-8*2, -8*1), end=grid.c2p(8*2, 8*1))
+        line_u.rotate(PI/2, about_point=grid.c2p(2 / (2*2 + 1*1), 1 / (2*2 + 1*1)))
+        self.play(
+            arrow_u.animate.set_opacity(0.5),
+            ReplacementTransform(arrow_u.copy(), circle_u),
+            GrowFromPoint(line_u, grid.c2p(0, 0)),
+        )
+        arrow_uu = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)), buff=0)
+        self.play(
+            ReplacementTransform(arrow_u, arrow_uu),
+            ReplacementTransform(circle_u, arrow_uu),
+            FadeOut(line_u),
+        )
+        self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 

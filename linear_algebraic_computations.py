@@ -251,7 +251,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
-        # '''
+        '''
         self.play(title.animate.become(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -414,7 +414,23 @@ class Projection(Scene):
         self.play(Create(vector_4))
         self.play(Create(tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        '''
         # TODO: projecting vectors
+        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
+        tex_0 = MathTex(r"\vec{v} = \vec{v}_u + \vec{v}_{u^\perp}").move_to(LEFT*4)
+        tex_0[0][:2].set_color(CS[1])
+        tex_0[0][3:6].set_color(CS[-1])
+        tex_0[0][7:].set_color(CS[2])
+        arrow_u = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2, 1), buff=0)
+        arrow_v = Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(2, 4), buff=0)
+        self.play(
+            Create(tex_0),
+            Create(arrow_u),
+            Create(arrow_v),
+        )
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 
         '''

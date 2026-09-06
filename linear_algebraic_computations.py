@@ -437,9 +437,9 @@ class Projection(Scene):
         ).move_to(LEFT*4)
         arrow_u = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2, 1), buff=0)
         arrow_v = Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(2, 4), buff=0)
-        arrow_vu = Arrow(color=CS[-1], start=grid.c2p(0, 0), end=grid.c2p(2*8/5, 1*8/5), buff=0, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
-        arrow_vup = Arrow(color=CS[2], start=grid.c2p(2*8/5, 1*8/5), end=grid.c2p(2, 4), buff=0, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
-        angle_v = RightAngle(arrow_vu, arrow_vup, length=0.4, quadrant=(-1, 1), color=LIGHT_GRAY, stroke_opacity=0.5)
+        arrow_vu = Arrow(color=CS[-1], start=grid.c2p(0, 0), end=grid.c2p(2*8/5, 1*8/5), buff=0)#, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
+        arrow_vup = Arrow(color=CS[2], start=grid.c2p(2*8/5, 1*8/5), end=grid.c2p(2, 4), buff=0)#, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
+        angle_v = RightAngle(arrow_vu, arrow_vup, length=0.4, quadrant=(-1, 1), color=LIGHT_GRAY)#, stroke_opacity=0.5)
         self.play(
             Create(tex_0),
             Create(arrow_u),
@@ -479,15 +479,15 @@ class Projection(Scene):
             tex_to_color_map={"v_u": CS[-1], r"\hat{u}^T": CS[0], "v": CS[1], r"\hat{u}": CS[0], r"u^T": CS[0], "u": CS[0]},
         ).next_to(tex_1, DOWN)
         self.play(Create(tex_2))
-        self.play(Create(arrow_vu.set_opacity(1)))
+        self.play(Create(arrow_vu))
         tex_3 = MathTex(
             r"\implies {{v_{u^\perp}}} = {{v}} - {{v_u}}",
             tex_to_color_map={"v": CS[1], "v_u": CS[-1], r"v_{u^\perp}": CS[2]},
         ).next_to(tex_0, RIGHT)
         self.play(Create(tex_3))
         self.play(
-            Create(arrow_vup.set_opacity(1)),
-            Create(angle_v.set_stroke_opacity(1)),
+            Create(arrow_vup),
+            Create(angle_v),
         )
         self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))

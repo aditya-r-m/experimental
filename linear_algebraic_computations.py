@@ -419,10 +419,10 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
-        tex_0 = MathTex(r"v = v_u + v_{u^\perp}").move_to(LEFT*4)
-        tex_0[0][:1].set_color(CS[1])
-        tex_0[0][2:4].set_color(CS[-1])
-        tex_0[0][5:].set_color(CS[2])
+        tex_0 = MathTex(
+            r"{{v}} = {{v_u}} + {{v_{u^\perp}}}",
+            tex_to_color_map={"v": CS[1], "v_u": CS[-1], r"v_{u^\perp}": CS[2]},
+        ).move_to(LEFT*4)
         arrow_u = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2, 1), buff=0)
         arrow_v = Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(2, 4), buff=0)
         arrow_vu = Arrow(color=CS[-1], start=grid.c2p(0, 0), end=grid.c2p(2*8/5, 1*8/5), buff=0, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
@@ -440,9 +440,10 @@ class Projection(Scene):
         )
         self.play(FadeOut(arrow_vu, arrow_vup, angle_v))
         self.play(tex_0.animate.shift(UP))
-        tex_1 = MathTex(r"\hat{u} = \frac{u}{\sqrt{u^T u}}").next_to(tex_0, DOWN)
-        tex_1[0][:2].set_color(CS[0])
-        tex_1[0][3:].set_color(CS[0])
+        tex_1 = MathTex(
+            r"{{\hat{u}}} = \frac{ {{u}} }{\sqrt{ {{u^T}} {{u}} }}",
+            tex_to_color_map={r"\hat{u}": CS[0], "u": CS[0], r"u^T": CS[0]},
+        ).next_to(tex_0, DOWN)
         self.play(Create(tex_1))
         circle_u = Circle(radius=0.1, color=CS[0]).move_to(grid.c2p(2, 1))
         line_u = Line(color=CS[0], start=grid.c2p(-8*2, -8*1), end=grid.c2p(8*2, 8*1))
@@ -453,11 +454,29 @@ class Projection(Scene):
             GrowFromPoint(line_u, grid.c2p(0, 0)),
         )
         arrow_uu = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)), buff=0)
+        circle_uu = Circle(radius=0.1, color=CS[0]).move_to(grid.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)))
+        line_uu = Line(color=CS[0], start=grid.c2p(-8*2, -8*1), end=grid.c2p(8*2, 8*1))
+        line_uu.rotate(PI/2, about_point=grid.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)))
         self.play(
             ReplacementTransform(arrow_u, arrow_uu),
-            ReplacementTransform(circle_u, arrow_uu),
-            FadeOut(line_u),
+            ReplacementTransform(circle_u, circle_uu),
+            ReplacementTransform(line_u, line_uu),
         )
+        self.play(
+            tex_0.animate.shift(UP),
+            tex_1.animate.shift(UP),
+        )
+        tex_2 = MathTex(
+            r"{{ v_u }} = ( {{ \hat{u}^T }} {{ v }}) {{ \hat{u} }} = \frac{u^T v}{u^T u} u",
+            tex_to_color_map={"v_u": CS[-1], r"\hat{u}^T": CS[0], "v": CS[1], r"\hat{u}": CS[0], r"u^T": CS[0], "u": CS[0]},
+        ).next_to(tex_1, DOWN)
+        self.play(Create(tex_2))
+        self.play(FadeIn(arrow_vu, arrow_vup, angle_v))
+        tex_3 = MathTex(
+            r"{{v_{u^\perp}}} = {{ v_u }} - \frac{u^T v}{u^T u} u",
+            tex_to_color_map={r"v_{u^\perp}":CS[2], "v_u": CS[-1], r"u^T": CS[0], "v": CS[1], "u": CS[0]},
+        ).next_to(tex_2, DOWN)
+        self.play(Create(tex_3))
         self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''

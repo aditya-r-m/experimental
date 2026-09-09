@@ -493,7 +493,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 
-        # '''
+        '''
         self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -560,13 +560,23 @@ class Projection(Scene):
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        # '''
-
         '''
+
+        # '''
         self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
-        - Lagrange multipliers : \nabla xAx optimized over xx=1
-        - Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        # TODO: intuition against shear and rotation
+        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
+        g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
+        r_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
+        self.play(
+            Create(g_arrow),
+            Create(r_arrow),
+        )
+        # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
+        # TODO: Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0
+        # self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 
         '''

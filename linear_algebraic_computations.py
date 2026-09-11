@@ -564,7 +564,6 @@ class Projection(Scene):
 
         # '''
         self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
-        # TODO: intuition against shear and rotation
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))

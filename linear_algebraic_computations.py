@@ -570,9 +570,49 @@ class Projection(Scene):
         self.play(Create(grid), Create(unit_circle))
         g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         r_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
+        matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*4)
+        matrix.set_column_colors(*CS)
         self.play(
             Create(g_arrow),
             Create(r_arrow),
+            Create(matrix),
+        )
+        lines = []
+        for t in range(32):
+            theta = 2*PI*t/32
+            x, y = 4*math.cos(theta), 4*math.sin(theta)
+            c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
+            lines.append(Line(
+                start=grid.c2p(0, 0),
+                end=grid.c2p(x, y),
+                color=c,
+                buff=0,
+                stroke_opacity=0.5,
+            ))
+        self.play(*(Create(line) for line in lines))
+        shear = [[1, 0],[0.5, 1]]
+        g_arrow_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(shear[0][0], shear[1][0]), color=CS[0], buff=0)
+        r_arrow_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(shear[0][1], shear[1][1]), color=CS[1], buff=0)
+        matrix_sheared = Matrix(shear).move_to(LEFT*4)
+        matrix_sheared.set_column_colors(*CS)
+        lines_sheared = []
+        for t in range(32):
+            theta = 2*PI*t/32
+            x, y = 4*math.cos(theta), 4*math.sin(theta)
+            c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
+            x, y = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][0]*y
+            lines_sheared.append(Line(
+                start=grid.c2p(0, 0),
+                end=grid.c2p(x, y),
+                color=c,
+                buff=0,
+                stroke_opacity=0.5,
+            ))
+        self.play(
+            ReplacementTransform(g_arrow, g_arrow_sheared),
+            ReplacementTransform(r_arrow, r_arrow_sheared),
+            ReplacementTransform(matrix, matrix_sheared),
+            *(ReplacementTransform(line, line_sheared) for (line, line_sheared) in zip(lines, lines_sheared)),
         )
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0

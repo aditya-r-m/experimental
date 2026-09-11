@@ -600,7 +600,7 @@ class Projection(Scene):
             theta = 2*PI*t/32
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
-            x, y = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][0]*y
+            x, y = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][1]*y
             lines_sheared.append(Line(
                 start=grid.c2p(0, 0),
                 end=grid.c2p(x, y),
@@ -608,11 +608,24 @@ class Projection(Scene):
                 buff=0,
                 stroke_opacity=0.5,
             ))
+        arrows = []
+        for t in range(32):
+            theta = 2*PI*t/32
+            x, y = math.cos(theta), math.sin(theta)
+            c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
+            x_u, y_u = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][1]*y
+            arrows.append(Arrow(
+                start=grid.c2p(x, y),
+                end=grid.c2p(x_u, y_u),
+                color=c,
+                buff=0,
+            ))
         self.play(
             ReplacementTransform(g_arrow, g_arrow_sheared),
             ReplacementTransform(r_arrow, r_arrow_sheared),
             ReplacementTransform(matrix, matrix_sheared),
             *(ReplacementTransform(line, line_sheared) for (line, line_sheared) in zip(lines, lines_sheared)),
+            *(Create(arrow) for arrow in arrows),
         )
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0

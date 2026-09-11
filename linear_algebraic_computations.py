@@ -608,13 +608,13 @@ class Projection(Scene):
                 buff=0,
                 stroke_opacity=0.5,
             ))
-        arrows = []
+        arrows_sheared = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = math.cos(theta), math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][1]*y
-            arrows.append(Arrow(
+            arrows_sheared.append(Arrow(
                 start=grid.c2p(x, y),
                 end=grid.c2p(x_u, y_u),
                 color=c,
@@ -625,7 +625,44 @@ class Projection(Scene):
             ReplacementTransform(r_arrow, r_arrow_sheared),
             ReplacementTransform(matrix, matrix_sheared),
             *(ReplacementTransform(line, line_sheared) for (line, line_sheared) in zip(lines, lines_sheared)),
-            *(Create(arrow) for arrow in arrows),
+            *(Create(arrow_sheared) for arrow_sheared in arrows_sheared),
+        )
+        aligned_shear = [[1, -0.5],[0.5, 1]]
+        g_arrow_aligned_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(aligned_shear[0][0], aligned_shear[1][0]), color=CS[0], buff=0)
+        r_arrow_aligned_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(aligned_shear[0][1], aligned_shear[1][1]), color=CS[1], buff=0)
+        matrix_aligned_sheared = Matrix(aligned_shear).move_to(LEFT*4)
+        matrix_aligned_sheared.set_column_colors(*CS)
+        lines_aligned_sheared = []
+        for t in range(32):
+            theta = 2*PI*t/32
+            x, y = 4*math.cos(theta), 4*math.sin(theta)
+            c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
+            x, y = aligned_shear[0][0]*x + aligned_shear[0][1]*y, aligned_shear[1][0]*x + aligned_shear[1][1]*y
+            lines_aligned_sheared.append(Line(
+                start=grid.c2p(0, 0),
+                end=grid.c2p(x, y),
+                color=c,
+                buff=0,
+                stroke_opacity=0.5,
+            ))
+        arrows_aligned_sheared = []
+        for t in range(32):
+            theta = 2*PI*t/32
+            x, y = math.cos(theta), math.sin(theta)
+            c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
+            x_u, y_u = aligned_shear[0][0]*x + aligned_shear[0][1]*y, aligned_shear[1][0]*x + aligned_shear[1][1]*y
+            arrows_aligned_sheared.append(Arrow(
+                start=grid.c2p(x, y),
+                end=grid.c2p(x_u, y_u),
+                color=c,
+                buff=0,
+            ))
+        self.play(
+            ReplacementTransform(g_arrow_sheared, g_arrow_aligned_sheared),
+            ReplacementTransform(r_arrow_sheared, r_arrow_aligned_sheared),
+            ReplacementTransform(matrix_sheared, matrix_aligned_sheared),
+            *(ReplacementTransform(line_sheared, line_aligned_sheared) for (line_sheared, line_aligned_sheared) in zip(lines_sheared, lines_aligned_sheared)),
+            *(ReplacementTransform(arrow_sheared, arrow_aligned_sheared) for (arrow_sheared, arrow_aligned_sheared) in zip(arrows_sheared, arrows_aligned_sheared)),
         )
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plan : px = 0 and Ax = (\lambda)x => (pA)x = 0

@@ -619,6 +619,11 @@ class Projection(Scene):
                 color=c,
                 buff=0,
             ))
+        _, eigen_vectors = np.linalg.eig(np.array(shear))
+        eigen_line = Line(start=grid.c2p(-4*eigen_vectors[0][0], -4*eigen_vectors[1][0]), end=grid.c2p(4*eigen_vectors[0][0], 4*eigen_vectors[1][0]), color=CS[-1], buff=0)
+        self.play(Create(eigen_line))
+        eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
+        self.play(Uncreate(eigen_line))
         self.play(
             ReplacementTransform(g_arrow, g_arrow_sheared),
             ReplacementTransform(r_arrow, r_arrow_sheared),
@@ -700,6 +705,12 @@ class Projection(Scene):
             *(ReplacementTransform(line_aligned_sheared, line_counter_sheared) for (line_aligned_sheared, line_counter_sheared) in zip(lines_aligned_sheared, lines_counter_sheared)),
             *(ReplacementTransform(arrow_aligned_sheared, arrow_counter_sheared) for (arrow_aligned_sheared, arrow_counter_sheared) in zip(arrows_aligned_sheared, arrows_counter_sheared)),
         )
+        _, eigen_vectors = np.linalg.eig(np.array(counter_shear))
+        for i in range(2):
+            eigen_line = Line(start=grid.c2p(-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), end=grid.c2p(4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), color=CS[-1], buff=0)
+            self.play(Create(eigen_line))
+            eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
+            self.play(Uncreate(eigen_line))
         imbalanced_counter_shear = [[1.5, 0.5],[0.5, 1]]
         g_arrow_imbalanced_counter_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(imbalanced_counter_shear[0][0], imbalanced_counter_shear[1][0]), color=CS[0], buff=0)
         r_arrow_imbalanced_counter_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(imbalanced_counter_shear[0][1], imbalanced_counter_shear[1][1]), color=CS[1], buff=0)
@@ -737,6 +748,12 @@ class Projection(Scene):
             *(ReplacementTransform(line_counter_sheared, line_imbalanced_counter_sheared) for (line_counter_sheared, line_imbalanced_counter_sheared) in zip(lines_counter_sheared, lines_imbalanced_counter_sheared)),
             *(ReplacementTransform(arrow_counter_sheared, arrow_imbalanced_counter_sheared) for (arrow_counter_sheared, arrow_imbalanced_counter_sheared) in zip(arrows_counter_sheared, arrows_imbalanced_counter_sheared)),
         )
+        _, eigen_vectors = np.linalg.eig(np.array(imbalanced_counter_shear))
+        for i in range(2):
+            eigen_line = Line(start=grid.c2p(-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), end=grid.c2p(4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), color=CS[-1], buff=0)
+            self.play(Create(eigen_line))
+            eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
+            self.play(Uncreate(eigen_line))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
         # self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))

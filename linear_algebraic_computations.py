@@ -10,7 +10,7 @@ class Projection(Scene):
    def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        '''
+        r'''
         title_texts = [
             "Rotation Matrix",
             "Projection Vector",
@@ -74,7 +74,7 @@ class Projection(Scene):
 
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
-        '''
+        r'''
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -249,7 +249,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 
-        '''
+        r'''
         self.play(title.animate.become(Text("Projection Vector").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -493,7 +493,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 
-        '''
+        r'''
         self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -562,7 +562,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
-        # '''
+        r'''
         self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -754,12 +754,52 @@ class Projection(Scene):
             self.play(Create(eigen_line))
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        '''
+        tex_f = MathTex(r"\frac{\partial f(x, y)}{\partial x} = \lim_{\Delta x \rightarrow 0} \frac{f(x + \Delta x, y) - f(x)}{\Delta x}")
+        self.play(Create(tex_f))
+        self.play(Uncreate(tex_f))
+        tex_e = MathTex("=")
+        tex_x = MathTex(r"\frac{\partial x}{\partial x}").next_to(tex_e, LEFT)
+        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{(x + }} {{ \Delta x }} {{ )   - x }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
+        tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ \Delta x }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
+        tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ 1 }}").next_to(tex_e, RIGHT)
+        tex_r = MathTex(r"{{ 1 }}").next_to(tex_e, RIGHT)
+        self.play(
+            Create(tex_x),
+            Create(tex_e),
+            Create(tex_r0),
+        )
+        self.play(TransformMatchingTex(tex_r0, tex_r1))
+        self.play(TransformMatchingTex(tex_r1, tex_r2))
+        self.play(TransformMatchingTex(tex_r2, tex_r))
+        tex_xs = MathTex(r"+ \frac{\partial x}{\partial x} + \ ..\ y \text{ times }").next_to(tex_e, LEFT)
+        tex_rs = MathTex(r"+ 1 + \ ..\ y \text{ times }").next_to(tex_r, RIGHT)
+        self.play(
+            tex_x.animate.next_to(tex_xs, LEFT),
+        )
+        self.play(
+            Create(tex_xs),
+            Create(tex_rs),
+        )
+        tex_y = MathTex("y").next_to(tex_x, LEFT)
+        self.play(
+            Uncreate(tex_xs),
+            Uncreate(tex_rs),
+            Create(tex_y),
+            tex_r.animate.become(MathTex("y").next_to(tex_e, RIGHT)),
+        )
+        self.play(
+            tex_x.animate.next_to(tex_e, LEFT),
+            tex_y.animate.next_to(tex_x.target, LEFT),
+        )
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
         # self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # '''
 
-        '''
+        r'''
         self.play(title.animate.become(Text("Eigenvector Computation").to_edge(UP+LEFT)))
         def qr(A):
             m, n = A.shape

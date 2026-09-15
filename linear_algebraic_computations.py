@@ -794,6 +794,24 @@ class Projection(Scene):
             tex_y.animate.next_to(tex_x.target, LEFT),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        tex_x = MathTex(r"\frac{\partial (x^2) }{\partial x}").next_to(tex_e, LEFT)
+        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x + }} {{ \Delta x }} {{ )^2   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
+        tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x^2 + }} {{ 2 x \Delta x }} {{ + \Delta x^2 )   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
+        tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ 2 x \Delta x }} {{ + \Delta x^2 }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
+        tex_r3 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ 2 x \Delta x }} {{ + \Delta x^2 }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
+        tex_r4 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} ( {{ 2 x + \Delta x }} )").next_to(tex_e, RIGHT)
+        tex_r = MathTex(r"{{ 2 x }}").next_to(tex_e, RIGHT)
+        self.play(
+            Create(tex_x),
+            Create(tex_e),
+            Create(tex_r0),
+        )
+        self.play(TransformMatchingTex(tex_r0, tex_r1))
+        self.play(TransformMatchingTex(tex_r1, tex_r2))
+        self.play(TransformMatchingTex(tex_r2, tex_r3))
+        self.play(TransformMatchingTex(tex_r3, tex_r4))
+        self.play(TransformMatchingTex(tex_r4, tex_r))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
         # self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))

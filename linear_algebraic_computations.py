@@ -756,57 +756,37 @@ class Projection(Scene):
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
-        tex_f = MathTex(r"\frac{\partial f(x, y)}{\partial x} = \lim_{\Delta x \rightarrow 0} \frac{f(x + \Delta x, y) - f(x)}{\Delta x}")
+        tex_f = MathTex(r"\frac{\partial f(x, y, ..)}{\partial x} = \lim_{\Delta x \rightarrow 0} \frac{f(x + \Delta x, y, ..) - f(x)}{\Delta x}")
         self.play(Create(tex_f))
         self.play(Uncreate(tex_f))
         tex_e = MathTex("=")
-        tex_x0 = MathTex(r"\frac{\partial (x + y)}{\partial x}").next_to(tex_e, LEFT)
-        tex_x = MathTex(r"\frac{\partial x}{\partial x}").next_to(tex_e, LEFT)
-        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{(x + }} {{ \Delta x }} {{ + y )   - (x + y) }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
-        tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ \Delta x }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
-        tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ 1 }}").next_to(tex_e, RIGHT)
-        tex_r = MathTex(r"{{ 1 }}").next_to(tex_e, RIGHT)
+        tex_x = MathTex(r"\frac{\partial (xy + z)}{\partial x}").next_to(tex_e, LEFT)
+        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ (yx + }} {{ y \Delta x }} {{ + z )   - (yx + z) }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
+        tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ y \Delta x }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
+        tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ y }}").next_to(tex_e, RIGHT)
+        tex_r = MathTex(r"{{ y }}").next_to(tex_e, RIGHT)
         self.play(
-            Create(tex_x0),
+            Create(tex_x),
             Create(tex_e),
             Create(tex_r0),
         )
         self.play(TransformMatchingTex(tex_r0, tex_r1))
         self.play(TransformMatchingTex(tex_r1, tex_r2))
         self.play(TransformMatchingTex(tex_r2, tex_r))
-        self.play(TransformMatchingTex(tex_x0, tex_x))
-        tex_xs = MathTex(r"+ \frac{\partial x}{\partial x} + \ ..\ y \text{ times }").next_to(tex_e, LEFT)
-        tex_rs = MathTex(r"+ 1 + \ ..\ y \text{ times }").next_to(tex_r, RIGHT)
-        self.play(
-            tex_x.animate.next_to(tex_xs, LEFT),
-        )
-        self.play(
-            Create(tex_xs),
-            Create(tex_rs),
-        )
-        tex_y = MathTex("y").next_to(tex_x, LEFT)
-        self.play(
-            Uncreate(tex_xs),
-            Uncreate(tex_rs),
-            Create(tex_y),
-            tex_r.animate.become(MathTex("y").next_to(tex_e, RIGHT)),
-        )
-        self.play(
-            tex_x.animate.next_to(tex_e, LEFT),
-            tex_y.animate.next_to(tex_x.target, LEFT),
-        )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         tex_e.move_to(LEFT*5)
         tex_x = MathTex(r"\frac{\partial (x^2) }{\partial x}").next_to(tex_e, LEFT)
         tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x + }} {{ \Delta x }} {{ )^2   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
         tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x^2 + }} {{ 2 x \Delta x }} {{ + \Delta x^2 )   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
         tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ 2 x \Delta x }} {{ + \Delta x^2 }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
-        tex_r3 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ 2 x \Delta x }} {{ + \Delta x^2 }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
-        tex_r4 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} ( {{ 2 x + \Delta x }} )").next_to(tex_e, RIGHT)
+        tex_r3 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} ( {{ 2 x + \Delta x }} )").next_to(tex_e, RIGHT)
         tex_r = MathTex(r"{{ 2 x }}").next_to(tex_e, RIGHT)
         square = Square().shift(2*RIGHT)
-        line_v = Line(start=(square.get_right() + square.get_bottom()), end=(square.get_right() + square.get_top()))
-        line_h = Line(start=(square.get_left() + square.get_top()), end=(square.get_right() + square.get_top()))
+        line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
+        line_h = Line(start=(square.get_corner(UP + LEFT) + UP), end=(square.get_corner(UP + RIGHT) + UP))
+        tex_v = MathTex("x").next_to(line_v, RIGHT)
+        tex_h = MathTex("x").next_to(line_h, UP)
+        tex_vh = MathTex(r"\Delta x").move_to([line_v.get_x(), line_h.get_y(), 0])
         self.play(
             Create(tex_x),
             Create(tex_e),
@@ -814,13 +794,15 @@ class Projection(Scene):
             Create(square),
             Create(line_v),
             Create(line_h),
+            Create(tex_v),
+            Create(tex_h),
+            Create(tex_vh),
         )
         self.play(TransformMatchingTex(tex_r0, tex_r1))
         self.play(TransformMatchingTex(tex_r1, tex_r2))
         self.play(TransformMatchingTex(tex_r2, tex_r3))
-        self.play(TransformMatchingTex(tex_r3, tex_r4))
+        self.play(TransformMatchingTex(tex_r3, tex_r))
         self.play(
-            TransformMatchingTex(tex_r4, tex_r),
             tex_x.animate.shift(RIGHT),
             tex_e.animate.shift(RIGHT),
             tex_r.animate.shift(RIGHT),

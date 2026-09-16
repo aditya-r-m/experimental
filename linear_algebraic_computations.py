@@ -760,19 +760,21 @@ class Projection(Scene):
         self.play(Create(tex_f))
         self.play(Uncreate(tex_f))
         tex_e = MathTex("=")
+        tex_x0 = MathTex(r"\frac{\partial (x + y)}{\partial x}").next_to(tex_e, LEFT)
         tex_x = MathTex(r"\frac{\partial x}{\partial x}").next_to(tex_e, LEFT)
-        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{(x + }} {{ \Delta x }} {{ )   - x }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
+        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{(x + }} {{ \Delta x }} {{ + y )   - (x + y) }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
         tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ \Delta x }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
         tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ 1 }}").next_to(tex_e, RIGHT)
         tex_r = MathTex(r"{{ 1 }}").next_to(tex_e, RIGHT)
         self.play(
-            Create(tex_x),
+            Create(tex_x0),
             Create(tex_e),
             Create(tex_r0),
         )
         self.play(TransformMatchingTex(tex_r0, tex_r1))
         self.play(TransformMatchingTex(tex_r1, tex_r2))
         self.play(TransformMatchingTex(tex_r2, tex_r))
+        self.play(TransformMatchingTex(tex_x0, tex_x))
         tex_xs = MathTex(r"+ \frac{\partial x}{\partial x} + \ ..\ y \text{ times }").next_to(tex_e, LEFT)
         tex_rs = MathTex(r"+ 1 + \ ..\ y \text{ times }").next_to(tex_r, RIGHT)
         self.play(
@@ -794,6 +796,7 @@ class Projection(Scene):
             tex_y.animate.next_to(tex_x.target, LEFT),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        tex_e.move_to(LEFT*5)
         tex_x = MathTex(r"\frac{\partial (x^2) }{\partial x}").next_to(tex_e, LEFT)
         tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x + }} {{ \Delta x }} {{ )^2   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
         tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x^2 + }} {{ 2 x \Delta x }} {{ + \Delta x^2 )   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
@@ -801,16 +804,27 @@ class Projection(Scene):
         tex_r3 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ 2 x \Delta x }} {{ + \Delta x^2 }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
         tex_r4 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} ( {{ 2 x + \Delta x }} )").next_to(tex_e, RIGHT)
         tex_r = MathTex(r"{{ 2 x }}").next_to(tex_e, RIGHT)
+        square = Square().shift(2*RIGHT)
+        line_v = Line(start=(square.get_right() + square.get_bottom()), end=(square.get_right() + square.get_top()))
+        line_h = Line(start=(square.get_left() + square.get_top()), end=(square.get_right() + square.get_top()))
         self.play(
             Create(tex_x),
             Create(tex_e),
             Create(tex_r0),
+            Create(square),
+            Create(line_v),
+            Create(line_h),
         )
         self.play(TransformMatchingTex(tex_r0, tex_r1))
         self.play(TransformMatchingTex(tex_r1, tex_r2))
         self.play(TransformMatchingTex(tex_r2, tex_r3))
         self.play(TransformMatchingTex(tex_r3, tex_r4))
-        self.play(TransformMatchingTex(tex_r4, tex_r))
+        self.play(
+            TransformMatchingTex(tex_r4, tex_r),
+            tex_x.animate.shift(RIGHT),
+            tex_e.animate.shift(RIGHT),
+            tex_r.animate.shift(RIGHT),
+        )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0

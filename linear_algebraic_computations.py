@@ -562,7 +562,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
-        r'''
+        # r'''
         self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
@@ -620,10 +620,6 @@ class Projection(Scene):
                 buff=0,
             ))
         _, eigen_vectors = np.linalg.eig(np.array(shear))
-        eigen_line = Line(start=grid.c2p(-4*eigen_vectors[0][0], -4*eigen_vectors[1][0]), end=grid.c2p(4*eigen_vectors[0][0], 4*eigen_vectors[1][0]), color=CS[-1], buff=0)
-        self.play(Create(eigen_line))
-        eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
-        self.play(Uncreate(eigen_line))
         self.play(
             ReplacementTransform(g_arrow, g_arrow_sheared),
             ReplacementTransform(r_arrow, r_arrow_sheared),
@@ -631,6 +627,10 @@ class Projection(Scene):
             *(ReplacementTransform(line, line_sheared) for (line, line_sheared) in zip(lines, lines_sheared)),
             *(Create(arrow_sheared) for arrow_sheared in arrows_sheared),
         )
+        eigen_line = Line(start=grid.c2p(-4*eigen_vectors[0][0], -4*eigen_vectors[1][0]), end=grid.c2p(4*eigen_vectors[0][0], 4*eigen_vectors[1][0]), color=CS[-1], buff=0)
+        self.play(Create(eigen_line))
+        eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
+        self.play(Uncreate(eigen_line))
         aligned_shear = [[1, -0.5],[0.5, 1]]
         g_arrow_aligned_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(aligned_shear[0][0], aligned_shear[1][0]), color=CS[0], buff=0)
         r_arrow_aligned_sheared = Arrow(start=grid.c2p(0, 0), end=grid.c2p(aligned_shear[0][1], aligned_shear[1][1]), color=CS[1], buff=0)

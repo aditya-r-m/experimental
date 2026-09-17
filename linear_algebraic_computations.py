@@ -567,6 +567,7 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
+        '''
         g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         r_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*4)
@@ -754,33 +755,21 @@ class Projection(Scene):
             self.play(Create(eigen_line))
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
         '''
-        tex_f = MathTex(r"\frac{\partial f(x, y, ..)}{\partial x} = \lim_{\Delta x \rightarrow 0} \frac{f(x + \Delta x, y, ..) - f(x)}{\Delta x}")
-        self.play(Create(tex_f))
-        self.play(Uncreate(tex_f))
-        tex_e = MathTex("=")
-        tex_x = MathTex(r"\frac{\partial (xy + z)}{\partial x}").next_to(tex_e, LEFT)
-        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ (yx + }} {{ y \Delta x }} {{ + z )   - (yx + z) }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
-        tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ y \Delta x }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
-        tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ y }}").next_to(tex_e, RIGHT)
-        tex_r = MathTex(r"{{ y }}").next_to(tex_e, RIGHT)
+        tex_l = MathTex(r"{{ f(x, y, ..) = }} x \implies").move_to(5*LEFT)
+        tex_r = MathTex(r"{{ \frac{\partial f}{\partial x} = }} 1").next_to(tex_l, RIGHT)
         self.play(
-            Create(tex_x),
-            Create(tex_e),
-            Create(tex_r0),
+            Create(tex_l),
+            Create(tex_r),
         )
-        self.play(TransformMatchingTex(tex_r0, tex_r1))
-        self.play(TransformMatchingTex(tex_r1, tex_r2))
-        self.play(TransformMatchingTex(tex_r2, tex_r))
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        tex_e.move_to(LEFT*5)
-        tex_x = MathTex(r"\frac{\partial (x^2) }{\partial x}").next_to(tex_e, LEFT)
-        tex_r0 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x + }} {{ \Delta x }} {{ )^2   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
-        tex_r1 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ ( x^2 + }} {{ 2 x \Delta x }} {{ + \Delta x^2 )   - x^2 }} }{ {{ \Delta x}} } }}").next_to(tex_e, RIGHT)
-        tex_r2 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} {{ \frac{ {{ 2 x \Delta x }} {{ + \Delta x^2 }} }{ {{ \Delta x }} } }}").next_to(tex_e, RIGHT)
-        tex_r3 = MathTex(r"{{ \lim_{\Delta x \rightarrow 0} }} ( {{ 2 x + \Delta x }} )").next_to(tex_e, RIGHT)
-        tex_r = MathTex(r"{{ 2 x }}").next_to(tex_e, RIGHT)
+        self.play(
+            tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial y} = }} 0").next_to(tex_l, RIGHT)),
+        )
+        self.play(
+            tex_l.animate.become(MathTex(r"{{ f(x, y, ..) = }} xy \implies").next_to(tex_r, LEFT)),
+            tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial x} = }} y").next_to(tex_l, RIGHT)),
+        )
         square = Square().shift(2*RIGHT)
         line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
         line_h = Line(start=(square.get_corner(UP + LEFT) + UP), end=(square.get_corner(UP + RIGHT) + UP))
@@ -788,24 +777,14 @@ class Projection(Scene):
         tex_h = MathTex("x").next_to(line_h, UP)
         tex_vh = MathTex(r"\Delta x").move_to([line_v.get_x(), line_h.get_y(), 0])
         self.play(
-            Create(tex_x),
-            Create(tex_e),
-            Create(tex_r0),
-            Create(square),
-            Create(line_v),
-            Create(line_h),
+            tex_l.animate.become(MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").next_to(tex_r, LEFT)),
+            tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial x} = }} 2x").next_to(tex_l, RIGHT)),
+            ReplacementTransform(unit_circle, square),
+            ReplacementTransform(grid.x_axis, line_h),
+            ReplacementTransform(grid.y_axis, line_v),
             Create(tex_v),
             Create(tex_h),
             Create(tex_vh),
-        )
-        self.play(TransformMatchingTex(tex_r0, tex_r1))
-        self.play(TransformMatchingTex(tex_r1, tex_r2))
-        self.play(TransformMatchingTex(tex_r2, tex_r3))
-        self.play(TransformMatchingTex(tex_r3, tex_r))
-        self.play(
-            tex_x.animate.shift(RIGHT),
-            tex_e.animate.shift(RIGHT),
-            tex_r.animate.shift(RIGHT),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1

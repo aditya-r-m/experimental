@@ -757,24 +757,36 @@ class Projection(Scene):
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
         '''
-        tex_l = MathTex(r"{{ f(x, y, ..) = }} x \implies").move_to(5*LEFT)
-        tex_r = MathTex(r"{{ \frac{\partial f}{\partial x} = }} 1").next_to(tex_l, RIGHT)
-        line_fx_0 = Line(color=CS[-1], start=grid.c2p(-2,-4), end=grid.c2p(-2,4))
-        line_fx_1 = Line(color=CS[-1], start=grid.c2p(2,-4), end=grid.c2p(2,4))
-        tex_fx_0 = MathTex("-2", color=CS[-1]).move_to(grid.c2p(-1.5, 2))
-        tex_fx_1 = MathTex("2", color=CS[-1]).move_to(grid.c2p(2.5, 2))
+        tex_l = MathTex(r"f(x, y, ..) = x").move_to(4*LEFT + UP)
+        tex_l.set_color(CS[0])
+        tex_r = MathTex(
+            r"\implies \nabla f =",
+            r"\renewcommand{\arraystretch}{1.5}",
+            r"\begin{bmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}"
+        ).next_to(tex_l, DOWN)
+        tex_r.set_color(CS[-1])
+        arrows_fx = [Arrow(
+            color=CS[-1],
+            start=grid.c2p(i, j),
+            end=grid.c2p(i+1,j),
+            stroke_opacity=0.25,
+            tip_shape=StealthTip,
+            tip_style={"fill_opacity": 0.25, "stroke_opacity": 0.25},
+        ) for i in range(-4, 4) for j in range(-4, 4)]
+        line_fx_0 = Line(color=CS[0], start=grid.c2p(-2,-4), end=grid.c2p(-2,4))
+        line_fx_1 = Line(color=CS[0], start=grid.c2p(2,-4), end=grid.c2p(2,4))
+        tex_fx_0 = MathTex("-2", color=CS[0]).move_to(grid.c2p(-1.5, 2))
+        tex_fx_1 = MathTex("2", color=CS[0]).move_to(grid.c2p(2.5, 2))
         self.play(
             Create(tex_l),
             Create(tex_r),
             Create(line_fx_0),
             Create(tex_fx_0),
+            *(Create(arrow) for arrow in arrows_fx),
         )
         self.play(
             ReplacementTransform(line_fx_0, line_fx_1),
             ReplacementTransform(tex_fx_0, tex_fx_1),
-        )
-        self.play(
-            tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial y} = }} 0").next_to(tex_l, RIGHT)),
         )
         self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, -2)))
         self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, 2)))
@@ -791,6 +803,7 @@ class Projection(Scene):
         self.play(
             FadeOut(line_fx_1),
             FadeOut(tex_fx_1),
+            FadeOut(*arrows_fx),
             tex_l.animate.become(MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").next_to(tex_r, LEFT)),
             tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial x} = }} 2x").next_to(tex_l, RIGHT)),
             ReplacementTransform(unit_circle, square),

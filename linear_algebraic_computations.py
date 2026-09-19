@@ -757,7 +757,7 @@ class Projection(Scene):
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
         '''
-        tex_l = MathTex(r"f(x, y, ..) = x").move_to(4*LEFT + UP)
+        tex_l = MathTex(r"f(x, y) = x").move_to(4*LEFT + UP)
         tex_l.set_color(CS[0])
         tex_r = MathTex(
             r"\implies \nabla f =",
@@ -791,9 +791,40 @@ class Projection(Scene):
         self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, -2)))
         self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, 2)))
         self.play(
-            tex_l.animate.become(MathTex(r"{{ f(x, y, ..) = }} xy \implies").next_to(tex_r, LEFT)),
-            tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial x} = }} y").next_to(tex_l, RIGHT)),
+            FadeOut(tex_l),
+            FadeOut(tex_r),
+            FadeOut(line_fx_1),
+            FadeOut(tex_fx_1),
+            FadeOut(*arrows_fx),
         )
+        tex_l = MathTex(r"f(x, y) = xy").move_to(4*LEFT + UP)
+        tex_l.set_color(CS[0])
+        tex_r = MathTex(
+            r"\implies \nabla f =",
+            r"\renewcommand{\arraystretch}{1.5}",
+            r"\begin{bmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{bmatrix} = \begin{bmatrix} y \\ x \end{bmatrix}"
+        ).next_to(tex_l, DOWN)
+        tex_r.set_color(CS[-1])
+        arrows_fx = [Arrow(
+            color=CS[-1],
+            start=grid.c2p(i, j),
+            end=grid.c2p(i+j,j+i),
+            stroke_opacity=0.25,
+            tip_shape=StealthTip,
+            tip_style={"fill_opacity": 0.25, "stroke_opacity": 0.25},
+        ) for i in range(-3, 4, 2) for j in range(-3, 4, 2)]
+        self.play(
+            Create(tex_l),
+            Create(tex_r),
+            *(Create(arrow) for arrow in arrows_fx),
+        )
+        self.play(
+            FadeOut(tex_l),
+            FadeOut(tex_r),
+            FadeOut(*arrows_fx),
+        )
+        tex_l = MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").next_to(tex_r, LEFT)
+        tex_r = MathTex(r"{{ \frac{\partial f}{\partial x} = }} 2x").next_to(tex_l, RIGHT)
         square = Square().shift(2*RIGHT)
         line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
         line_h = Line(start=(square.get_corner(UP + LEFT) + UP), end=(square.get_corner(UP + RIGHT) + UP))
@@ -801,11 +832,8 @@ class Projection(Scene):
         tex_h = MathTex("x").next_to(line_h, UP)
         tex_vh = MathTex(r"\Delta x").move_to([line_v.get_x(), line_h.get_y(), 0])
         self.play(
-            FadeOut(line_fx_1),
-            FadeOut(tex_fx_1),
-            FadeOut(*arrows_fx),
-            tex_l.animate.become(MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").next_to(tex_r, LEFT)),
-            tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial x} = }} 2x").next_to(tex_l, RIGHT)),
+            Create(tex_l),
+            Create(tex_r),
             ReplacementTransform(unit_circle, square),
             ReplacementTransform(grid.x_axis, line_h),
             ReplacementTransform(grid.y_axis, line_v),

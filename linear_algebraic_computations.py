@@ -759,13 +759,25 @@ class Projection(Scene):
         '''
         tex_l = MathTex(r"{{ f(x, y, ..) = }} x \implies").move_to(5*LEFT)
         tex_r = MathTex(r"{{ \frac{\partial f}{\partial x} = }} 1").next_to(tex_l, RIGHT)
+        line_fx_0 = Line(color=CS[-1], start=grid.c2p(-2,-4), end=grid.c2p(-2,4))
+        line_fx_1 = Line(color=CS[-1], start=grid.c2p(2,-4), end=grid.c2p(2,4))
+        tex_fx_0 = MathTex("-2", color=CS[-1]).move_to(grid.c2p(-1.5, 2))
+        tex_fx_1 = MathTex("2", color=CS[-1]).move_to(grid.c2p(2.5, 2))
         self.play(
             Create(tex_l),
             Create(tex_r),
+            Create(line_fx_0),
+            Create(tex_fx_0),
+        )
+        self.play(
+            ReplacementTransform(line_fx_0, line_fx_1),
+            ReplacementTransform(tex_fx_0, tex_fx_1),
         )
         self.play(
             tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial y} = }} 0").next_to(tex_l, RIGHT)),
         )
+        self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, -2)))
+        self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, 2)))
         self.play(
             tex_l.animate.become(MathTex(r"{{ f(x, y, ..) = }} xy \implies").next_to(tex_r, LEFT)),
             tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial x} = }} y").next_to(tex_l, RIGHT)),
@@ -777,6 +789,8 @@ class Projection(Scene):
         tex_h = MathTex("x").next_to(line_h, UP)
         tex_vh = MathTex(r"\Delta x").move_to([line_v.get_x(), line_h.get_y(), 0])
         self.play(
+            FadeOut(line_fx_1),
+            FadeOut(tex_fx_1),
             tex_l.animate.become(MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").next_to(tex_r, LEFT)),
             tex_r.animate.become(MathTex(r"{{ \frac{\partial f}{\partial x} = }} 2x").next_to(tex_l, RIGHT)),
             ReplacementTransform(unit_circle, square),

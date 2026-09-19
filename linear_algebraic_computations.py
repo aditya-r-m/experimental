@@ -769,14 +769,14 @@ class Projection(Scene):
             color=CS[-1],
             start=grid.c2p(i, j),
             end=grid.c2p(i+1,j),
-            stroke_opacity=0.25,
+            stroke_opacity=1,
             tip_shape=StealthTip,
-            tip_style={"fill_opacity": 0.25, "stroke_opacity": 0.25},
+            tip_style={"fill_opacity": 1, "stroke_opacity": 1},
         ) for i in range(-4, 4) for j in range(-4, 4)]
         line_fx_0 = Line(color=CS[0], start=grid.c2p(-2,-4), end=grid.c2p(-2,4))
         line_fx_1 = Line(color=CS[0], start=grid.c2p(2,-4), end=grid.c2p(2,4))
-        tex_fx_0 = MathTex("-2", color=CS[0]).move_to(grid.c2p(-1.5, 2))
-        tex_fx_1 = MathTex("2", color=CS[0]).move_to(grid.c2p(2.5, 2))
+        tex_fx_0 = MathTex("-2", color=CS[0]).move_to(grid.c2p(-1.5, 2.5))
+        tex_fx_1 = MathTex("2", color=CS[0]).move_to(grid.c2p(2.5, 2.5))
         self.play(
             Create(tex_l),
             Create(tex_r),
@@ -788,8 +788,8 @@ class Projection(Scene):
             ReplacementTransform(line_fx_0, line_fx_1),
             ReplacementTransform(tex_fx_0, tex_fx_1),
         )
-        self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, -2)))
-        self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, 2)))
+        self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, -2.5)))
+        self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, 2.5)))
         self.play(
             FadeOut(tex_l),
             FadeOut(tex_r),
@@ -808,11 +808,11 @@ class Projection(Scene):
         arrows_fx = [Arrow(
             color=CS[-1],
             start=grid.c2p(i, j),
-            end=grid.c2p(i+j,j+i),
-            stroke_opacity=0.25,
+            end=grid.c2p(i+j/(math.sqrt(i*i+j*j)),j+i/(math.sqrt(i*i+j*j))),
+            stroke_opacity=(i*i+j*j)/16,
             tip_shape=StealthTip,
-            tip_style={"fill_opacity": 0.25, "stroke_opacity": 0.25},
-        ) for i in range(-3, 4, 2) for j in range(-3, 4, 2)]
+            tip_style={"fill_opacity": (i*i+j*j)/16, "stroke_opacity": (i*i+j*j)/16},
+        ) for i in range(-4, 5) for j in range(-4, 5) if i or j]
         self.play(
             Create(tex_l),
             Create(tex_r),
@@ -823,7 +823,7 @@ class Projection(Scene):
             FadeOut(tex_r),
             FadeOut(*arrows_fx),
         )
-        tex_l = MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").next_to(tex_r, LEFT)
+        tex_l = MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").move_to(4*LEFT)
         tex_r = MathTex(r"{{ \frac{\partial f}{\partial x} = }} 2x").next_to(tex_l, RIGHT)
         square = Square().shift(2*RIGHT)
         line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))

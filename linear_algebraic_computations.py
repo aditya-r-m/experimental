@@ -562,12 +562,11 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
-        # r'''
+        r'''
         self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
-        '''
         g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         r_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*4)
@@ -757,6 +756,26 @@ class Projection(Scene):
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
         '''
+        tex = MathTex(r"\frac{d(x^2)}{dx} = 2x").move_to(4*LEFT)
+        square = Square().shift(2*RIGHT)
+        line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
+        line_h = Line(start=(square.get_corner(UP + LEFT) + UP), end=(square.get_corner(UP + RIGHT) + UP))
+        tex_v = MathTex("x").next_to(line_v, RIGHT)
+        tex_h = MathTex("x").next_to(line_h, UP)
+        tex_vh = MathTex(r"\Delta x").move_to([line_v.get_x(), line_h.get_y(), 0])
+        self.play(
+            Create(tex),
+            Create(square),
+            Create(line_v),
+            Create(line_h),
+            Create(tex_v),
+            Create(tex_h),
+            Create(tex_vh),
+        )
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
         tex_l = MathTex(r"f(x, y) = x").move_to(4*LEFT + UP)
         tex_l.set_color(CS[0])
         tex_r = MathTex(
@@ -817,29 +836,6 @@ class Projection(Scene):
             Create(tex_l),
             Create(tex_r),
             *(Create(arrow) for arrow in arrows_fx),
-        )
-        self.play(
-            FadeOut(tex_l),
-            FadeOut(tex_r),
-            FadeOut(*arrows_fx),
-        )
-        tex_l = MathTex(r"{{ f(x, y, ..) = }} x^2 \implies").move_to(4*LEFT)
-        tex_r = MathTex(r"{{ \frac{\partial f}{\partial x} = }} 2x").next_to(tex_l, RIGHT)
-        square = Square().shift(2*RIGHT)
-        line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
-        line_h = Line(start=(square.get_corner(UP + LEFT) + UP), end=(square.get_corner(UP + RIGHT) + UP))
-        tex_v = MathTex("x").next_to(line_v, RIGHT)
-        tex_h = MathTex("x").next_to(line_h, UP)
-        tex_vh = MathTex(r"\Delta x").move_to([line_v.get_x(), line_h.get_y(), 0])
-        self.play(
-            Create(tex_l),
-            Create(tex_r),
-            ReplacementTransform(unit_circle, square),
-            ReplacementTransform(grid.x_axis, line_h),
-            ReplacementTransform(grid.y_axis, line_v),
-            Create(tex_v),
-            Create(tex_h),
-            Create(tex_vh),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1

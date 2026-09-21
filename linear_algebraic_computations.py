@@ -756,7 +756,7 @@ class Projection(Scene):
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
         '''
-        tex = MathTex(r"\frac{d(x^2)}{dx} = 2x").move_to(4*LEFT)
+        tex = MathTex(r"\partial_x ( x^2 ) = 2x").move_to(4*LEFT)
         square = Square().shift(2*RIGHT)
         line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
         line_h = Line(start=(square.get_corner(UP + LEFT) + UP), end=(square.get_corner(UP + RIGHT) + UP))

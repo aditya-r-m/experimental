@@ -7,13 +7,10 @@ from manim import *
 CS = [GREEN,RED,YELLOW,TEAL]
 
 class Projection(Scene):
-   def construct(self):
-        Text.set_default(font_size=24)
-        MathTex.set_default(font_size=42)
-        r'''
+    def play_introduction(self):
         title_texts = [
             "Rotation Matrix",
-            "Projection Vector",
+            "Projection Covector",
             "Rotation Inverse",
             "Spectral Theorem",
             "Eigenvector Computation\n     (QR Iteration)",
@@ -70,11 +67,8 @@ class Projection(Scene):
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
         self.play(FadeOut(*self.mobjects))
-        # '''
 
-        title = Text("Rotation Matrix").to_edge(UP+LEFT)
-        self.play(Create(title))
-        r'''
+    def play_rotation_matrix(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -247,10 +241,8 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        # '''
 
-        r'''
-        self.play(title.animate.become(Text("Projection Vector").to_edge(UP+LEFT)))
+    def play_projection_covector(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -491,10 +483,8 @@ class Projection(Scene):
         )
         self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        # '''
 
-        r'''
-        self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
+    def play_rotation_inverse(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -560,10 +550,8 @@ class Projection(Scene):
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        '''
 
-        r'''
-        self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
+    def play_spectral_theorem(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -755,7 +743,6 @@ class Projection(Scene):
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
-        '''
         tex = MathTex(r"\partial_x ( x^2 ) = 2x").move_to(4*LEFT)
         square = Square().shift(2*RIGHT)
         line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
@@ -840,11 +827,9 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
-        # self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        # '''
 
-        r'''
-        self.play(title.animate.become(Text("Eigenvector Computation").to_edge(UP+LEFT)))
+    def play_eigenvector_computation(self, title):
+        '''
         def qr(A):
             m, n = A.shape
             Q = np.zeros((m, n))
@@ -889,7 +874,23 @@ class Projection(Scene):
         A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
         A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        # '''
+        '''
+
+    def construct(self):
+        Text.set_default(font_size=24)
+        MathTex.set_default(font_size=42)
+        self.play_introduction()
+        title = Text("Rotation Matrix").to_edge(UP+LEFT)
+        self.play(Create(title))
+        self.play_rotation_matrix(title)
+        self.play(title.animate.become(Text("Projection Covector").to_edge(UP+LEFT)))
+        self.play_projection_covector(title)
+        self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
+        self.play_rotation_inverse(title)
+        self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
+        self.play_spectral_theorem(title)
+        # self.play(title.animate.become(Text("Eigenvector Computation (QR Iteration)").to_edge(UP+LEFT)))
+        # self.play_eigenvector_computation(title)
 
 
 class Determinant(Scene):

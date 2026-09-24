@@ -551,7 +551,7 @@ class Projection(Scene):
         self.play(Create(r_tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
-    def play_spectral_theorem(self, title):
+    def _play_spectral_theorem(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -742,7 +742,8 @@ class Projection(Scene):
             self.play(Create(eigen_line))
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+    def play_spectral_theorem(self, title):
         tex = MathTex(r"\partial_x ( x^2 ) = 2x").move_to(4*LEFT)
         square = Square().shift(2*RIGHT)
         line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
@@ -768,7 +769,7 @@ class Projection(Scene):
         tex_r = MathTex(
             r"\implies \nabla f =",
             r"\renewcommand{\arraystretch}{1.5}",
-            r"\begin{bmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}"
+            r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}"
         ).next_to(tex_l, DOWN)
         tex_r.set_color(CS[-1])
         arrows_fx = [Arrow(
@@ -808,7 +809,7 @@ class Projection(Scene):
         tex_r = MathTex(
             r"\implies \nabla f =",
             r"\renewcommand{\arraystretch}{1.5}",
-            r"\begin{bmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{\partial y} \end{bmatrix} = \begin{bmatrix} y \\ x \end{bmatrix}"
+            r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} y \\ x \end{bmatrix}"
         ).next_to(tex_l, DOWN)
         tex_r.set_color(CS[-1])
         arrows_fx = [Arrow(
@@ -879,15 +880,15 @@ class Projection(Scene):
     def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        self.play_introduction()
+        # self.play_introduction()
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
         self.play(Create(title))
-        self.play_rotation_matrix(title)
-        self.play(title.animate.become(Text("Projection Covector").to_edge(UP+LEFT)))
-        self.play_projection_covector(title)
-        self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
-        self.play_rotation_inverse(title)
-        self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
+        # self.play_rotation_matrix(title)
+        # self.play(title.animate.become(Text("Projection Covector").to_edge(UP+LEFT)))
+        # self.play_projection_covector(title)
+        # self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
+        # self.play_rotation_inverse(title)
+        # self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
         self.play_spectral_theorem(title)
         # self.play(title.animate.become(Text("Eigenvector Computation (QR Iteration)").to_edge(UP+LEFT)))
         # self.play_eigenvector_computation(title)

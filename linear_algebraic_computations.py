@@ -845,9 +845,10 @@ class Projection(Scene):
             color=CS[0],
             start=grid.c2p(i, j),
             end=grid.c2p(i+j/(math.sqrt(i*i+j*j)),j+i/(math.sqrt(i*i+j*j))),
-            stroke_opacity=(i*i+j*j)/16,
+            stroke_opacity=1,
             tip_shape=StealthTip,
-            tip_style={"fill_opacity": (i*i+j*j)/16, "stroke_opacity": (i*i+j*j)/16},
+            tip_length=(i*i+j*j)/32,
+            # tip_style={"fill_opacity": (i*i+j*j)/16, "stroke_opacity": (i*i+j*j)/16},
         ) for i in range(-4, 5) for j in range(-4, 5) if i or j]
         self.play(
             Create(tex_l),

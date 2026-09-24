@@ -744,23 +744,27 @@ class Projection(Scene):
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
     def play_spectral_theorem(self, title):
-        tex = MathTex(r"\partial_x ( x^2 ) = 2x").move_to(4*LEFT)
-        square = Square().shift(2*RIGHT)
-        line_v = Line(start=(square.get_corner(DOWN + RIGHT) + RIGHT), end=(square.get_corner(UP + RIGHT) + RIGHT))
-        line_h = Line(start=(square.get_corner(UP + LEFT) + UP), end=(square.get_corner(UP + RIGHT) + UP))
+        tex = MathTex(
+            r"f(x, y) = x^2",
+            r"\implies \partial_x f = y"
+        ).move_to(LEFT*4)
+        tex[0].set_color(CS[0])
+        tex[1].set_color(CS[1])
+        square = Square(fill_color=CS[0], fill_opacity=1).shift(2*RIGHT)
+        line_v = Line(color=CS[1], start=(square.get_corner(DOWN + RIGHT) + 0.05), end=(square.get_corner(UP + RIGHT) + 0.05), stroke_width=8)
+        line_h = Line(color=CS[1], start=(square.get_corner(UP + RIGHT) + 0.05), end=(square.get_corner(UP + LEFT) + 0.05), stroke_width=8)
         tex_v = MathTex("x").next_to(line_v, RIGHT)
         tex_h = MathTex("x").next_to(line_h, UP)
-        tex_vh = MathTex(r"\Delta x").move_to([line_v.get_x(), line_h.get_y(), 0])
         self.play(
             Create(tex),
             Create(square),
-            Create(line_v),
-            Create(line_h),
             Create(tex_v),
             Create(tex_h),
-            Create(tex_vh),
         )
+        self.play(Create(line_v))
+        self.play(Create(line_h))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        return
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -768,7 +772,6 @@ class Projection(Scene):
         tex_l.set_color(CS[0])
         tex_r = MathTex(
             r"\implies \nabla f =",
-            r"\renewcommand{\arraystretch}{1.5}",
             r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}"
         ).next_to(tex_l, DOWN)
         tex_r.set_color(CS[-1])
@@ -808,7 +811,6 @@ class Projection(Scene):
         tex_l.set_color(CS[0])
         tex_r = MathTex(
             r"\implies \nabla f =",
-            r"\renewcommand{\arraystretch}{1.5}",
             r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} y \\ x \end{bmatrix}"
         ).next_to(tex_l, DOWN)
         tex_r.set_color(CS[-1])

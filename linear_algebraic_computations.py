@@ -743,15 +743,14 @@ class Projection(Scene):
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-    def play_spectral_theorem(self, title):
         tex = MathTex(
             r"f(x, y) = xy",
             r"\implies \partial_x f = y"
         ).move_to(LEFT*3)
-        tex[0].set_color(CS[0])
-        tex[1].set_color(CS[1])
-        rectangle = Rectangle(fill_color=CS[0], fill_opacity=1).shift(3*RIGHT)
-        line_v = Line(color=CS[1], start=(rectangle.get_corner(DOWN + RIGHT) + [0.05, 0, 0]), end=(rectangle.get_corner(UP + RIGHT) + [0.05, 0, 0]), stroke_width=8)
+        tex[0].set_color(CS[1])
+        tex[1].set_color(CS[0])
+        rectangle = Rectangle(fill_color=CS[1], fill_opacity=1).shift(3*RIGHT)
+        line_v = Line(color=CS[0], start=(rectangle.get_corner(DOWN + RIGHT) + [0.05, 0, 0]), end=(rectangle.get_corner(UP + RIGHT) + [0.05, 0, 0]), stroke_width=8)
         tex_v = MathTex("y").next_to(rectangle, RIGHT)
         tex_h = MathTex("x").next_to(rectangle, UP)
         self.play(
@@ -766,11 +765,11 @@ class Projection(Scene):
             r"f(x, y) = x^2",
             r"\implies \partial_x f = 2x"
         ).move_to(LEFT*3)
-        tex[0].set_color(CS[0])
-        tex[1].set_color(CS[1])
-        square = Square(fill_color=CS[0], fill_opacity=1).shift(2*RIGHT)
-        line_v = Line(color=CS[1], start=(square.get_corner(DOWN + RIGHT) + [0.05,0,0]), end=(square.get_corner(UP + RIGHT) + 0.05), stroke_width=8)
-        line_h = Line(color=CS[1], start=(square.get_corner(UP + RIGHT) + 0.05), end=(square.get_corner(UP + LEFT) + [0,0.05,0]), stroke_width=8)
+        tex[0].set_color(CS[1])
+        tex[1].set_color(CS[0])
+        square = Square(fill_color=CS[1], fill_opacity=1).shift(2*RIGHT)
+        line_v = Line(color=CS[0], start=(square.get_corner(DOWN + RIGHT) + [0.05,0,0]), end=(square.get_corner(UP + RIGHT) + 0.05), stroke_width=8)
+        line_h = Line(color=CS[0], start=(square.get_corner(UP + RIGHT) + 0.05), end=(square.get_corner(UP + LEFT) + [0,0.05,0]), stroke_width=8)
         tex_v = MathTex("x").next_to(square, RIGHT)
         tex_h = MathTex("x").next_to(square, UP)
         self.play(
@@ -782,29 +781,29 @@ class Projection(Scene):
         self.play(Create(line_v))
         self.play(Create(line_h))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        return
+    def play_spectral_theorem(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
         tex_l = MathTex(r"f(x, y) = x").move_to(4*LEFT + UP)
-        tex_l.set_color(CS[0])
+        tex_l.set_color(CS[1])
         tex_r = MathTex(
             r"\implies \nabla f =",
             r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}"
         ).next_to(tex_l, DOWN)
-        tex_r.set_color(CS[-1])
+        tex_r.set_color(CS[0])
         arrows_fx = [Arrow(
-            color=CS[-1],
+            color=CS[0],
             start=grid.c2p(i, j),
             end=grid.c2p(i+1,j),
             stroke_opacity=1,
             tip_shape=StealthTip,
             tip_style={"fill_opacity": 1, "stroke_opacity": 1},
         ) for i in range(-4, 4) for j in range(-4, 4)]
-        line_fx_0 = Line(color=CS[0], start=grid.c2p(-2,-4), end=grid.c2p(-2,4))
-        line_fx_1 = Line(color=CS[0], start=grid.c2p(2,-4), end=grid.c2p(2,4))
-        tex_fx_0 = MathTex("-2", color=CS[0]).move_to(grid.c2p(-1.5, 2.5))
-        tex_fx_1 = MathTex("2", color=CS[0]).move_to(grid.c2p(2.5, 2.5))
+        line_fx_0 = Line(color=CS[1], start=grid.c2p(-2,-4), end=grid.c2p(-2,4))
+        line_fx_1 = Line(color=CS[1], start=grid.c2p(2,-4), end=grid.c2p(2,4))
+        tex_fx_0 = MathTex("-2", color=CS[1]).move_to(grid.c2p(-1.5, 2.5))
+        tex_fx_1 = MathTex("2", color=CS[1]).move_to(grid.c2p(2.5, 2.5))
         self.play(
             Create(tex_l),
             Create(tex_r),
@@ -826,14 +825,24 @@ class Projection(Scene):
             FadeOut(*arrows_fx),
         )
         tex_l = MathTex(r"f(x, y) = xy").move_to(4*LEFT + UP)
-        tex_l.set_color(CS[0])
+        tex_l.set_color(CS[1])
         tex_r = MathTex(
             r"\implies \nabla f =",
             r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} y \\ x \end{bmatrix}"
         ).next_to(tex_l, DOWN)
-        tex_r.set_color(CS[-1])
+        tex_r.set_color(CS[0])
+        hyperbola_left = grid.plot(
+            lambda x: -2 / x,
+            x_range=[-4, -0.4],
+            color=CS[1]
+        )
+        hyperbola_right = grid.plot(
+            lambda x: -2 / x,
+            x_range=[0.4, 4],
+            color=CS[1]
+        )
         arrows_fx = [Arrow(
-            color=CS[-1],
+            color=CS[0],
             start=grid.c2p(i, j),
             end=grid.c2p(i+j/(math.sqrt(i*i+j*j)),j+i/(math.sqrt(i*i+j*j))),
             stroke_opacity=(i*i+j*j)/16,
@@ -843,6 +852,8 @@ class Projection(Scene):
         self.play(
             Create(tex_l),
             Create(tex_r),
+            Create(hyperbola_left),
+            Create(hyperbola_right),
             *(Create(arrow) for arrow in arrows_fx),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))

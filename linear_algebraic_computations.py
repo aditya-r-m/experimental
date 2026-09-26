@@ -806,9 +806,11 @@ class Projection(Scene):
         tex_fx_1 = MathTex("2", color=CS[1]).move_to(grid.c2p(2.5, 2.5))
         self.play(
             Create(tex_l),
-            Create(tex_r),
             Create(line_fx_0),
             Create(tex_fx_0),
+        )
+        self.play(
+            Create(tex_r),
             *(Create(arrow) for arrow in arrows_fx),
         )
         self.play(
@@ -819,9 +821,9 @@ class Projection(Scene):
         self.play(tex_fx_1.animate.move_to(grid.c2p(2.5, 2.5)))
         self.play(
             FadeOut(tex_l),
-            FadeOut(tex_r),
             FadeOut(line_fx_1),
             FadeOut(tex_fx_1),
+            FadeOut(tex_r),
             FadeOut(*arrows_fx),
         )
         tex_l = MathTex(r"f(x, y) = xy").move_to(4*LEFT + UP)
@@ -832,30 +834,58 @@ class Projection(Scene):
         ).next_to(tex_l, DOWN)
         tex_r.set_color(CS[0])
         hyperbola_left = grid.plot(
-            lambda x: -2 / x,
+            lambda x: 2 / x,
             x_range=[-4, -0.4],
             color=CS[1]
         )
         hyperbola_right = grid.plot(
-            lambda x: -2 / x,
+            lambda x: 2 / x,
             x_range=[0.4, 4],
             color=CS[1]
         )
+        tex_f_c = MathTex(2, color=CS[1]).move_to(grid.c2p(2, 2))
         arrows_fx = [Arrow(
             color=CS[0],
             start=grid.c2p(i, j),
             end=grid.c2p(i+j/(math.sqrt(i*i+j*j)),j+i/(math.sqrt(i*i+j*j))),
-            stroke_opacity=1,
-            tip_shape=StealthTip,
-            tip_length=(i*i+j*j)/32,
-            # tip_style={"fill_opacity": (i*i+j*j)/16, "stroke_opacity": (i*i+j*j)/16},
+            tip_length=(i*i+j*j)/16,
         ) for i in range(-4, 5) for j in range(-4, 5) if i or j]
         self.play(
             Create(tex_l),
-            Create(tex_r),
             Create(hyperbola_left),
+        )
+        self.play(
             Create(hyperbola_right),
+            Create(tex_f_c),
+        )
+        self.play(
+            Create(tex_r),
             *(Create(arrow) for arrow in arrows_fx),
+        )
+        self.play(
+            tex_l.animate.shift(UP),
+            tex_r.animate.shift(UP),
+        )
+        tex_l_g = MathTex(r"g(x, y) = x^2 + y^2 = 1").move_to(4*LEFT + UP).next_to(tex_r, DOWN)
+        tex_l_g.set_color(CS[3])
+        tex_r_g = MathTex(
+            r"\implies \nabla g =",
+            r"\begin{bmatrix} \partial_x g \\ \partial_y g \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \end{bmatrix}"
+        ).next_to(tex_l_g, DOWN)
+        tex_r_g.set_color(CS[2])
+        circle_g = Circle(radius=1, color=CS[3]).move_to(grid.c2p(0, 0))
+        arrows_gx = [Arrow(
+            color=CS[2],
+            start=grid.c2p(math.cos(i*PI/16), math.sin(i*PI/16)),
+            end=grid.c2p(2*math.cos(i*PI/16), 2*math.sin(i*PI/16)),
+        ) for i in range(0, 32, 2)]
+        self.play(
+            Create(tex_l_g),
+            GrowFromCenter(circle_g),
+        )
+        self.play(
+            Create(tex_r_g),
+            *(Create(arrow) for arrow in arrows_gx),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1

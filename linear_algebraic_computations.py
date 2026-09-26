@@ -848,6 +848,7 @@ class Projection(Scene):
             color=CS[0],
             start=grid.c2p(i, j),
             end=grid.c2p(i+j/(math.sqrt(i*i+j*j)),j+i/(math.sqrt(i*i+j*j))),
+            tip_shape=StealthTip,
             tip_length=(i*i+j*j)/16,
         ) for i in range(-4, 5) for j in range(-4, 5) if i or j]
         self.play(
@@ -878,6 +879,7 @@ class Projection(Scene):
             color=CS[2],
             start=grid.c2p(math.cos(i*PI/16), math.sin(i*PI/16)),
             end=grid.c2p(2*math.cos(i*PI/16), 2*math.sin(i*PI/16)),
+            tip_shape=StealthTip,
         ) for i in range(0, 32, 2)]
         self.play(
             Create(tex_l_g),
@@ -886,6 +888,42 @@ class Projection(Scene):
         self.play(
             Create(tex_r_g),
             *(Create(arrow) for arrow in arrows_gx),
+        )
+        hyperbola_left_o = grid.plot(
+            lambda x: 0.5 / x,
+            x_range=[-4, -0.1],
+            color=CS[1]
+        )
+        hyperbola_right_o = grid.plot(
+            lambda x: 0.5 / x,
+            x_range=[0.1, 4],
+            color=CS[1]
+        )
+        tex_f_c_o = MathTex("1/2", color=CS[1]).move_to(grid.c2p(1.7, 1.7))
+        self.play(
+            ReplacementTransform(hyperbola_left, hyperbola_left_o),
+            ReplacementTransform(hyperbola_right, hyperbola_right_o),
+            ReplacementTransform(tex_f_c, tex_f_c_o),
+        )
+        tex_f_o = MathTex(r"\text{optimizing }"," f(..)").move_to(4*LEFT + UP)
+        tex_f_o[1].set_color(CS[1])
+        tex_g_o = MathTex(r"\text{over }", " g(..) = c").move_to(4*LEFT)
+        tex_g_o[1].set_color(CS[3])
+        tex_r_o = MathTex(r"\text{requires }", r" \nabla f", "=", r" \lambda \nabla g ").move_to(4*LEFT + DOWN)
+        tex_r_o[1].set_color(CS[0])
+        tex_r_o[3].set_color(CS[2])
+        self.play(
+            ReplacementTransform(tex_l, tex_f_o[1]),
+            ReplacementTransform(tex_l_g, tex_g_o[1]),
+            ReplacementTransform(tex_r, tex_r_o[1]),
+            ReplacementTransform(tex_r_g, tex_r_o[3]),
+            FadeOut(tex_f_c_o),
+        )
+        self.play(
+            Create(tex_f_o[0]),
+            Create(tex_g_o[0]),
+            Create(tex_r_o[0]),
+            Create(tex_r_o[2]),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1

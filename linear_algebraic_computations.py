@@ -925,6 +925,14 @@ class Projection(Scene):
             Create(tex_r_o[0]),
             Create(tex_r_o[2]),
         )
+        line = Line(start=grid.c2p(-4,-4), end=grid.c2p(4,4))
+        self.play(Create(line))
+        line.reverse_points()
+        self.play(Uncreate(line))
+        line = Line(start=grid.c2p(4,-4), end=grid.c2p(-4,4))
+        self.play(Create(line))
+        line.reverse_points()
+        self.play(Uncreate(line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0

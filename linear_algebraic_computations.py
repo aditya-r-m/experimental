@@ -781,7 +781,6 @@ class Projection(Scene):
         self.play(Create(line_v))
         self.play(Create(line_h))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-    def play_spectral_theorem(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
@@ -934,7 +933,27 @@ class Projection(Scene):
         line.reverse_points()
         self.play(Uncreate(line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        # TODO: Lagrange multipliers : \nabla xAx optimized over xx=1
+    def play_spectral_theorem(self, title):
+        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
+        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
+        self.play(Create(grid), Create(unit_circle))
+        u_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
+        u_circle = Circle(color=CS[0], radius=0.1).move_to(grid.c2p(1, 0))
+        u_line = Line(-4*grid.c2p(1, 0), 4*grid.c2p(1, 0), color=CS[0]).rotate(PI/2, about_point=grid.c2p(1, 0))
+        self.play(
+            Create(u_arrow),
+        )
+        self.play(
+            ReplacementTransform(u_arrow.copy(), u_circle),
+            GrowFromPoint(u_line, grid.c2p(1, 0)),
+        )
+        self.play(
+            Rotate(u_arrow, 17*PI/8, about_point=grid.c2p(0, 0)),
+            Rotate(u_circle, 17*PI/8, about_point=grid.c2p(0, 0)),
+            Rotate(u_line, 17*PI/8, about_point=grid.c2p(0, 0)),
+        run_time=3)
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        # TODO: \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
 
     def play_eigenvector_computation(self, title):
@@ -990,7 +1009,7 @@ class Projection(Scene):
         MathTex.set_default(font_size=42)
         # self.play_introduction()
         title = Text("Rotation Matrix").to_edge(UP+LEFT)
-        self.play(Create(title))
+        # self.play(Create(title))
         # self.play_rotation_matrix(title)
         # self.play(title.animate.become(Text("Projection Covector").to_edge(UP+LEFT)))
         # self.play_projection_covector(title)

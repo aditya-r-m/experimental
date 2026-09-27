@@ -937,11 +937,18 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
+        uu_tex = MathTex("u^T u = x^2 + y^2 = 1", color=CS[0]).move_to(4*LEFT)
+        uu_circle = Circle(color=CS[0], radius=1).move_to(grid.c2p(0, 0))
+        nuu_tex = MathTex(
+            r"\nabla u^T u =",
+            r"\begin{bmatrix} \partial_x (x^2+y^2) \\ \partial_y (x^2+y^2) \end{bmatrix}",
+        color=CS[3]).next_to(uu_tex, DOWN)
         u_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         u_circle = Circle(color=CS[0], radius=0.1).move_to(grid.c2p(1, 0))
         u_line = Line(-4*grid.c2p(1, 0), 4*grid.c2p(1, 0), color=CS[0]).rotate(PI/2, about_point=grid.c2p(1, 0))
         self.play(
             Create(u_arrow),
+            Create(uu_tex),
         )
         self.play(
             GrowFromPoint(u_circle, grid.c2p(1, 0)),
@@ -951,7 +958,31 @@ class Projection(Scene):
             Rotate(u_arrow, 17*PI/8, about_point=grid.c2p(0, 0)),
             Rotate(u_circle, 17*PI/8, about_point=grid.c2p(0, 0)),
             Rotate(u_line, 17*PI/8, about_point=grid.c2p(0, 0)),
+            Create(uu_circle),
         run_time=3)
+        nuu_arrows_init = [
+            Arrow(start=grid.c2p(0, 0), end=grid.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)), color=CS[3], buff=0)
+            for i in range(16)
+        ]
+        nuu_arrows = [
+            Arrow(
+                start=grid.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
+                end=grid.c2p(2*math.cos(i*2*PI/16), 2*math.sin(i*2*PI/16)),
+                color=CS[3],
+                tip_shape=StealthTip,
+                buff=0)
+            for i in range(16)
+        ]
+        self.play(Create(nuu_tex))
+        self.play(nuu_tex[1].animate.become(MathTex(r"\begin{bmatrix} 2x \\ 2y \end{bmatrix}", color=CS[3]).next_to(nuu_tex[0], RIGHT)))
+        self.play(nuu_tex[1].animate.become(MathTex(r"2u", color=CS[3]).next_to(nuu_tex[0], RIGHT)))
+        self.play(*(Create(arrow) for arrow in nuu_arrows_init))
+        self.play(*(ReplacementTransform(arrow_init, arrow) for (arrow_init, arrow) in zip(nuu_arrows_init, nuu_arrows)))
+        self.play(
+            uu_tex.animate.become(MathTex(r"u^T u = 1", color=CS[0]).move_to(LEFT*4)),
+            nuu_tex.animate.next_to(uu_tex.target, DOWN),
+        )
+        self.wait()
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: \nabla xAx optimized over xx=1
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0

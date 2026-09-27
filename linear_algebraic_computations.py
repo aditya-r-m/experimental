@@ -937,7 +937,7 @@ class Projection(Scene):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
         self.play(Create(grid), Create(unit_circle))
-        uu_tex = MathTex("u^T u = x^2 + y^2 = 1", color=CS[0]).move_to(4*LEFT)
+        uu_tex = MathTex("u^T u =", "x^2 + y^2 = 1", color=CS[0]).move_to(4*LEFT)
         uu_circle = Circle(color=CS[0], radius=1).move_to(grid.c2p(0, 0))
         nuu_tex = MathTex(
             r"\nabla u^T u =",
@@ -979,7 +979,7 @@ class Projection(Scene):
         self.play(*(Create(arrow) for arrow in nuu_arrows_init))
         self.play(*(ReplacementTransform(arrow_init, arrow) for (arrow_init, arrow) in zip(nuu_arrows_init, nuu_arrows)))
         self.play(
-            uu_tex.animate.become(MathTex(r"u^T u = 1", color=CS[0]).move_to(LEFT*4)),
+            uu_tex.animate.become(MathTex(r"u^T u =", "1", color=CS[0]).move_to(LEFT*4)),
             nuu_tex.animate.next_to(uu_tex.target, DOWN),
         )
         self.wait()

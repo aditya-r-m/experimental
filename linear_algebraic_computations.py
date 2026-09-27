@@ -944,7 +944,7 @@ class Projection(Scene):
             Create(u_arrow),
         )
         self.play(
-            ReplacementTransform(u_arrow.copy(), u_circle),
+            GrowFromPoint(u_circle, grid.c2p(1, 0)),
             GrowFromPoint(u_line, grid.c2p(1, 0)),
         )
         self.play(

@@ -4,7 +4,7 @@ import math
 import numpy as np
 from manim import *
 
-CS = [GREEN,RED,YELLOW,TEAL]
+CS = [PURPLE_A,RED,YELLOW,TEAL]
 
 class Projection(Scene):
     def play_introduction(self):
@@ -961,7 +961,7 @@ class Projection(Scene):
             Create(uu_circle),
         run_time=3)
         nuu_arrows_init = [
-            Arrow(start=grid.c2p(0, 0), end=grid.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)), color=CS[3], buff=0)
+            Arrow(start=grid.c2p(0, 0), end=grid.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)), color=CS[0], buff=0)
             for i in range(16)
         ]
         nuu_arrows = [
@@ -973,6 +973,11 @@ class Projection(Scene):
                 buff=0)
             for i in range(16)
         ]
+        self.play(
+            FadeOut(u_arrow),
+            FadeOut(u_circle),
+            FadeOut(u_line),
+        )
         self.play(Create(nuu_tex))
         self.play(nuu_tex[1].animate.become(MathTex(r"\begin{bmatrix} 2x \\ 2y \end{bmatrix}", color=CS[3]).next_to(nuu_tex[0], RIGHT)))
         self.play(nuu_tex[1].animate.become(MathTex(r"2u", color=CS[3]).next_to(nuu_tex[0], RIGHT)))

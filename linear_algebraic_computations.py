@@ -987,9 +987,46 @@ class Projection(Scene):
             uu_tex.animate.become(MathTex(r"u^T u =", "1", color=CS[0]).move_to(LEFT*4)),
             nuu_tex.animate.next_to(uu_tex.target, DOWN),
         )
+        self.play(
+            *(FadeOut(arrow) for arrow in nuu_arrows),
+        )
+        nuau_arrows_init = [
+            Arrow(start=grid.c2p(0, 0), end=grid.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)), color=CS[0], buff=0)
+            for i in range(16)
+        ]
+        nuau_arrows_mid = [
+            Arrow(
+                start=grid.c2p(0, 0),
+                end=grid.c2p(
+                    2*(math.cos(i*2*PI/16)) + 1*(math.sin(i*2*PI/16)),
+                    1*(math.cos(i*2*PI/16)) + 2*(math.sin(i*2*PI/16)),
+                ),
+                color=CS[1], buff=0
+            )
+            for i in range(16)
+        ]
+        nuau_arrows = [
+            Arrow(
+                start=grid.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
+                end=grid.c2p(
+                    2.5*(math.cos(i*2*PI/16)) + 1*(math.sin(i*2*PI/16)),
+                    1*(math.cos(i*2*PI/16)) + 3*(math.sin(i*2*PI/16)),
+                ),
+                tip_shape=StealthTip,
+                color=CS[2], buff=0
+            )
+            for i in range(16)
+        ]
+        self.play(*(Create(arrow) for arrow in nuau_arrows_init))
+        self.play(*(ReplacementTransform(arrow_init, arrow_mid) for (arrow_init, arrow_mid) in zip(nuau_arrows_init, nuau_arrows_mid)))
+        self.play(*(ReplacementTransform(arrow_mid, arrow) for (arrow_mid, arrow) in zip(nuau_arrows_mid, nuau_arrows)))
         self.wait()
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: \nabla xAx optimized over xx=1
+        # TODO: Gradient of this circle function radiates in straight lines starting at the origin.
+        # TODO: A function attains maximum value at points on the unit circle where the gradient aligns with straight lines starting at the origin.
+        # TODO: Gradients being aligned means that contours are aligned, which means that any wiggling away from the point leads to a suboptimal contour in any direction you step.
+        # TODO: For symmetric metrix A, the gradient of length measurement function uAu is 2Au. Thus, length measurement peaks when Au aligns with u.
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
 
     def play_eigenvector_computation(self, title):

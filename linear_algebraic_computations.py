@@ -6,6 +6,7 @@ from manim import *
 
 CS = [PURPLE_A,RED,YELLOW,TEAL]
 
+#TODO: intuition for SVD by unit circle turning into ellipse
 class Projection(Scene):
     def play_introduction(self):
         title_texts = [

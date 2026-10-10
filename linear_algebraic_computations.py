@@ -121,14 +121,10 @@ class Projection(Scene):
         for tex in texs:
             for i in range(3):
                 tex[i*2].set_color(CS[i])
-        self.play(Write(texs[0][0]))
+        self.play(Create(triangles[2]), Write(texs[0][4]))
+        self.play(Write(texs[0][:4]))
         self.play(Create(triangles[0]))
-        self.play(Write(texs[0][2]))
         self.play(Create(triangles[1]))
-        self.play(Write(texs[0][4]))
-        self.play(Create(triangles[2]))
-        self.play(Write(texs[0][1]))
-        self.play(Write(texs[0][3]))
         self.play(ReplacementTransform(texs[0], texs[1]))
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]]))

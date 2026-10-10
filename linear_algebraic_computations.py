@@ -92,8 +92,7 @@ class Projection(Scene):
         self.play(Create(lines[1]))
         texs = [
             MathTex(r"{{A_x}} + {{A_y}} = {{A_1}}").move_to(LEFT*4),
-            MathTex(r"{{c \cdot x^2}} + {{c \cdot y^2}} = {{c \cdot 1^2}}").move_to(LEFT*4),
-            MathTex(r"{{x^2}} + {{y^2}} = {{1}}").move_to(LEFT*4),
+            MathTex(r"{{c x^2}} + {{c y^2}} = {{c 1^2}}").move_to(LEFT*4),
         ]
         triangles = [
             self.get_polygon(
@@ -114,7 +113,7 @@ class Projection(Scene):
             MathTex("1", color=CS[2]),
         ]
         for (brace, label) in zip(braces, labels):
-            brace.put_at_tip(label, buff=0.125)
+            brace.put_at_tip(label, buff=0.1)
             self.play(
                 GrowFromCenter(brace),
                 Write(label),
@@ -122,17 +121,22 @@ class Projection(Scene):
         for tex in texs:
             for i in range(3):
                 tex[i*2].set_color(CS[i])
-        self.play(Write(texs[0]))
+        self.play(Write(texs[0][0]))
         self.play(Create(triangles[0]))
+        self.play(Write(texs[0][2]))
         self.play(Create(triangles[1]))
+        self.play(Write(texs[0][4]))
         self.play(Create(triangles[2]))
+        self.play(Write(texs[0][1]))
+        self.play(Write(texs[0][3]))
         self.play(ReplacementTransform(texs[0], texs[1]))
-        self.play(ReplacementTransform(texs[1], texs[2]))
-        self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[2]]))
+        self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
+        self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]]))
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
-        v_tex = MathTex("v =", color=CS[2]).move_to(LEFT*6)
+        v_tex = MathTex("v =").move_to(LEFT*6)
+        v_tex[0].set_color(CS[2])
         r_mat = Matrix([["g_x","r_x"],["g_y","r_y"]]).next_to(v_tex, RIGHT)
         r_mat.set_column_colors(*CS)
         v_vec = Matrix([["v_g"],["v_r"]]).next_to(r_mat, RIGHT)

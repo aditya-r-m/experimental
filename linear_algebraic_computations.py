@@ -132,103 +132,89 @@ class Projection(Scene):
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
-        v_tex = Matrix([["v_g"],["v_r"]]).move_to(LEFT*4)
-        v_tex.set_column_colors(CS[2])
+        v_tex = MathTex("v =", color=CS[2]).move_to(LEFT*6)
+        r_mat = Matrix([["g_x","r_x"],["g_y","r_y"]]).next_to(v_tex, RIGHT)
+        r_mat.set_column_colors(*CS)
+        v_vec = Matrix([["v_g"],["v_r"]]).next_to(r_mat, RIGHT)
         v_arrow = self.get_arrow((0, 0), (2, 1), CS[2])
-        r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]])
-        r_tex.set_column_colors(*CS)
         self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
-        self.play(Create(v_tex), Create(v_arrow))
-        self.play(v_tex.animate.move_to(LEFT*3))
-        r_tex.next_to(v_tex, LEFT)
+        self.play(Write(v_tex))
+        self.play(Write(r_mat))
+        self.play(Write(v_vec))
+        self.play(Create(v_arrow))
+        self.play(*(Rotate(obj, PI/4, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        r_mat_0 = Matrix([["g_x"],["g_y"]]).next_to(v_tex, RIGHT)
+        r_mat_0.set_column_colors(CS[0])
+        v_vec_0 = MathTex("v_g").next_to(r_mat_0, RIGHT)
+        p_tex = MathTex("+").next_to(v_vec_0, RIGHT)
+        r_mat_1 = Matrix([["r_x"],["r_y"]]).next_to(p_tex, RIGHT)
+        r_mat_1.set_column_colors(CS[1])
+        v_vec_1 = MathTex("v_r").next_to(r_mat_1, RIGHT)
         self.play(
-            Create(r_tex),
-            *(Rotate(obj, PI/4, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
-        )
-        v_tex_1 = MathTex("v_r").move_to(LEFT*2)
-        v_tex_1.set_color(CS[2])
-        r_tex_1 = Matrix([["r_x"],["r_y"]]).next_to(v_tex_1, LEFT)
-        r_tex_1.set_column_colors(CS[1])
-        p_tex = MathTex("+").next_to(r_tex_1, LEFT)
-        v_tex_0 = MathTex("v_g").next_to(p_tex, LEFT)
-        v_tex_0.set_color(CS[2])
-        r_tex_0 = Matrix([["g_x"],["g_y"]]).next_to(v_tex_0, LEFT)
-        r_tex_0.set_column_colors(CS[0])
-        self.play(
-            FadeOut(r_tex.get_brackets()),
-            FadeOut(v_tex.get_brackets())
+            FadeOut(r_mat.get_brackets()),
+            FadeOut(v_vec.get_brackets())
         )
         self.play(
-            ReplacementTransform(r_tex.get_columns()[0], r_tex_0.get_columns()[0]),
-            ReplacementTransform(r_tex.get_columns()[1], r_tex_1.get_columns()[0]),
-            ReplacementTransform(v_tex.get_rows()[0], v_tex_0),
-            ReplacementTransform(v_tex.get_rows()[1], v_tex_1),
+            ReplacementTransform(r_mat.get_columns()[0], r_mat_0.get_columns()[0]),
+            ReplacementTransform(r_mat.get_columns()[1], r_mat_1.get_columns()[0]),
+            ReplacementTransform(v_vec.get_rows()[0], v_vec_0),
+            ReplacementTransform(v_vec.get_rows()[1], v_vec_1),
             Create(p_tex),
         )
         self.play(
-            FadeIn(r_tex_0.get_brackets()),
-            FadeIn(r_tex_1.get_brackets()),
+            FadeIn(r_mat_0.get_brackets()),
+            FadeIn(r_mat_1.get_brackets()),
         )
-        v_tex_0_c = v_tex_0.copy()
-        v_tex_1_c = v_tex_1.copy()
+        v_vec_0_c = v_vec_0.copy()
+        v_vec_1_c = v_vec_1.copy()
         p_tex_c = p_tex.copy()
         self.play(
-            FadeOut(r_tex_0.get_brackets()),
-            FadeOut(r_tex_1.get_brackets()),
+            FadeOut(r_mat_0.get_brackets()),
+            FadeOut(r_mat_1.get_brackets()),
         )
         self.play(
-            v_tex_0.animate.next_to(r_tex_0.get_entries()[0], RIGHT),
-            v_tex_0_c.animate.next_to(r_tex_0.get_entries()[1], RIGHT),
-            v_tex_1.animate.next_to(r_tex_1.get_entries()[0], RIGHT),
-            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1], RIGHT),
-            p_tex.animate.next_to(r_tex_1.get_entries()[0], LEFT),
-            p_tex_c.animate.next_to(r_tex_1.get_entries()[1], LEFT),
+            v_vec_0.animate.next_to(r_mat_0.get_entries()[0], RIGHT),
+            v_vec_0_c.animate.next_to(r_mat_0.get_entries()[1], RIGHT),
+            v_vec_1.animate.next_to(r_mat_1.get_entries()[0], RIGHT),
+            v_vec_1_c.animate.next_to(r_mat_1.get_entries()[1], RIGHT),
+            p_tex.animate.next_to(r_mat_1.get_entries()[0], LEFT),
+            p_tex_c.animate.next_to(r_mat_1.get_entries()[1], LEFT),
         )
         self.play(
-            p_tex.animate.next_to(v_tex_0, RIGHT),
-            p_tex_c.animate.next_to(v_tex_0_c, RIGHT),
-            r_tex_1.get_entries()[0].animate.next_to(p_tex.target, RIGHT),
-            r_tex_1.get_entries()[1].animate.next_to(p_tex_c.target, RIGHT),
-            v_tex_1.animate.next_to(r_tex_1.get_entries()[0].target, RIGHT),
-            v_tex_1_c.animate.next_to(r_tex_1.get_entries()[1].target, RIGHT),
+            p_tex.animate.next_to(v_vec_0, RIGHT),
+            p_tex_c.animate.next_to(v_vec_0_c, RIGHT),
+            r_mat_1.get_entries()[0].animate.next_to(p_tex.target, RIGHT),
+            r_mat_1.get_entries()[1].animate.next_to(p_tex_c.target, RIGHT),
+            v_vec_1.animate.next_to(r_mat_1.get_entries()[0].target, RIGHT),
+            v_vec_1_c.animate.next_to(r_mat_1.get_entries()[1].target, RIGHT),
         )
-        r_tex_1.get_brackets()[1].set_x(v_tex_1.get_right()[0] + MED_SMALL_BUFF)
+        r_mat_1.get_brackets()[1].set_x(v_vec_1.get_right()[0] + MED_SMALL_BUFF)
         self.play(
-            FadeIn(r_tex_0.get_brackets()[0]),
-            FadeIn(r_tex_1.get_brackets()[1]),
+            FadeIn(r_mat_0.get_brackets()[0]),
+            FadeIn(r_mat_1.get_brackets()[1]),
         )
         brace = BraceBetweenPoints(
             np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
             np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
             direction=UP,
             buff=0,
+            color=CS[2]
+        )
+        label = MathTex(
+            r"{{v_x}}",
+            r"= \begin{bmatrix} {{g_x}} & {{r_x}} \end{bmatrix}",
+            r"\begin{bmatrix} v_g \\ v_r \end{bmatrix}")
+        label[0].set_color(CS[2])
+        label[2].set_color(CS[0])
+        label[4].set_color(CS[1])
+        label.next_to(brace.get_tip(), UP, aligned_edge=LEFT)
+        self.play(
+            GrowFromCenter(brace),
+            Write(label),
         )
         self.play(
-            FadeIn(brace),
-            FadeOut(r_tex_0.get_brackets()[0]),
-            FadeOut(r_tex_1.get_brackets()[1]),
-            FadeOut(r_tex_0.get_entries()[1]),
-            FadeOut(r_tex_1.get_entries()[1]),
-            FadeOut(p_tex_c),
-            FadeOut(v_tex_0_c),
-            FadeOut(v_tex_1_c),
-        )
-        v_tex = Matrix([["v_g"],["v_r"]]).move_to(LEFT*4)
-        v_tex.set_column_colors(CS[2])
-        r_tex = Matrix([["g_x","r_x"]], h_buff=0.9)
-        r_tex.set_column_colors(*CS)
-        p_tex = MathTex("=")
-        p_tex.set_x(r_tex_0.get_entries()[0].get_x() - 0.9)
-        p_tex.set_y(r_tex_0.get_entries()[0].get_y() - LARGE_BUFF)
-        r_tex.next_to(p_tex, RIGHT)
-        v_tex.next_to(r_tex, RIGHT, aligned_edge=UP)
-        self.play(
-            Create(p_tex),
-            Create(r_tex),
-            Create(v_tex),
-        )
-        self.play(
-            FadeOut(*(mob for mob in self.mobjects if mob not in [self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),
+            FadeOut(*(mob for mob in self.mobjects if mob not in [
+                self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),
             *(Rotate(obj, -PI/4, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
         )
         matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)

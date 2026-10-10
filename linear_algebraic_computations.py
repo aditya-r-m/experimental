@@ -4,9 +4,9 @@ import math
 import numpy as np
 from manim import *
 
-CS = [PURPLE_A,RED,YELLOW,TEAL]
+CS = [GREEN,RED,YELLOW,TEAL]
+Z = np.array([0., 0., 0.,])
 
-#TODO: intuition for SVD by unit circle turning into ellipse
 class Projection(Scene):
     def play_introduction(self):
         title_texts = [
@@ -67,15 +67,26 @@ class Projection(Scene):
                     max_tip_length_to_length_ratio=100,
                 ))
             self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        self.play(FadeOut(*self.mobjects))
+        return node_texts
+
+    def get_arrow(self, start, end, color):
+        return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)
+
+    def get_line(self, color, start, end):
+        return Line(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end))
+
+    def get_polygon(self, *points, color, fill_color, fill_opacity):
+        return Polygon(*(self.axes.c2p(*point) for point in points), color=color, fill_color=fill_color, fill_opacity=fill_opacity)
+
+    def get_brace_between_points(self, start, end, color, direction):
+        return BraceBetweenPoints(self.axes.c2p(start), self.axes.c2p(end), color=color, direction=direction, buff=0)
 
     def play_rotation_matrix(self, title):
-        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
-        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
+        #TODO: intuition for SVD by unit circle turning into ellipse
+        self.play(Create(self.axes), Create(self.unit_circle))
         lines = [
-            Line(color=LIGHT_GRAY, start=grid.c2p(0, 0), end=grid.c2p(3/5, 4/5)),
-            Line(color=LIGHT_GRAY, start=grid.c2p(3/5, 4/5), end=grid.c2p(3/5, 0)),
+            self.get_line(LIGHT_GRAY, (0, 0), (3/5, 4/5)),
+            self.get_line(LIGHT_GRAY, (3/5, 4/5), (3/5, 0)),
         ]
         self.play(Create(lines[0]))
         self.play(Create(lines[1]))
@@ -85,14 +96,17 @@ class Projection(Scene):
             MathTex(r"{{x^2}} + {{y^2}} = {{1}}").move_to(LEFT*4),
         ]
         triangles = [
-            Polygon(grid.c2p(0, 0), grid.c2p(3/5 * 3/5 * 3/5, 3/5 * 4/5 * 3/5), grid.c2p(3/5, 0), color=CS[0], fill_color=CS[0], fill_opacity=0.5),
-            Polygon(grid.c2p(3/5, 0), grid.c2p(3/5 * 3/5 * 3/5, 3/5 * 4/5 * 3/5), grid.c2p(3/5, 4/5), color=CS[1], fill_color=CS[1], fill_opacity=0.5),
-            Polygon(grid.c2p(0, 0), grid.c2p(3/5, 0), grid.c2p(3/5, 4/5), color=CS[2], fill_color=CS[2], fill_opacity=0.5),
+            self.get_polygon(
+                (0, 0), (3/5 * 3/5 * 3/5, 3/5 * 4/5 * 3/5), (3/5, 0), color=CS[0], fill_color=CS[0], fill_opacity=0.5),
+            self.get_polygon(
+                (3/5, 0), (3/5 * 3/5 * 3/5, 3/5 * 4/5 * 3/5), (3/5, 4/5), color=CS[1], fill_color=CS[1], fill_opacity=0.5),
+            self.get_polygon(
+                (0, 0), (3/5, 0), (3/5, 4/5), color=CS[2], fill_color=CS[2], fill_opacity=0.5),
         ]
         braces = [
-            BraceBetweenPoints(grid.c2p(0, 0), grid.c2p(3/5, 0), direction=DOWN, buff=0, color=CS[0]),
-            BraceBetweenPoints(grid.c2p(3/5, 0), grid.c2p(3/5, 4/5), direction=RIGHT, buff=0, color=CS[1]),
-            BraceBetweenPoints(grid.c2p(3/5, 4/5), grid.c2p(0, 0), buff=0, color=CS[2]),
+            self.get_brace_between_points((0, 0), (3/5, 0), direction=DOWN, color=CS[0]),
+            self.get_brace_between_points((3/5, 0), (3/5, 4/5), direction=RIGHT, color=CS[1]),
+            self.get_brace_between_points((3/5, 4/5), (0, 0), direction=Z, color=CS[2]),
         ]
         labels = [
             MathTex("x", color=CS[0]),
@@ -102,25 +116,25 @@ class Projection(Scene):
         for (brace, label) in zip(braces, labels):
             brace.put_at_tip(label, buff=0.125)
             self.play(
-                Create(brace),
-                Create(label),
+                GrowFromCenter(brace),
+                Write(label),
             )
         for tex in texs:
             for i in range(3):
                 tex[i*2].set_color(CS[i])
-        self.play(Create(texs[0]))
-        self.play(Create(triangles[0]), run_time=4)
-        self.play(Create(triangles[1]), run_time=4)
-        self.play(Create(triangles[2]), run_time=4)
+        self.play(Write(texs[0]))
+        self.play(Create(triangles[0]))
+        self.play(Create(triangles[1]))
+        self.play(Create(triangles[2]))
         self.play(ReplacementTransform(texs[0], texs[1]))
         self.play(ReplacementTransform(texs[1], texs[2]))
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[2]]))
-        i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
-        j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
+        i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
+        j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         v_tex = Matrix([["v_g"],["v_r"]]).move_to(LEFT*4)
         v_tex.set_column_colors(CS[2])
-        v_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(2, 1), color=CS[2], buff=0)
+        v_arrow = self.get_arrow((0, 0), (2, 1), CS[2])
         r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]])
         r_tex.set_column_colors(*CS)
         self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
@@ -129,7 +143,7 @@ class Projection(Scene):
         r_tex.next_to(v_tex, LEFT)
         self.play(
             Create(r_tex),
-            *(Rotate(obj, PI/4, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
+            *(Rotate(obj, PI/4, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
         )
         v_tex_1 = MathTex("v_r").move_to(LEFT*2)
         v_tex_1.set_color(CS[2])
@@ -214,8 +228,8 @@ class Projection(Scene):
             Create(v_tex),
         )
         self.play(
-            FadeOut(*(mob for mob in self.mobjects if mob not in [grid, title, i_arrow, j_arrow, ij_angle, v_arrow, unit_circle])),
-            *(Rotate(obj, -PI/4, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
+            FadeOut(*(mob for mob in self.mobjects if mob not in [self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),
+            *(Rotate(obj, -PI/4, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
         )
         matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)
         matrix_180.set_column_colors(*CS)
@@ -224,9 +238,9 @@ class Projection(Scene):
             Create(matrix_180),
             Create(tex_180),
         )
-        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.play(*(Rotate(obj, -PI, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, PI, about_point=self.origin, axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
         tex_90 = MathTex(r"x \leftrightarrow y,\ y \rightarrow -y").next_to(matrix_90, UP)
@@ -238,9 +252,9 @@ class Projection(Scene):
             Create(matrix_90),
             Create(tex_90),
         )
-        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.play(*(Rotate(obj, PI, about_point=grid.c2p(0, 0), axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.play(*(Rotate(obj, -PI/2, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
     def play_projection_covector(self, title):
@@ -553,9 +567,8 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
     def _play_spectral_theorem(self, title):
-        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
-        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
+        grid = get_grid()
+        self.play(Create(grid))
         g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
         r_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
         matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*4)
@@ -935,9 +948,8 @@ class Projection(Scene):
         self.play(Uncreate(line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
     def play_spectral_theorem(self, title):
-        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
-        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
+        grid = get_grid()
+        self.play(Create(grid))
         uu_tex = MathTex("u^T u =", "x^2 + y^2 = 1", color=CS[0]).move_to(4*LEFT)
         uu_circle = Circle(color=CS[0], radius=1).move_to(grid.c2p(0, 0))
         nuu_tex = MathTex(
@@ -1081,16 +1093,19 @@ class Projection(Scene):
     def construct(self):
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
-        # self.play_introduction()
-        title = Text("Rotation Matrix").to_edge(UP+LEFT)
-        # self.play(Create(title))
-        # self.play_rotation_matrix(title)
+        self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
+        self.origin = self.axes.c2p(0, 0)
+        self.unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(self.origin)
+        node_texts = self.play_introduction()
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != node_texts[0])))
+        self.play(node_texts[0].animate.to_edge(UP+LEFT))
+        self.play_rotation_matrix(node_texts[0])
         # self.play(title.animate.become(Text("Projection Covector").to_edge(UP+LEFT)))
         # self.play_projection_covector(title)
         # self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
         # self.play_rotation_inverse(title)
         # self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
-        self.play_spectral_theorem(title)
+        # self.play_spectral_theorem(title)
         # self.play(title.animate.become(Text("Eigenvector Computation (QR Iteration)").to_edge(UP+LEFT)))
         # self.play_eigenvector_computation(title)
 

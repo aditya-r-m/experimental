@@ -8,7 +8,7 @@ CS = [GREEN,RED,YELLOW,TEAL]
 Z = np.array([0., 0., 0.,])
 
 class Projection(Scene):
-    def play_introduction(self):
+    def get_titles(self):
         title_texts = [
             "Rotation Matrix",
             "Projection Covector",
@@ -20,7 +20,7 @@ class Projection(Scene):
             "Projection Matrix",
             "    Linear Regression\n(Ordinary Least Squares)",
         ]
-        node_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
+        title_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
         layout = [
             np.array([-5,3,0]),
             np.array([5,3,0]),
@@ -43,11 +43,11 @@ class Projection(Scene):
             [5,1],
             [7],
         ]
-        for (i, node_text) in enumerate(node_texts):
-            node_text.move_to(layout[i])
-            arrows = []
+        arrows = []
+        for (i, title_text) in enumerate(title_texts):
+            title_text.move_to(layout[i])
             for u in edges[i]:
-                src, dst = node_texts[u], node_text
+                src, dst = title_texts[u], title_text
                 sx, dx = layout[u][0], layout[i][0]
                 if sx == dx:
                     start = src.get_bottom()
@@ -66,8 +66,7 @@ class Projection(Scene):
                     max_stroke_width_to_length_ratio=100,
                     max_tip_length_to_length_ratio=100,
                 ))
-            self.play(Create(node_text), *(Create(arrow) for arrow in arrows))
-        return node_texts
+        return title_texts, arrows
 
     def get_arrow(self, start, end, color):
         return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)
@@ -1099,10 +1098,14 @@ class Projection(Scene):
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(self.origin)
-        node_texts = self.play_introduction()
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != node_texts[0])))
-        self.play(node_texts[0].animate.to_edge(UP+LEFT))
-        self.play_rotation_matrix(node_texts[0])
+        title_texts, title_arrows = self.get_titles()
+        self.play(
+            *(Write(title_text) for title_text in title_texts),
+            *(Create(title_arrow) for title_arrow in title_arrows),
+        )
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[0])))
+        self.play(title_texts[0].animate.to_edge(UP+LEFT))
+        self.play_rotation_matrix(title_texts[0])
         # self.play(title.animate.become(Text("Projection Covector").to_edge(UP+LEFT)))
         # self.play_projection_covector(title)
         # self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))

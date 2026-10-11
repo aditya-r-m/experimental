@@ -81,8 +81,20 @@ class Projection(Scene):
     def get_brace_between_points(self, start, end, color, direction):
         return BraceBetweenPoints(self.axes.c2p(start), self.axes.c2p(end), color=color, direction=direction, buff=0)
 
+    def get_elliptic_contours(self, width, height, color):
+        group = VGroup()
+        group.add(Ellipse(
+            width=2*width,
+            height=2*height,
+            color=color).move_to(self.origin))
+        for (dx, dy) in [(0,1),(1,0),(-1,0),(0,-1)]:
+            group.add(Line(
+                color=color,
+                start=self.axes.c2p(width*dx, height*dy),
+                end=self.axes.c2p((width+0.25)*dx, (height+0.25)*dy)))
+        return group
+
     def play_rotation_matrix(self, title):
-        #TODO: intuition for SVD by unit circle turning into ellipse
         self.play(Create(self.axes), Create(self.unit_circle))
         lines = [
             self.get_line(LIGHT_GRAY, (0, 0), (3/5, 4/5)),
@@ -128,6 +140,13 @@ class Projection(Scene):
         self.play(ReplacementTransform(texs[0], texs[1]))
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]]))
+        elliptic_tex = MathTex(
+            r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1",
+            color=CS[-1]).move_to(LEFT*4)
+        self.play(Write(elliptic_tex))
+        elliptic_contours = self.get_elliptic_contours(1, 2, CS[-1])
+        self.play(ReplacementTransform(self.unit_circle.copy(), elliptic_contours))
+        self.play(FadeOut(elliptic_tex), FadeOut(elliptic_contours))
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)

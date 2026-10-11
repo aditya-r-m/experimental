@@ -169,13 +169,6 @@ class Projection(Scene):
         self.play(ReplacementTransform(texs[0], texs[1]))
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
-        elliptic_tex = MathTex(
-            r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1",
-            color=CS[2]).move_to(LEFT*4)
-        self.play(Write(elliptic_tex))
-        ellipse = Ellipse(color=CS[2], width=4, height=6).move_to(self.origin)
-        self.play(ReplacementTransform(self.unit_circle.copy(), ellipse))
-        self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
@@ -265,7 +258,7 @@ class Projection(Scene):
         )
         matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)
         matrix_180.set_column_colors(*CS)
-        tex_180 = MathTex(r"x \leftrightarrow -x,\ y \leftrightarrow -y").next_to(matrix_180, UP)
+        tex_180 = MathTex(r"\text{Half turn : } x \leftrightarrow -x,\ y \leftrightarrow -y").next_to(matrix_180, UP)
         self.play(
             Create(matrix_180),
             Create(tex_180),
@@ -275,7 +268,7 @@ class Projection(Scene):
         self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
-        tex_90 = MathTex(r"x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
+        tex_90 = MathTex(r"\text{Quarter turn : } x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
         self.play(
             FadeOut(matrix_180),
             FadeOut(tex_180),
@@ -1122,7 +1115,17 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         '''
 
+    def play_svd(self, title):
+        elliptic_tex = MathTex(
+            r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1",
+            color=CS[2]).move_to(LEFT*4)
+        self.play(Write(elliptic_tex))
+        ellipse = Ellipse(color=CS[2], width=4, height=6).move_to(self.origin)
+        self.play(ReplacementTransform(self.unit_circle.copy(), ellipse))
+        self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
+
     def construct(self):
+        selected_chapter = 0
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -1133,17 +1136,14 @@ class Projection(Scene):
             *(Write(title_text) for title_text in title_texts),
             *(Create(title_arrow) for title_arrow in title_arrows),
         )
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[0])))
-        self.play(title_texts[0].animate.to_edge(UP+LEFT))
-        self.play_rotation_matrix(title_texts[0])
-        # self.play(title.animate.become(Text("Projection Covector").to_edge(UP+LEFT)))
-        # self.play_projection_covector(title)
-        # self.play(title.animate.become(Text("Rotation Inverse").to_edge(UP+LEFT)))
-        # self.play_rotation_inverse(title)
-        # self.play(title.animate.become(Text("Spectral Theorem").to_edge(UP+LEFT)))
-        # self.play_spectral_theorem(title)
-        # self.play(title.animate.become(Text("Eigenvector Computation (QR Iteration)").to_edge(UP+LEFT)))
-        # self.play_eigenvector_computation(title)
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
+        self.play(title_texts[selected_chapter].animate.scale(2.0).to_edge(UP+LEFT))
+        if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
+        if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])
+        if selected_chapter == 2: self.play_rotation_inverse(title_texts[selected_chapter])
+        if selected_chapter == 3: self.play_spectral_theorem(title_texts[selected_chapter])
+        if selected_chapter == 4: self.play_eigenvector_computation(title_texts[selected_chapter])
+        if selected_chapter == 5: self.play_svd(title_texts[selected_chapter])
 
 
 class Determinant(Scene):

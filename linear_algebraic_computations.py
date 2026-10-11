@@ -592,6 +592,7 @@ class Projection(Scene):
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
     def _play_spectral_theorem(self, title):
+        # TODO : simplify gradient explanations by making circle gradient implicit
         grid = get_grid()
         self.play(Create(grid))
         g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)

@@ -236,7 +236,7 @@ class Projection(Scene):
         )
         matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)
         matrix_180.set_column_colors(*CS)
-        tex_180 = MathTex(r"x \rightarrow -x,\ y \rightarrow -y").next_to(matrix_180, UP)
+        tex_180 = MathTex(r"x \leftrightarrow -x,\ y \leftrightarrow -y").next_to(matrix_180, UP)
         self.play(
             Create(matrix_180),
             Create(tex_180),
@@ -246,7 +246,7 @@ class Projection(Scene):
         self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
-        tex_90 = MathTex(r"x \leftrightarrow y,\ y \rightarrow -y").next_to(matrix_90, UP)
+        tex_90 = MathTex(r"x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
         self.play(
             FadeOut(matrix_180),
             FadeOut(tex_180),

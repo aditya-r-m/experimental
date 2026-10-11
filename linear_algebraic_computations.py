@@ -258,7 +258,7 @@ class Projection(Scene):
         )
         matrix_180 = Matrix([[-1, 0],[0,-1]]).move_to(LEFT*4)
         matrix_180.set_column_colors(*CS)
-        tex_180 = MathTex(r"\text{Half turn : } x \leftrightarrow -x,\ y \leftrightarrow -y").next_to(matrix_180, UP)
+        tex_180 = MathTex(r"\text{1/2 turn : } x \leftrightarrow -x,\ y \leftrightarrow -y").next_to(matrix_180, UP)
         self.play(
             Create(matrix_180),
             Create(tex_180),
@@ -268,7 +268,7 @@ class Projection(Scene):
         self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
-        tex_90 = MathTex(r"\text{Quarter turn : } x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
+        tex_90 = MathTex(r"\text{1/4 turn : } x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
         self.play(
             FadeOut(matrix_180),
             FadeOut(tex_180),
@@ -1145,6 +1145,7 @@ class Projection(Scene):
         if selected_chapter == 3: self.play_spectral_theorem(title_texts[selected_chapter])
         if selected_chapter == 4: self.play_eigenvector_computation(title_texts[selected_chapter])
         if selected_chapter == 5: self.play_svd(title_texts[selected_chapter])
+        self.play(FadeOut(*(obj for obj in self.mobjects)))
 
 
 class Determinant(Scene):

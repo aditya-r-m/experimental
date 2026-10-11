@@ -142,11 +142,11 @@ class Projection(Scene):
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]]))
         elliptic_tex = MathTex(
             r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1",
-            color=CS[-1]).move_to(LEFT*4)
+            color=CS[2]).move_to(LEFT*4)
         self.play(Write(elliptic_tex))
-        elliptic_contours = self.get_elliptic_contours(1, 2, CS[-1])
-        self.play(ReplacementTransform(self.unit_circle.copy(), elliptic_contours))
-        self.play(FadeOut(elliptic_tex), FadeOut(elliptic_contours))
+        ellipse = Ellipse(color=CS[2], width=4, height=8).move_to(self.origin)
+        self.play(ReplacementTransform(self.unit_circle.copy(), ellipse))
+        self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)

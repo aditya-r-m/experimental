@@ -133,12 +133,42 @@ class Projection(Scene):
             for i in range(3):
                 tex[i*2].set_color(CS[i])
         self.play(Create(triangles[2]), Write(texs[0][4]))
+        self.play(triangles[2].animate
+            .rotate(-math.atan2(4, 3), about_point=triangles[2].get_vertices()[0])
+            .next_to(texs[0][4][0], DOWN)
+        )
         self.play(Write(texs[0][:4]))
         self.play(Create(triangles[0]))
         self.play(Create(triangles[1]))
+        self.play(
+            triangles[0].animate
+                .next_to(texs[0][0][0], DOWN),
+            triangles[1].animate
+                .rotate(-PI/2, about_point=triangles[1].get_vertices()[0])
+                .next_to(texs[0][2][0], DOWN),
+        )
+        self.play(
+            triangles[0].animate
+                .flip(LEFT),
+            triangles[1].animate
+                .flip(LEFT),
+        )
+        squares = [
+            Square(color=CS[0], side_length=np.linalg.norm(triangles[0].get_vertices()[2] - triangles[0].get_vertices()[0])),
+            Square(color=CS[1], side_length=np.linalg.norm(triangles[1].get_vertices()[2] - triangles[1].get_vertices()[0])),
+            Square(color=CS[2], side_length=np.linalg.norm(triangles[2].get_vertices()[2] - triangles[2].get_vertices()[0])),
+        ]
+        squares[0].shift(triangles[0].get_vertices()[0] - squares[0].get_corner(UL))
+        squares[1].shift(triangles[1].get_vertices()[0] - squares[1].get_corner(UL))
+        squares[2].shift(triangles[2].get_vertices()[0] - squares[2].get_corner(UL))
+        self.play(
+            Create(squares[0]),
+            Create(squares[1]),
+            Create(squares[2]),
+        )
         self.play(ReplacementTransform(texs[0], texs[1]))
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
-        self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]]))
+        self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
         elliptic_tex = MathTex(
             r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1",
             color=CS[2]).move_to(LEFT*4)

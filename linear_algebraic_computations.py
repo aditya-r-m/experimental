@@ -144,7 +144,7 @@ class Projection(Scene):
             r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1",
             color=CS[2]).move_to(LEFT*4)
         self.play(Write(elliptic_tex))
-        ellipse = Ellipse(color=CS[2], width=4, height=8).move_to(self.origin)
+        ellipse = Ellipse(color=CS[2], width=4, height=6).move_to(self.origin)
         self.play(ReplacementTransform(self.unit_circle.copy(), ellipse))
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])

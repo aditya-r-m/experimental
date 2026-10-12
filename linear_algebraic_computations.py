@@ -71,14 +71,20 @@ class Projection(Scene):
     def get_arrow(self, start, end, color):
         return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)
 
-    def get_line(self, color, start, end):
+    def get_line(self, start, end, color):
         return Line(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end))
+
+    def get_dashed_line(self, start, end, color):
+        return DashedLine(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end))
 
     def get_polygon(self, *points, color, fill_color, fill_opacity):
         return Polygon(*(self.axes.c2p(*point) for point in points), color=color, fill_color=fill_color, fill_opacity=fill_opacity)
 
     def get_brace_between_points(self, start, end, color, direction):
         return BraceBetweenPoints(self.axes.c2p(start), self.axes.c2p(end), color=color, direction=direction, buff=0)
+
+    def get_circle(self, center, radius, color):
+        return Circle(radius=radius, color=color).move_to(self.axes.c2p(*center))
 
     def get_elliptic_contours(self, width, height, color):
         group = VGroup()
@@ -96,8 +102,8 @@ class Projection(Scene):
     def play_rotation_matrix(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
         lines = [
-            self.get_line(LIGHT_GRAY, (0, 0), (3/5, 4/5)),
-            self.get_line(LIGHT_GRAY, (3/5, 4/5), (3/5, 0)),
+            self.get_line((0, 0), (3/5, 4/5), LIGHT_GRAY),
+            self.get_line((3/5, 4/5), (3/5, 0), LIGHT_GRAY),
         ]
         self.play(Create(lines[0]))
         self.play(Create(lines[1]))
@@ -282,21 +288,19 @@ class Projection(Scene):
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
 
     def play_projection_covector(self, title):
-        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
-        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
+        self.play(Create(self.axes), Create(self.unit_circle))
         color_1, color_0, color_c = CS[0:3]
         theta = PI/3
         x, y = math.cos(theta), math.sin(theta)
-        x_line = DashedLine(start=grid.c2p(x, y - 0.1), end=grid.c2p(x, -1), color=color_c)
-        y_line = DashedLine(start=grid.c2p(x + 0.1, y), end=grid.c2p(2, y), color=color_c)
-        x_brace = BraceBetweenPoints(grid.c2p(0, -1), grid.c2p(x, -1), direction=DOWN, buff=0, color=color_c)
-        y_brace = BraceBetweenPoints(grid.c2p(2, 0), grid.c2p(2, y), direction=RIGHT, buff=0, color=color_c)
+        x_line = self.get_dashed_line((x, y - 0.1), (x, -1), color_c)
+        y_line = self.get_dashed_line((x + 0.1, y), (2, y), color_c)
+        x_brace = self.get_brace_between_points((0, -1), (x, -1), color_c, DOWN)
+        y_brace = self.get_brace_between_points((2, 0), (2, y), color_c, RIGHT)
         x_tex = MathTex("x", color=color_c, font_size=32).next_to(x_brace, 0.5 * DOWN)
         y_tex = MathTex("y", color=color_c, font_size=32).next_to(y_brace, 0.5 * RIGHT)
         covector = Matrix([["x", "y"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
-        circle_c = Circle(radius=0.1, color=color_c).move_to(grid.c2p(x, y))
+        circle_c = self.get_circle((x, y), 0.1, color_c)
         self.play(
             Create(covector),
             Create(x_line),
@@ -307,7 +311,7 @@ class Projection(Scene):
             Create(y_tex),
             Create(circle_c),
         )
-        arrow_1 = Arrow(color=color_1, start=grid.c2p(0, 0), end=grid.c2p(x, y), buff=0)
+        arrow_1 = self.get_arrow((0, 0), (x, y), color_1)
         vector_1 = Matrix([["x"], ["y"]]).next_to(covector)
         vector_1.set_column_colors(color_1)
         tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
@@ -318,7 +322,7 @@ class Projection(Scene):
             Create(arrow_1),
             Create(tex_1),
         )
-        arrow_0 = Arrow(color=color_0, start=grid.c2p(0, 0), end=grid.c2p(-y, x), buff=0)
+        arrow_0 = self.get_arrow((0, 0), (-y, x), color_0)
         angle_01 = RightAngle(arrow_0, arrow_1, length=0.25, color=LIGHT_GRAY)
         vector_0 = Matrix([["-y"], ["x"]]).next_to(covector)
         vector_0.set_column_colors(color_0)
@@ -335,7 +339,7 @@ class Projection(Scene):
             Create(angle_01),
             Create(tex_0),
         )
-        line_c = Line(color=color_c, start=grid.c2p(1, -8), end=grid.c2p(1, 8)).rotate(theta, about_point=grid.c2p(0, 0))
+        line_c = self.get_line((1, -8), (1, 8), color_c).rotate(theta, about_point=self.origin)
         angle_1c = RightAngle(arrow_1, line_c, length=0.25, quadrant=(-1,1), color=LIGHT_GRAY)
         vector_01 = Matrix([["x - cy"], ["y + cx"]]).next_to(covector)
         vector_01.get_entries()[0][0][0:2].set_color(color_1)
@@ -351,7 +355,7 @@ class Projection(Scene):
         tex_1_l.set_color(CS[-1])
         self.play(
             Create(vector_01),
-            GrowFromPoint(line_c, grid.c2p(0, 0)),
+            GrowFromPoint(line_c, self.origin),
             Create(angle_1c),
             FadeIn(tex_1_l),
         )
@@ -365,7 +369,7 @@ class Projection(Scene):
         for diff in [(-4*y, 4*x), (8*y, -8*x), (-4*y, 4*x)]:
             ax, ay = ax + diff[0], ay + diff[1]
             self.play(
-                arrow_1_c.animate.put_start_and_end_on(grid.c2p(0, 0), grid.c2p(ax, ay)),
+                arrow_1_c.animate.put_start_and_end_on(self.origin, self.axes.c2p(ax, ay)),
                 tex_1_c.animate.next_to(arrow_1_c.target.get_end(), UP),
         )
         self.play(
@@ -390,9 +394,9 @@ class Projection(Scene):
         for diff in [(1, 0), (0, -0.5), (-1, 0), (0, 0.5)]:
             x += diff[0]
             y += diff[1]
-            new_circle_c = circle_c.copy().move_to(grid.c2p(x, y))
-            new_line_c = Line(color=color_c, start=grid.c2p(-8*x, -8*y), end=grid.c2p(8*x, 8*y))
-            new_line_c.rotate(PI/2, about_point=grid.c2p(x / (x*x + y*y), y / (x*x + y*y)))
+            new_circle_c = circle_c.copy().move_to(self.axes.c2p(x, y))
+            new_line_c = self.get_line((-8*x, -8*y), (8*x, 8*y), color_c)
+            new_line_c.rotate(PI/2, about_point=self.axes.c2p(x / (x*x + y*y), y / (x*x + y*y)))
             self.play(
                 ReplacementTransform(circle_c, new_circle_c),
                 ReplacementTransform(line_c, new_line_c),
@@ -458,19 +462,20 @@ class Projection(Scene):
             covector_4_r_f.get_entries()[3].animate.next_to(tex_p_r, RIGHT),
             vector_4_r.get_entries()[3].animate.next_to(covector_4_r_f.get_entries()[3].target, RIGHT),
         )
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
-        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
         tex_0 = MathTex(
             r"{{v}} = {{v_u}} + {{v_{u^\perp}}}",
             tex_to_color_map={"v": CS[1], "v_u": CS[-1], r"v_{u^\perp}": CS[2]},
         ).move_to(LEFT*4)
-        arrow_u = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2, 1), buff=0)
-        arrow_v = Arrow(color=CS[1], start=grid.c2p(0, 0), end=grid.c2p(2, 4), buff=0)
-        arrow_vu = Arrow(color=CS[-1], start=grid.c2p(0, 0), end=grid.c2p(2*8/5, 1*8/5), buff=0)#, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
-        arrow_vup = Arrow(color=CS[2], start=grid.c2p(2*8/5, 1*8/5), end=grid.c2p(2, 4), buff=0)#, stroke_opacity=0.5, tip_style={"fill_opacity":0.75})
-        angle_v = RightAngle(arrow_vu, arrow_vup, length=0.4, quadrant=(-1, 1), color=LIGHT_GRAY)#, stroke_opacity=0.5)
+        arrow_u = self.get_arrow((0, 0), (2, 1), CS[0])
+        arrow_v = self.get_arrow((0, 0), (2, 4), CS[1])
+        arrow_vu = self.get_arrow((0, 0), (2*8/5, 1*8/5), CS[-1])
+        arrow_vup = self.get_arrow((2*8/5, 1*8/5), (2, 4), CS[2])
+        angle_v = RightAngle(arrow_vu, arrow_vup, length=0.4, quadrant=(-1, 1), color=LIGHT_GRAY)
+        self.play(
+            FadeIn(self.axes),
+            FadeIn(self.unit_circle),
+        )
         self.play(
             Create(tex_0),
             Create(arrow_u),
@@ -488,18 +493,18 @@ class Projection(Scene):
             tex_to_color_map={r"\hat{u}": CS[0], "u": CS[0], r"u^T": CS[0]},
         ).next_to(tex_0, DOWN)
         self.play(Create(tex_1))
-        circle_u = Circle(radius=0.1, color=CS[0]).move_to(grid.c2p(2, 1))
-        line_u = Line(color=CS[0], start=grid.c2p(-8*2, -8*1), end=grid.c2p(8*2, 8*1))
-        line_u.rotate(PI/2, about_point=grid.c2p(2 / (2*2 + 1*1), 1 / (2*2 + 1*1)))
+        circle_u = self.get_circle((2, 1), 0.1, CS[0])
+        line_u = self.get_line((-8*2, -8*1), (8*2, 8*1), CS[0])
+        line_u.rotate(PI/2, about_point=self.axes.c2p(2 / (2*2 + 1*1), 1 / (2*2 + 1*1)))
         self.play(
             arrow_u.animate.set_opacity(0.5),
             ReplacementTransform(arrow_u.copy(), circle_u),
-            GrowFromPoint(line_u, grid.c2p(0, 0)),
+            GrowFromPoint(line_u, self.origin),
         )
-        arrow_uu = Arrow(color=CS[0], start=grid.c2p(0, 0), end=grid.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)), buff=0)
-        circle_uu = Circle(radius=0.1, color=CS[0]).move_to(grid.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)))
-        line_uu = Line(color=CS[0], start=grid.c2p(-8*2, -8*1), end=grid.c2p(8*2, 8*1))
-        line_uu.rotate(PI/2, about_point=grid.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)))
+        arrow_uu = self.get_arrow((0, 0), (2 / math.sqrt(5), 1 / math.sqrt(5)), CS[0])
+        circle_uu = self.get_circle((2 / math.sqrt(5), 1 / math.sqrt(5)), 0.1, CS[0])
+        line_uu = self.get_line((-8*2, -8*1), (8*2, 8*1), CS[0])
+        line_uu.rotate(PI/2, about_point=self.axes.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)))
         self.play(
             ReplacementTransform(arrow_u, arrow_uu),
             ReplacementTransform(circle_u, circle_uu),
@@ -1120,7 +1125,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 0
+        selected_chapter = 1
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)

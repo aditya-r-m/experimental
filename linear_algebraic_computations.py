@@ -280,7 +280,6 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
     def play_projection_covector(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -521,8 +520,6 @@ class Projection(Scene):
             Create(arrow_vup),
             Create(angle_v),
         )
-        self.wait(8)
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
     def play_rotation_inverse(self, title):
         grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -589,7 +586,6 @@ class Projection(Scene):
         self.play(Create(y_line))
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
     def _play_spectral_theorem(self, title):
         # TODO : simplify gradient explanations by making circle gradient implicit
@@ -1059,8 +1055,6 @@ class Projection(Scene):
         self.play(*(Create(arrow) for arrow in nuau_arrows_init))
         self.play(*(ReplacementTransform(arrow_init, arrow_mid) for (arrow_init, arrow_mid) in zip(nuau_arrows_init, nuau_arrows_mid)))
         self.play(*(ReplacementTransform(arrow_mid, arrow) for (arrow_mid, arrow) in zip(nuau_arrows_mid, nuau_arrows)))
-        self.wait()
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         # TODO: \nabla xAx optimized over xx=1
         # TODO: Gradient of this circle function radiates in straight lines starting at the origin.
         # TODO: A function attains maximum value at points on the unit circle where the gradient aligns with straight lines starting at the origin.

@@ -527,52 +527,50 @@ class Projection(Scene):
         )
 
     def play_rotation_inverse(self, title):
-        grid = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
-        unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(grid.c2p(0, 0))
-        self.play(Create(grid), Create(unit_circle))
+        self.play(Create(self.axes), Create(self.unit_circle))
         theta = PI/3
         x, y = math.cos(theta), math.sin(theta)
-        i_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(1, 0), color=CS[0], buff=0)
-        j_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(0, 1), color=CS[1], buff=0)
+        i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
+        j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]]).move_to(LEFT*4)
         r_tex.set_column_colors(*CS)
         self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
         self.play(
             Create(r_tex),
-            *(Rotate(obj, theta, about_point=grid.c2p(0, 0)) for obj in [i_arrow, j_arrow, ij_angle]),
+            *(Rotate(obj, theta, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle]),
         )
         self.play(r_tex.animate.shift(RIGHT*1.5))
         s_tex = MathTex("-1").next_to(r_tex, RIGHT+UP, buff=0)
         e_tex = MathTex("=").next_to(r_tex, LEFT)
         t_tex = Matrix([["g_x","g_y"],["r_x","r_y"]]).next_to(e_tex, LEFT)
         t_tex.set_row_colors(*CS)
-        i_circle = Circle(radius=0.1, color=CS[0]).move_to(grid.c2p(x, y))
-        i_line = Line(color=CS[0], start=grid.c2p(-8*x, -8*y), end=grid.c2p(8*x, 8*y))
-        i_line.rotate(PI/2, about_point=grid.c2p(x / (x*x + y*y), y / (x*x + y*y)))
-        j_circle = Circle(radius=0.1, color=CS[1]).move_to(grid.c2p(-y, x))
-        j_line = Line(color=CS[1], start=grid.c2p(8*y, -8*x), end=grid.c2p(-8*y, 8*x))
-        j_line.rotate(PI/2, about_point=grid.c2p(-y / (x*x + y*y), x / (x*x + y*y)))
+        i_circle = self.get_circle((x, y), 0.1, CS[0])
+        i_line = self.get_line((-8*x, -8*y), (8*x, 8*y), CS[0])
+        i_line.rotate(PI/2, about_point=self.axes.c2p(x / (x*x + y*y), y / (x*x + y*y)))
+        j_circle = self.get_circle((-y, x), 0.1, CS[1])
+        j_line = self.get_line((8*y, -8*x), (-8*y, 8*x), CS[1])
+        j_line.rotate(PI/2, about_point=self.axes.c2p(-y / (x*x + y*y), x / (x*x + y*y)))
         self.play(
             Create(s_tex),
             Create(e_tex),
             Create(t_tex),
             i_arrow.animate.set_opacity(0.5),
             ReplacementTransform(i_arrow.copy(), i_circle),
-            GrowFromPoint(i_line, grid.c2p(0, 0)),
+            GrowFromPoint(i_line, self.origin),
             j_arrow.animate.set_opacity(0.5),
             ReplacementTransform(j_arrow.copy(), j_circle),
-            GrowFromPoint(j_line, grid.c2p(0, 0)),
+            GrowFromPoint(j_line, self.origin),
         )
         self.play(
             i_arrow.animate.set_opacity(1),
             j_arrow.animate.set_opacity(1),
         )
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, grid, unit_circle])))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
         theta = PI/3
         x, y = math.cos(theta), math.sin(theta)
-        g_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(x, y), color=CS[0], buff=0)
-        y_arrow = Arrow(start=grid.c2p(0, 0), end=grid.c2p(3, 1), color=CS[2], buff=0)
+        g_arrow = self.get_arrow((0, 0), (x, y), CS[0])
+        y_arrow = self.get_arrow((0, 0), (3, 1), CS[2])
         g_matrix = Matrix([["g_x","g_y"],["-","-"]]).move_to(LEFT*5)
         g_matrix.set_row_colors(CS[0])
         y_matrix = Matrix([["v_x"],["v_y"]]).next_to(g_matrix, RIGHT)
@@ -584,8 +582,8 @@ class Projection(Scene):
             Create(y_matrix),
         )
         self.play(
-            Rotate(g_arrow, -theta, about_point=grid.c2p(0, 0)),
-            Rotate(y_arrow, -theta, about_point=grid.c2p(0, 0)),
+            Rotate(g_arrow, -theta, about_point=self.origin),
+            Rotate(y_arrow, -theta, about_point=self.origin),
         )
         y_line = DashedLine(start=y_arrow.get_end(), end=[y_arrow.get_end()[0], y_arrow.get_start()[1], 0], color=CS[2])
         self.play(Create(y_line))
@@ -1125,12 +1123,12 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 1
+        selected_chapter = 2
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         self.origin = self.axes.c2p(0, 0)
-        self.unit_circle = Circle(radius=1, color=LIGHT_GRAY).move_to(self.origin)
+        self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
         self.play(
             *(Write(title_text) for title_text in title_texts),

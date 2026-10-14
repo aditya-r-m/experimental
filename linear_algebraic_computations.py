@@ -93,8 +93,8 @@ class Projection(Scene):
             (length_scale*center[0], length_scale*center[1]),
             color)
         line.rotate(PI/2, about_point=self.axes.c2p(
-            center[0] / math.sqrt(center[0]**2 + center[1]**2),
-            center[1] / math.sqrt(center[0]**2 + center[1]**2)))
+            center[0] / (center[0]**2 + center[1]**2),
+            center[1] / (center[0]**2 + center[1]**2)))
         return line, circle
 
     def get_elliptic_contours(self, width, height, color):
@@ -404,9 +404,7 @@ class Projection(Scene):
         for diff in [(1, 0), (0, -0.5), (-1, 0), (0, 0.5)]:
             x += diff[0]
             y += diff[1]
-            new_circle_c = circle_c.copy().move_to(self.axes.c2p(x, y))
-            new_line_c = self.get_line((-8*x, -8*y), (8*x, 8*y), color_c)
-            new_line_c.rotate(PI/2, about_point=self.axes.c2p(x / (x*x + y*y), y / (x*x + y*y)))
+            new_line_c, new_circle_c = self.get_lircle((x, y), color_c)
             self.play(
                 ReplacementTransform(circle_c, new_circle_c),
                 ReplacementTransform(line_c, new_line_c),
@@ -503,18 +501,14 @@ class Projection(Scene):
             tex_to_color_map={r"\hat{u}": CS[0], "u": CS[0], r"u^T": CS[0]},
         ).next_to(tex_0, DOWN)
         self.play(Create(tex_1))
-        circle_u = self.get_circle((2, 1), 0.1, CS[0])
-        line_u = self.get_line((-8*2, -8*1), (8*2, 8*1), CS[0])
-        line_u.rotate(PI/2, about_point=self.axes.c2p(2 / (2*2 + 1*1), 1 / (2*2 + 1*1)))
+        line_u, circle_u = self.get_lircle((2, 1), CS[0])
         self.play(
             arrow_u.animate.set_opacity(0.5),
             ReplacementTransform(arrow_u.copy(), circle_u),
             GrowFromPoint(line_u, self.origin),
         )
         arrow_uu = self.get_arrow((0, 0), (2 / math.sqrt(5), 1 / math.sqrt(5)), CS[0])
-        circle_uu = self.get_circle((2 / math.sqrt(5), 1 / math.sqrt(5)), 0.1, CS[0])
-        line_uu = self.get_line((-8*2, -8*1), (8*2, 8*1), CS[0])
-        line_uu.rotate(PI/2, about_point=self.axes.c2p(2 / math.sqrt(5), 1 / math.sqrt(5)))
+        line_uu, circle_uu = self.get_lircle((2 / math.sqrt(5), 1 / math.sqrt(5)), CS[0])
         self.play(
             ReplacementTransform(arrow_u, arrow_uu),
             ReplacementTransform(circle_u, circle_uu),

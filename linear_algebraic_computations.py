@@ -616,10 +616,10 @@ class Projection(Scene):
         self.play(GrowFromCenter(eigen_vector))
         self.play(Rotate(eigen_vector, PI, about_point=self.origin))
         self.play(ShrinkToCenter(eigen_vector))
-        return
+        
         shear = [[1, 0],[0.5, 1]]
-        g_arrow_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(shear[0][0], shear[1][0]), color=CS[0], buff=0)
-        r_arrow_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(shear[0][1], shear[1][1]), color=CS[1], buff=0)
+        g_arrow_sheared = self.get_arrow((0, 0), (shear[0][0], shear[1][0]), CS[0])
+        r_arrow_sheared = self.get_arrow((0, 0), (shear[0][1], shear[1][1]), CS[1])
         matrix_sheared = Matrix(shear).move_to(LEFT*4)
         matrix_sheared.set_column_colors(*CS)
         lines_sheared = []
@@ -628,25 +628,14 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x, y = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][1]*y
-            lines_sheared.append(Line(
-                start=self.axes.c2p(0, 0),
-                end=self.axes.c2p(x, y),
-                color=c,
-                buff=0,
-                stroke_opacity=0.5,
-            ))
+            lines_sheared.append(self.get_line((0, 0), (x, y), c, stroke_opacity=0.5))
         arrows_sheared = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = math.cos(theta), math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][1]*y
-            arrows_sheared.append(Arrow(
-                start=self.axes.c2p(x, y),
-                end=self.axes.c2p(x_u, y_u),
-                color=c,
-                buff=0,
-            ))
+            arrows_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
         _, eigen_vectors = np.linalg.eig(np.array(shear))
         self.play(
             ReplacementTransform(g_arrow, g_arrow_sheared),
@@ -655,13 +644,13 @@ class Projection(Scene):
             *(ReplacementTransform(line, line_sheared) for (line, line_sheared) in zip(lines, lines_sheared)),
             *(Create(arrow_sheared) for arrow_sheared in arrows_sheared),
         )
-        eigen_line = Line(start=self.axes.c2p(-4*eigen_vectors[0][0], -4*eigen_vectors[1][0]), end=self.axes.c2p(4*eigen_vectors[0][0], 4*eigen_vectors[1][0]), color=CS[-1], buff=0)
+        eigen_line = self.get_line((-4*eigen_vectors[0][0], -4*eigen_vectors[1][0]), (4*eigen_vectors[0][0], 4*eigen_vectors[1][0]), CS[-1])
         self.play(Create(eigen_line))
         eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
         self.play(Uncreate(eigen_line))
         aligned_shear = [[1, -0.5],[0.5, 1]]
-        g_arrow_aligned_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(aligned_shear[0][0], aligned_shear[1][0]), color=CS[0], buff=0)
-        r_arrow_aligned_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(aligned_shear[0][1], aligned_shear[1][1]), color=CS[1], buff=0)
+        g_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][0], aligned_shear[1][0]), CS[0])
+        r_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][1], aligned_shear[1][1]), CS[1])
         matrix_aligned_sheared = Matrix(aligned_shear).move_to(LEFT*4)
         matrix_aligned_sheared.set_column_colors(*CS)
         lines_aligned_sheared = []
@@ -670,25 +659,14 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x, y = aligned_shear[0][0]*x + aligned_shear[0][1]*y, aligned_shear[1][0]*x + aligned_shear[1][1]*y
-            lines_aligned_sheared.append(Line(
-                start=self.axes.c2p(0, 0),
-                end=self.axes.c2p(x, y),
-                color=c,
-                buff=0,
-                stroke_opacity=0.5,
-            ))
+            lines_aligned_sheared.append(self.get_line((0, 0), (x, y), c, stroke_opacity=0.5))
         arrows_aligned_sheared = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = math.cos(theta), math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = aligned_shear[0][0]*x + aligned_shear[0][1]*y, aligned_shear[1][0]*x + aligned_shear[1][1]*y
-            arrows_aligned_sheared.append(Arrow(
-                start=self.axes.c2p(x, y),
-                end=self.axes.c2p(x_u, y_u),
-                color=c,
-                buff=0,
-            ))
+            arrows_aligned_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
         self.play(
             ReplacementTransform(g_arrow_sheared, g_arrow_aligned_sheared),
             ReplacementTransform(r_arrow_sheared, r_arrow_aligned_sheared),
@@ -697,8 +675,8 @@ class Projection(Scene):
             *(ReplacementTransform(arrow_sheared, arrow_aligned_sheared) for (arrow_sheared, arrow_aligned_sheared) in zip(arrows_sheared, arrows_aligned_sheared)),
         )
         counter_shear = [[1, 0.5],[0.5, 1]]
-        g_arrow_counter_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(counter_shear[0][0], counter_shear[1][0]), color=CS[0], buff=0)
-        r_arrow_counter_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(counter_shear[0][1], counter_shear[1][1]), color=CS[1], buff=0)
+        g_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][0], counter_shear[1][0]), CS[0])
+        r_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][1], counter_shear[1][1]), CS[1])
         matrix_counter_sheared = Matrix(counter_shear).move_to(LEFT*4)
         matrix_counter_sheared.set_column_colors(*CS)
         lines_counter_sheared = []
@@ -707,25 +685,14 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x, y = counter_shear[0][0]*x + counter_shear[0][1]*y, counter_shear[1][0]*x + counter_shear[1][1]*y
-            lines_counter_sheared.append(Line(
-                start=self.axes.c2p(0, 0),
-                end=self.axes.c2p(x, y),
-                color=c,
-                buff=0,
-                stroke_opacity=0.5,
-            ))
+            lines_counter_sheared.append(self.get_line((0, 0), (x, y), c, stroke_opacity=0.5))
         arrows_counter_sheared = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = math.cos(theta), math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = counter_shear[0][0]*x + counter_shear[0][1]*y, counter_shear[1][0]*x + counter_shear[1][1]*y
-            arrows_counter_sheared.append(Arrow(
-                start=self.axes.c2p(x, y),
-                end=self.axes.c2p(x_u, y_u),
-                color=c,
-                buff=0,
-            ))
+            arrows_counter_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
         self.play(
             ReplacementTransform(g_arrow_aligned_sheared, g_arrow_counter_sheared),
             ReplacementTransform(r_arrow_aligned_sheared, r_arrow_counter_sheared),
@@ -735,13 +702,13 @@ class Projection(Scene):
         )
         _, eigen_vectors = np.linalg.eig(np.array(counter_shear))
         for i in range(2):
-            eigen_line = Line(start=self.axes.c2p(-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), end=self.axes.c2p(4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), color=CS[-1], buff=0)
+            eigen_line = self.get_line((-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), (4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), CS[-1])
             self.play(Create(eigen_line))
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
         imbalanced_counter_shear = [[1.5, 0.5],[0.5, 1]]
-        g_arrow_imbalanced_counter_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(imbalanced_counter_shear[0][0], imbalanced_counter_shear[1][0]), color=CS[0], buff=0)
-        r_arrow_imbalanced_counter_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(imbalanced_counter_shear[0][1], imbalanced_counter_shear[1][1]), color=CS[1], buff=0)
+        g_arrow_imbalanced_counter_sheared = self.get_arrow((0, 0), (imbalanced_counter_shear[0][0], imbalanced_counter_shear[1][0]), CS[0])
+        r_arrow_imbalanced_counter_sheared = self.get_arrow((0, 0), (imbalanced_counter_shear[0][1], imbalanced_counter_shear[1][1]), CS[1])
         matrix_imbalanced_counter_sheared = Matrix(imbalanced_counter_shear).move_to(LEFT*4)
         matrix_imbalanced_counter_sheared.set_column_colors(*CS)
         lines_imbalanced_counter_sheared = []
@@ -750,25 +717,14 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x, y = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
-            lines_imbalanced_counter_sheared.append(Line(
-                start=self.axes.c2p(0, 0),
-                end=self.axes.c2p(x, y),
-                color=c,
-                buff=0,
-                stroke_opacity=0.5,
-            ))
+            lines_imbalanced_counter_sheared.append(self.get_line((0, 0), (x, y), c, stroke_opacity=0.5))
         arrows_imbalanced_counter_sheared = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = math.cos(theta), math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
-            arrows_imbalanced_counter_sheared.append(Arrow(
-                start=self.axes.c2p(x, y),
-                end=self.axes.c2p(x_u, y_u),
-                color=c,
-                buff=0,
-            ))
+            arrows_imbalanced_counter_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
         self.play(
             ReplacementTransform(g_arrow_counter_sheared, g_arrow_imbalanced_counter_sheared),
             ReplacementTransform(r_arrow_counter_sheared, r_arrow_imbalanced_counter_sheared),
@@ -778,7 +734,7 @@ class Projection(Scene):
         )
         _, eigen_vectors = np.linalg.eig(np.array(imbalanced_counter_shear))
         for i in range(2):
-            eigen_line = Line(start=self.axes.c2p(-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), end=self.axes.c2p(4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), color=CS[-1], buff=0)
+            eigen_line = self.get_line((-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), (4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), CS[-1])
             self.play(Create(eigen_line))
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
@@ -829,16 +785,17 @@ class Projection(Scene):
             r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}"
         ).next_to(tex_l, DOWN)
         tex_r.set_color(CS[0])
-        arrows_fx = [Arrow(
-            color=CS[0],
-            start=self.axes.c2p(i, j),
-            end=self.axes.c2p(i+1,j),
+        arrows_fx = [self.get_arrow(
+            (i, j),
+            (i+1, j),
+            CS[0],
+            buff=0.25,
             stroke_opacity=1,
             tip_shape=StealthTip,
             tip_style={"fill_opacity": 1, "stroke_opacity": 1},
         ) for i in range(-4, 4) for j in range(-4, 4)]
-        line_fx_0 = Line(color=CS[1], start=self.axes.c2p(-2,-4), end=self.axes.c2p(-2,4))
-        line_fx_1 = Line(color=CS[1], start=self.axes.c2p(2,-4), end=self.axes.c2p(2,4))
+        line_fx_0 = self.get_line((-2, -4), (-2, 4), CS[1])
+        line_fx_1 = self.get_line((2, -4), (2, 4), CS[1])
         tex_fx_0 = MathTex("-2", color=CS[1]).move_to(self.axes.c2p(-1.5, 2.5))
         tex_fx_1 = MathTex("2", color=CS[1]).move_to(self.axes.c2p(2.5, 2.5))
         self.play(
@@ -881,10 +838,11 @@ class Projection(Scene):
             color=CS[1]
         )
         tex_f_c = MathTex(2, color=CS[1]).move_to(self.axes.c2p(2, 2))
-        arrows_fx = [Arrow(
-            color=CS[0],
-            start=self.axes.c2p(i, j),
-            end=self.axes.c2p(i+j/(math.sqrt(i*i+j*j)),j+i/(math.sqrt(i*i+j*j))),
+        arrows_fx = [self.get_arrow(
+            (i, j),
+            (i+j/(math.sqrt(i*i+j*j)), j+i/(math.sqrt(i*i+j*j))),
+            CS[0],
+            buff=0.25,
             tip_shape=StealthTip,
             tip_length=(i*i+j*j)/16,
         ) for i in range(-4, 5) for j in range(-4, 5) if i or j]
@@ -912,10 +870,11 @@ class Projection(Scene):
         ).next_to(tex_l_g, DOWN)
         tex_r_g.set_color(CS[2])
         circle_g = Circle(radius=1, color=CS[3]).move_to(self.axes.c2p(0, 0))
-        arrows_gx = [Arrow(
-            color=CS[2],
-            start=self.axes.c2p(math.cos(i*PI/16), math.sin(i*PI/16)),
-            end=self.axes.c2p(2*math.cos(i*PI/16), 2*math.sin(i*PI/16)),
+        arrows_gx = [self.get_arrow(
+            (math.cos(i*PI/16), math.sin(i*PI/16)),
+            (2*math.cos(i*PI/16), 2*math.sin(i*PI/16)),
+            CS[2],
+            buff=0.25,
             tip_shape=StealthTip,
         ) for i in range(0, 32, 2)]
         self.play(
@@ -962,11 +921,11 @@ class Projection(Scene):
             Create(tex_r_o[0]),
             Create(tex_r_o[2]),
         )
-        line = Line(start=self.axes.c2p(-4,-4), end=self.axes.c2p(4,4))
+        line = self.get_line((-4, -4), (4, 4), WHITE)
         self.play(Create(line))
         line.reverse_points()
         self.play(Uncreate(line))
-        line = Line(start=self.axes.c2p(4,-4), end=self.axes.c2p(-4,4))
+        line = self.get_line((4, -4), (-4, 4), WHITE)
         self.play(Create(line))
         line.reverse_points()
         self.play(Uncreate(line))
@@ -978,9 +937,9 @@ class Projection(Scene):
             r"\nabla u^T u =",
             r"\begin{bmatrix} \partial_x (x^2+y^2) \\ \partial_y (x^2+y^2) \end{bmatrix}",
         color=CS[3]).next_to(uu_tex, DOWN)
-        u_arrow = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(1, 0), color=CS[0], buff=0)
+        u_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         u_circle = Circle(color=CS[0], radius=0.1).move_to(self.axes.c2p(1, 0))
-        u_line = Line(-4*self.axes.c2p(1, 0), 4*self.axes.c2p(1, 0), color=CS[0]).rotate(PI/2, about_point=self.axes.c2p(1, 0))
+        u_line = self.get_line((1, -4), (1, 4), CS[0])
         self.play(
             Create(u_arrow),
             Create(uu_tex),
@@ -996,14 +955,14 @@ class Projection(Scene):
             Create(uu_circle),
         run_time=3)
         nuu_arrows_init = [
-            Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)), color=CS[0], buff=0)
+            self.get_arrow((0, 0), (math.cos(i*2*PI/16), math.sin(i*2*PI/16)), CS[0], buff=0.25)
             for i in range(16)
         ]
         nuu_arrows = [
-            Arrow(
-                start=self.axes.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
-                end=self.axes.c2p(2*math.cos(i*2*PI/16), 2*math.sin(i*2*PI/16)),
-                color=CS[3],
+            self.get_arrow(
+                (math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
+                (2*math.cos(i*2*PI/16), 2*math.sin(i*2*PI/16)),
+                CS[3],
                 tip_shape=StealthTip,
                 buff=0)
             for i in range(16)
@@ -1026,30 +985,28 @@ class Projection(Scene):
             *(FadeOut(arrow) for arrow in nuu_arrows),
         )
         nuau_arrows_init = [
-            Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)), color=CS[0], buff=0)
+            self.get_arrow((0, 0), (math.cos(i*2*PI/16), math.sin(i*2*PI/16)), CS[0])
             for i in range(16)
         ]
         nuau_arrows_mid = [
-            Arrow(
-                start=self.axes.c2p(0, 0),
-                end=self.axes.c2p(
+            self.get_arrow(
+                (0, 0),
+                (
                     2*(math.cos(i*2*PI/16)) + 1*(math.sin(i*2*PI/16)),
                     1*(math.cos(i*2*PI/16)) + 2*(math.sin(i*2*PI/16)),
                 ),
-                color=CS[1], buff=0
-            )
+                CS[1])
             for i in range(16)
         ]
         nuau_arrows = [
-            Arrow(
-                start=self.axes.c2p(math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
-                end=self.axes.c2p(
+            self.get_arrow(
+                (math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
+                (
                     2.5*(math.cos(i*2*PI/16)) + 1*(math.sin(i*2*PI/16)),
                     1*(math.cos(i*2*PI/16)) + 3*(math.sin(i*2*PI/16)),
                 ),
-                tip_shape=StealthTip,
-                color=CS[2], buff=0
-            )
+                CS[2],
+                tip_shape=StealthTip)
             for i in range(16)
         ]
         self.play(*(Create(arrow) for arrow in nuau_arrows_init))

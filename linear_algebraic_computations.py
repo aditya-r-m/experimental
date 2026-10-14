@@ -590,7 +590,7 @@ class Projection(Scene):
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
 
-    def _play_spectral_theorem(self, title):
+    def play_spectral_theorem(self, title):
         # TODO : simplify gradient explanations by making circle gradient implicit
         grid = get_grid()
         self.play(Create(grid))
@@ -972,7 +972,6 @@ class Projection(Scene):
         line.reverse_points()
         self.play(Uncreate(line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-    def play_spectral_theorem(self, title):
         grid = get_grid()
         self.play(Create(grid))
         uu_tex = MathTex("u^T u =", "x^2 + y^2 = 1", color=CS[0]).move_to(4*LEFT)
@@ -1123,7 +1122,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 2
+        selected_chapter = 3
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)

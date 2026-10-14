@@ -81,10 +81,21 @@ class Projection(Scene):
         return Polygon(*(self.axes.c2p(*point) for point in points), color=color, fill_color=fill_color, fill_opacity=fill_opacity)
 
     def get_brace_between_points(self, start, end, color, direction):
-        return BraceBetweenPoints(self.axes.c2p(start), self.axes.c2p(end), color=color, direction=direction, buff=0)
+        return BraceBetweenPoints(self.axes.c2p(*start), self.axes.c2p(*end), color=color, direction=direction, buff=0)
 
     def get_circle(self, center, radius, color):
         return Circle(radius=radius, color=color).move_to(self.axes.c2p(*center))
+
+    def get_lircle(self, center, color, radius=0.1, length_scale=8):
+        circle = self.get_circle(center, 0.1, color)
+        line = self.get_line(
+            (-length_scale*center[0], -length_scale*center[1]),
+            (length_scale*center[0], length_scale*center[1]),
+            color)
+        line.rotate(PI/2, about_point=self.axes.c2p(
+            center[0] / math.sqrt(center[0]**2 + center[1]**2),
+            center[1] / math.sqrt(center[0]**2 + center[1]**2)))
+        return line, circle
 
     def get_elliptic_contours(self, width, height, color):
         group = VGroup()
@@ -300,7 +311,7 @@ class Projection(Scene):
         y_tex = MathTex("y", color=color_c, font_size=32).next_to(y_brace, 0.5 * RIGHT)
         covector = Matrix([["x", "y"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
-        circle_c = self.get_circle((x, y), 0.1, color_c)
+        line_c, circle_c = self.get_lircle((x, y), color_c)
         self.play(
             Create(covector),
             Create(x_line),
@@ -339,7 +350,6 @@ class Projection(Scene):
             Create(angle_01),
             Create(tex_0),
         )
-        line_c = self.get_line((1, -8), (1, 8), color_c).rotate(theta, about_point=self.origin)
         angle_1c = RightAngle(arrow_1, line_c, length=0.25, quadrant=(-1,1), color=LIGHT_GRAY)
         vector_01 = Matrix([["x - cy"], ["y + cx"]]).next_to(covector)
         vector_01.get_entries()[0][0][0:2].set_color(color_1)
@@ -1123,7 +1133,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 2
+        selected_chapter = 1
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)

@@ -595,7 +595,7 @@ class Projection(Scene):
         self.play(Create(self.axes), Create(self.unit_circle))
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
-        matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*4)
+        matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*5)
         matrix.set_column_colors(*CS)
         eigen_tex = MathTex("v = \lambda v").next_to(matrix, RIGHT)
         eigen_tex[0][::3].set_color(CS[-1])
@@ -620,7 +620,7 @@ class Projection(Scene):
         shear = [[1, 0],[0.5, 1]]
         g_arrow_sheared = self.get_arrow((0, 0), (shear[0][0], shear[1][0]), CS[0])
         r_arrow_sheared = self.get_arrow((0, 0), (shear[0][1], shear[1][1]), CS[1])
-        matrix_sheared = Matrix(shear).move_to(LEFT*4)
+        matrix_sheared = Matrix(shear).move_to(LEFT*5)
         matrix_sheared.set_column_colors(*CS)
         lines_sheared = []
         for t in range(32):
@@ -641,6 +641,7 @@ class Projection(Scene):
             ReplacementTransform(g_arrow, g_arrow_sheared),
             ReplacementTransform(r_arrow, r_arrow_sheared),
             ReplacementTransform(matrix, matrix_sheared),
+            eigen_tex.animate.next_to(matrix_sheared, RIGHT),
             *(ReplacementTransform(line, line_sheared) for (line, line_sheared) in zip(lines, lines_sheared)),
             *(Create(arrow_sheared) for arrow_sheared in arrows_sheared),
         )
@@ -651,7 +652,7 @@ class Projection(Scene):
         aligned_shear = [[1, -0.5],[0.5, 1]]
         g_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][0], aligned_shear[1][0]), CS[0])
         r_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][1], aligned_shear[1][1]), CS[1])
-        matrix_aligned_sheared = Matrix(aligned_shear).move_to(LEFT*4)
+        matrix_aligned_sheared = Matrix(aligned_shear).move_to(LEFT*5)
         matrix_aligned_sheared.set_column_colors(*CS)
         lines_aligned_sheared = []
         for t in range(32):
@@ -671,13 +672,14 @@ class Projection(Scene):
             ReplacementTransform(g_arrow_sheared, g_arrow_aligned_sheared),
             ReplacementTransform(r_arrow_sheared, r_arrow_aligned_sheared),
             ReplacementTransform(matrix_sheared, matrix_aligned_sheared),
+            eigen_tex.animate.next_to(matrix_aligned_sheared, RIGHT),
             *(ReplacementTransform(line_sheared, line_aligned_sheared) for (line_sheared, line_aligned_sheared) in zip(lines_sheared, lines_aligned_sheared)),
             *(ReplacementTransform(arrow_sheared, arrow_aligned_sheared) for (arrow_sheared, arrow_aligned_sheared) in zip(arrows_sheared, arrows_aligned_sheared)),
         )
         counter_shear = [[1, 0.5],[0.5, 1]]
         g_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][0], counter_shear[1][0]), CS[0])
         r_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][1], counter_shear[1][1]), CS[1])
-        matrix_counter_sheared = Matrix(counter_shear).move_to(LEFT*4)
+        matrix_counter_sheared = Matrix(counter_shear).move_to(LEFT*5)
         matrix_counter_sheared.set_column_colors(*CS)
         lines_counter_sheared = []
         for t in range(32):
@@ -697,6 +699,7 @@ class Projection(Scene):
             ReplacementTransform(g_arrow_aligned_sheared, g_arrow_counter_sheared),
             ReplacementTransform(r_arrow_aligned_sheared, r_arrow_counter_sheared),
             ReplacementTransform(matrix_aligned_sheared, matrix_counter_sheared),
+            eigen_tex.animate.next_to(matrix_counter_sheared, RIGHT),
             *(ReplacementTransform(line_aligned_sheared, line_counter_sheared) for (line_aligned_sheared, line_counter_sheared) in zip(lines_aligned_sheared, lines_counter_sheared)),
             *(ReplacementTransform(arrow_aligned_sheared, arrow_counter_sheared) for (arrow_aligned_sheared, arrow_counter_sheared) in zip(arrows_aligned_sheared, arrows_counter_sheared)),
         )
@@ -709,7 +712,7 @@ class Projection(Scene):
         imbalanced_counter_shear = [[1.5, 0.5],[0.5, 1]]
         g_arrow_imbalanced_counter_sheared = self.get_arrow((0, 0), (imbalanced_counter_shear[0][0], imbalanced_counter_shear[1][0]), CS[0])
         r_arrow_imbalanced_counter_sheared = self.get_arrow((0, 0), (imbalanced_counter_shear[0][1], imbalanced_counter_shear[1][1]), CS[1])
-        matrix_imbalanced_counter_sheared = Matrix(imbalanced_counter_shear).move_to(LEFT*4)
+        matrix_imbalanced_counter_sheared = Matrix(imbalanced_counter_shear).move_to(LEFT*5)
         matrix_imbalanced_counter_sheared.set_column_colors(*CS)
         lines_imbalanced_counter_sheared = []
         for t in range(32):
@@ -729,6 +732,7 @@ class Projection(Scene):
             ReplacementTransform(g_arrow_counter_sheared, g_arrow_imbalanced_counter_sheared),
             ReplacementTransform(r_arrow_counter_sheared, r_arrow_imbalanced_counter_sheared),
             ReplacementTransform(matrix_counter_sheared, matrix_imbalanced_counter_sheared),
+            eigen_tex.animate.next_to(matrix_imbalanced_counter_sheared, RIGHT),
             *(ReplacementTransform(line_counter_sheared, line_imbalanced_counter_sheared) for (line_counter_sheared, line_imbalanced_counter_sheared) in zip(lines_counter_sheared, lines_imbalanced_counter_sheared)),
             *(ReplacementTransform(arrow_counter_sheared, arrow_imbalanced_counter_sheared) for (arrow_counter_sheared, arrow_imbalanced_counter_sheared) in zip(arrows_counter_sheared, arrows_imbalanced_counter_sheared)),
         )
@@ -778,240 +782,6 @@ class Projection(Scene):
         self.play(Create(line_h))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        tex_l = MathTex(r"f(x, y) = x").move_to(4*LEFT + UP)
-        tex_l.set_color(CS[1])
-        tex_r = MathTex(
-            r"\implies \nabla f =",
-            r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} 1 \\ 0 \end{bmatrix}"
-        ).next_to(tex_l, DOWN)
-        tex_r.set_color(CS[0])
-        arrows_fx = [self.get_arrow(
-            (i, j),
-            (i+1, j),
-            CS[0],
-            buff=0.25,
-            stroke_opacity=1,
-            tip_shape=StealthTip,
-            tip_style={"fill_opacity": 1, "stroke_opacity": 1},
-        ) for i in range(-4, 4) for j in range(-4, 4)]
-        line_fx_0 = self.get_line((-2, -4), (-2, 4), CS[1])
-        line_fx_1 = self.get_line((2, -4), (2, 4), CS[1])
-        tex_fx_0 = MathTex("-2", color=CS[1]).move_to(self.axes.c2p(-1.5, 2.5))
-        tex_fx_1 = MathTex("2", color=CS[1]).move_to(self.axes.c2p(2.5, 2.5))
-        self.play(
-            Create(tex_l),
-            Create(line_fx_0),
-            Create(tex_fx_0),
-        )
-        self.play(
-            Create(tex_r),
-            *(Create(arrow) for arrow in arrows_fx),
-        )
-        self.play(
-            ReplacementTransform(line_fx_0, line_fx_1),
-            ReplacementTransform(tex_fx_0, tex_fx_1),
-        )
-        self.play(tex_fx_1.animate.move_to(self.axes.c2p(2.5, -2.5)))
-        self.play(tex_fx_1.animate.move_to(self.axes.c2p(2.5, 2.5)))
-        self.play(
-            FadeOut(tex_l),
-            FadeOut(line_fx_1),
-            FadeOut(tex_fx_1),
-            FadeOut(tex_r),
-            FadeOut(*arrows_fx),
-        )
-        tex_l = MathTex(r"f(x, y) = xy").move_to(4*LEFT + UP)
-        tex_l.set_color(CS[1])
-        tex_r = MathTex(
-            r"\implies \nabla f =",
-            r"\begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} = \begin{bmatrix} y \\ x \end{bmatrix}"
-        ).next_to(tex_l, DOWN)
-        tex_r.set_color(CS[0])
-        hyperbola_left = self.axes.plot(
-            lambda x: 2 / x,
-            x_range=[-4, -0.4],
-            color=CS[1]
-        )
-        hyperbola_right = self.axes.plot(
-            lambda x: 2 / x,
-            x_range=[0.4, 4],
-            color=CS[1]
-        )
-        tex_f_c = MathTex(2, color=CS[1]).move_to(self.axes.c2p(2, 2))
-        arrows_fx = [self.get_arrow(
-            (i, j),
-            (i+j/(math.sqrt(i*i+j*j)), j+i/(math.sqrt(i*i+j*j))),
-            CS[0],
-            buff=0.25,
-            tip_shape=StealthTip,
-            tip_length=(i*i+j*j)/16,
-        ) for i in range(-4, 5) for j in range(-4, 5) if i or j]
-        self.play(
-            Create(tex_l),
-            Create(hyperbola_left),
-        )
-        self.play(
-            Create(hyperbola_right),
-            Create(tex_f_c),
-        )
-        self.play(
-            Create(tex_r),
-            *(Create(arrow) for arrow in arrows_fx),
-        )
-        self.play(
-            tex_l.animate.shift(UP),
-            tex_r.animate.shift(UP),
-        )
-        tex_l_g = MathTex(r"g(x, y) = x^2 + y^2 = 1").move_to(4*LEFT + UP).next_to(tex_r, DOWN)
-        tex_l_g.set_color(CS[3])
-        tex_r_g = MathTex(
-            r"\implies \nabla g =",
-            r"\begin{bmatrix} \partial_x g \\ \partial_y g \end{bmatrix} = \begin{bmatrix} 2x \\ 2y \end{bmatrix}"
-        ).next_to(tex_l_g, DOWN)
-        tex_r_g.set_color(CS[2])
-        circle_g = Circle(radius=1, color=CS[3]).move_to(self.axes.c2p(0, 0))
-        arrows_gx = [self.get_arrow(
-            (math.cos(i*PI/16), math.sin(i*PI/16)),
-            (2*math.cos(i*PI/16), 2*math.sin(i*PI/16)),
-            CS[2],
-            buff=0.25,
-            tip_shape=StealthTip,
-        ) for i in range(0, 32, 2)]
-        self.play(
-            Create(tex_l_g),
-            GrowFromCenter(circle_g),
-        )
-        self.play(
-            Create(tex_r_g),
-            *(Create(arrow) for arrow in arrows_gx),
-        )
-        hyperbola_left_o = self.axes.plot(
-            lambda x: 0.5 / x,
-            x_range=[-4, -0.1],
-            color=CS[1]
-        )
-        hyperbola_right_o = self.axes.plot(
-            lambda x: 0.5 / x,
-            x_range=[0.1, 4],
-            color=CS[1]
-        )
-        tex_f_c_o = MathTex("1/2", color=CS[1]).move_to(self.axes.c2p(1.7, 1.7))
-        self.play(
-            ReplacementTransform(hyperbola_left, hyperbola_left_o),
-            ReplacementTransform(hyperbola_right, hyperbola_right_o),
-            ReplacementTransform(tex_f_c, tex_f_c_o),
-        )
-        tex_f_o = MathTex(r"\text{optimizing }"," f(..)").move_to(4*LEFT + UP)
-        tex_f_o[1].set_color(CS[1])
-        tex_g_o = MathTex(r"\text{over }", " g(..) = c").move_to(4*LEFT)
-        tex_g_o[1].set_color(CS[3])
-        tex_r_o = MathTex(r"\text{requires }", r" \nabla f", "=", r" \lambda \nabla g ").move_to(4*LEFT + DOWN)
-        tex_r_o[1].set_color(CS[0])
-        tex_r_o[3].set_color(CS[2])
-        self.play(
-            ReplacementTransform(tex_l, tex_f_o[1]),
-            ReplacementTransform(tex_l_g, tex_g_o[1]),
-            ReplacementTransform(tex_r, tex_r_o[1]),
-            ReplacementTransform(tex_r_g, tex_r_o[3]),
-            FadeOut(tex_f_c_o),
-        )
-        self.play(
-            Create(tex_f_o[0]),
-            Create(tex_g_o[0]),
-            Create(tex_r_o[0]),
-            Create(tex_r_o[2]),
-        )
-        line = self.get_line((-4, -4), (4, 4), WHITE)
-        self.play(Create(line))
-        line.reverse_points()
-        self.play(Uncreate(line))
-        line = self.get_line((4, -4), (-4, 4), WHITE)
-        self.play(Create(line))
-        line.reverse_points()
-        self.play(Uncreate(line))
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        uu_tex = MathTex("u^T u =", "x^2 + y^2 = 1", color=CS[0]).move_to(4*LEFT)
-        uu_circle = Circle(color=CS[0], radius=1).move_to(self.axes.c2p(0, 0))
-        nuu_tex = MathTex(
-            r"\nabla u^T u =",
-            r"\begin{bmatrix} \partial_x (x^2+y^2) \\ \partial_y (x^2+y^2) \end{bmatrix}",
-        color=CS[3]).next_to(uu_tex, DOWN)
-        u_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
-        u_circle = Circle(color=CS[0], radius=0.1).move_to(self.axes.c2p(1, 0))
-        u_line = self.get_line((1, -4), (1, 4), CS[0])
-        self.play(
-            Create(u_arrow),
-            Create(uu_tex),
-        )
-        self.play(
-            GrowFromPoint(u_circle, self.axes.c2p(1, 0)),
-            GrowFromPoint(u_line, self.axes.c2p(1, 0)),
-        )
-        self.play(
-            Rotate(u_arrow, 17*PI/8, about_point=self.axes.c2p(0, 0)),
-            Rotate(u_circle, 17*PI/8, about_point=self.axes.c2p(0, 0)),
-            Rotate(u_line, 17*PI/8, about_point=self.axes.c2p(0, 0)),
-            Create(uu_circle),
-        run_time=3)
-        nuu_arrows_init = [
-            self.get_arrow((0, 0), (math.cos(i*2*PI/16), math.sin(i*2*PI/16)), CS[0], buff=0.25)
-            for i in range(16)
-        ]
-        nuu_arrows = [
-            self.get_arrow(
-                (math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
-                (2*math.cos(i*2*PI/16), 2*math.sin(i*2*PI/16)),
-                CS[3],
-                tip_shape=StealthTip,
-                buff=0)
-            for i in range(16)
-        ]
-        self.play(
-            FadeOut(u_arrow),
-            FadeOut(u_circle),
-            FadeOut(u_line),
-        )
-        self.play(Create(nuu_tex))
-        self.play(nuu_tex[1].animate.become(MathTex(r"\begin{bmatrix} 2x \\ 2y \end{bmatrix}", color=CS[3]).next_to(nuu_tex[0], RIGHT)))
-        self.play(nuu_tex[1].animate.become(MathTex(r"2u", color=CS[3]).next_to(nuu_tex[0], RIGHT)))
-        self.play(*(Create(arrow) for arrow in nuu_arrows_init))
-        self.play(*(ReplacementTransform(arrow_init, arrow) for (arrow_init, arrow) in zip(nuu_arrows_init, nuu_arrows)))
-        self.play(
-            uu_tex.animate.become(MathTex(r"u^T u =", "1", color=CS[0]).move_to(LEFT*4)),
-            nuu_tex.animate.next_to(uu_tex.target, DOWN),
-        )
-        self.play(
-            *(FadeOut(arrow) for arrow in nuu_arrows),
-        )
-        nuau_arrows_init = [
-            self.get_arrow((0, 0), (math.cos(i*2*PI/16), math.sin(i*2*PI/16)), CS[0])
-            for i in range(16)
-        ]
-        nuau_arrows_mid = [
-            self.get_arrow(
-                (0, 0),
-                (
-                    2*(math.cos(i*2*PI/16)) + 1*(math.sin(i*2*PI/16)),
-                    1*(math.cos(i*2*PI/16)) + 2*(math.sin(i*2*PI/16)),
-                ),
-                CS[1])
-            for i in range(16)
-        ]
-        nuau_arrows = [
-            self.get_arrow(
-                (math.cos(i*2*PI/16), math.sin(i*2*PI/16)),
-                (
-                    2.5*(math.cos(i*2*PI/16)) + 1*(math.sin(i*2*PI/16)),
-                    1*(math.cos(i*2*PI/16)) + 3*(math.sin(i*2*PI/16)),
-                ),
-                CS[2],
-                tip_shape=StealthTip)
-            for i in range(16)
-        ]
-        self.play(*(Create(arrow) for arrow in nuau_arrows_init))
-        self.play(*(ReplacementTransform(arrow_init, arrow_mid) for (arrow_init, arrow_mid) in zip(nuau_arrows_init, nuau_arrows_mid)))
-        self.play(*(ReplacementTransform(arrow_mid, arrow) for (arrow_mid, arrow) in zip(nuau_arrows_mid, nuau_arrows)))
         # TODO: \nabla xAx optimized over xx=1
         # TODO: Gradient of this circle function radiates in straight lines starting at the origin.
         # TODO: A function attains maximum value at points on the unit circle where the gradient aligns with straight lines starting at the origin.

@@ -549,12 +549,8 @@ class Projection(Scene):
         e_tex = MathTex("=").next_to(r_tex, LEFT)
         t_tex = Matrix([["g_x","g_y"],["r_x","r_y"]]).next_to(e_tex, LEFT)
         t_tex.set_row_colors(*CS)
-        i_circle = self.get_circle((x, y), 0.1, CS[0])
-        i_line = self.get_line((-8*x, -8*y), (8*x, 8*y), CS[0])
-        i_line.rotate(PI/2, about_point=self.axes.c2p(x / (x*x + y*y), y / (x*x + y*y)))
-        j_circle = self.get_circle((-y, x), 0.1, CS[1])
-        j_line = self.get_line((8*y, -8*x), (-8*y, 8*x), CS[1])
-        j_line.rotate(PI/2, about_point=self.axes.c2p(-y / (x*x + y*y), x / (x*x + y*y)))
+        i_line, i_circle = self.get_lircle((x, y), CS[0])
+        j_line, j_circle = self.get_lircle((-y, x), CS[1])
         self.play(
             Create(s_tex),
             Create(e_tex),
@@ -1127,7 +1123,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 1
+        selected_chapter = 2
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=42)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)

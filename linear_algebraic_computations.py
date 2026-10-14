@@ -71,8 +71,8 @@ class Projection(Scene):
     def get_arrow(self, start, end, color):
         return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)
 
-    def get_line(self, start, end, color):
-        return Line(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end))
+    def get_line(self, start, end, color, stroke_opacity=1):
+        return Line(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end), stroke_opacity=stroke_opacity)
 
     def get_dashed_line(self, start, end, color):
         return DashedLine(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end))
@@ -593,28 +593,30 @@ class Projection(Scene):
     def play_spectral_theorem(self, title):
         # TODO : simplify gradient explanations by making circle gradient implicit
         self.play(Create(self.axes), Create(self.unit_circle))
-        g_arrow = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(1, 0), color=CS[0], buff=0)
-        r_arrow = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(0, 1), color=CS[1], buff=0)
+        g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
+        r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*4)
         matrix.set_column_colors(*CS)
+        eigen_tex = MathTex("v = \lambda v").next_to(matrix, RIGHT)
+        eigen_tex[0][::3].set_color(CS[-1])
         self.play(
             Create(g_arrow),
             Create(r_arrow),
             Create(matrix),
+            Create(eigen_tex),
         )
         lines = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
-            lines.append(Line(
-                start=self.axes.c2p(0, 0),
-                end=self.axes.c2p(x, y),
-                color=c,
-                buff=0,
-                stroke_opacity=0.5,
-            ))
+            lines.append(self.get_line((0, 0), (x, y), c, 0.5))
         self.play(*(Create(line) for line in lines))
+        eigen_vector = self.get_line((-4, 0), (4, 0), CS[-1])
+        self.play(GrowFromCenter(eigen_vector))
+        self.play(Rotate(eigen_vector, PI, about_point=self.origin))
+        self.play(ShrinkToCenter(eigen_vector))
+        return
         shear = [[1, 0],[0.5, 1]]
         g_arrow_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(shear[0][0], shear[1][0]), color=CS[0], buff=0)
         r_arrow_sheared = Arrow(start=self.axes.c2p(0, 0), end=self.axes.c2p(shear[0][1], shear[1][1]), color=CS[1], buff=0)

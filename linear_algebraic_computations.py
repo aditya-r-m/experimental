@@ -591,7 +591,6 @@ class Projection(Scene):
         self.play(Create(r_tex))
 
     def play_spectral_theorem(self, title):
-        # TODO : simplify gradient explanations by making circle gradient implicit
         self.play(Create(self.axes), Create(self.unit_circle))
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
@@ -782,11 +781,10 @@ class Projection(Scene):
         self.play(Create(line_h))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        # TODO: \nabla xAx optimized over xx=1
-        # TODO: Gradient of this circle function radiates in straight lines starting at the origin.
-        # TODO: A function attains maximum value at points on the unit circle where the gradient aligns with straight lines starting at the origin.
-        # TODO: Gradients being aligned means that contours are aligned, which means that any wiggling away from the point leads to a suboptimal contour in any direction you step.
-        # TODO: For symmetric metrix A, the gradient of length measurement function uAu is 2Au. Thus, length measurement peaks when Au aligns with u.
+        # TODO: maximize [1,1] over xx=1, gradient acts as a force which pushes us towards the maximum,
+        # which on a circular boundary is the point where gradient aligns with arrow from origin.
+        # TODO: \nabla AxAx or xAx optimized over xx=1
+        # For symmetric metrix A, the gradient of length measurement function uAu is 2Au. Thus, length measurement peaks when Au aligns with u
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
 
     def play_eigenvector_computation(self, title):

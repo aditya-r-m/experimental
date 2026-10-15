@@ -749,15 +749,15 @@ class Projection(Scene):
         ).move_to(LEFT*3)
         tex[0].set_color(CS[1])
         tex[1].set_color(CS[0])
-        rectangle = Rectangle(fill_color=CS[1], fill_opacity=1).shift(3*RIGHT)
+        rectangle = Rectangle(width=2, height=4, color=CS[1], fill_color=CS[1], fill_opacity=0.3).shift(3*RIGHT)
         line_v = Line(color=CS[0], start=(rectangle.get_corner(DOWN + RIGHT) + [0.05, 0, 0]), end=(rectangle.get_corner(UP + RIGHT) + [0.05, 0, 0]), stroke_width=8)
         tex_v = MathTex("y").next_to(rectangle, RIGHT)
         tex_h = MathTex("x").next_to(rectangle, UP)
         self.play(
-            Create(tex),
+            Write(tex),
             Create(rectangle),
-            Create(tex_v),
-            Create(tex_h),
+            Write(tex_v),
+            Write(tex_h),
         )
         self.play(Create(line_v))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
@@ -767,16 +767,16 @@ class Projection(Scene):
         ).move_to(LEFT*3)
         tex[0].set_color(CS[1])
         tex[1].set_color(CS[0])
-        square = Square(fill_color=CS[1], fill_opacity=1).shift(2*RIGHT)
+        square = Square(side_length=2, color=CS[1], fill_color=CS[1], fill_opacity=0.3).shift(3*RIGHT)
         line_v = Line(color=CS[0], start=(square.get_corner(DOWN + RIGHT) + [0.05,0,0]), end=(square.get_corner(UP + RIGHT) + 0.05), stroke_width=8)
         line_h = Line(color=CS[0], start=(square.get_corner(UP + RIGHT) + 0.05), end=(square.get_corner(UP + LEFT) + [0,0.05,0]), stroke_width=8)
         tex_v = MathTex("x").next_to(square, RIGHT)
         tex_h = MathTex("x").next_to(square, UP)
         self.play(
-            Create(tex),
+            Write(tex),
             Create(square),
-            Create(tex_v),
-            Create(tex_h),
+            Write(tex_v),
+            Write(tex_h),
         )
         self.play(Create(line_v))
         self.play(Create(line_h))

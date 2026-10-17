@@ -784,24 +784,14 @@ class Projection(Scene):
     def play_spectral_theorem(self, title):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         tex_f = MathTex(
-            r"{{ f(x, y) }} = {{ \begin{bmatrix} 1 & 1 \end{bmatrix} }} {{ \begin{bmatrix} x \\ y \end{bmatrix} }} = {{ x + y }}",
+            r"f(x, y) = {{ \begin{bmatrix} 1 & 1 \end{bmatrix} }} {{ \begin{bmatrix} x \\ y \end{bmatrix} }} = {{ x + y }}",
             color=CS[-2],
-        ).move_to(LEFT*3 + UP)
-        tex_f[0][2].set_color(CS[0])
-        tex_f[4][1].set_color(CS[0])
-        tex_f[6][0].set_color(CS[0])
-        tex_f[0][4].set_color(CS[1])
-        tex_f[4][2].set_color(CS[1])
-        tex_f[6][2].set_color(CS[1])
+        ).move_to(LEFT*4 + UP)
         line_f, circle_f = self.get_lircle((1, 1), CS[-2])
         tex_nf = MathTex(
             r"{{ \nabla f(x, y) }} = {{ \begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} }} = {{ \begin{bmatrix} 1 \\ 1 \end{bmatrix} }}",
             color=CS[-1],
-        ).move_to(LEFT*3 - UP)
-        tex_nf[0][3].set_color(CS[0])
-        tex_nf[2][2].set_color(CS[0])
-        tex_nf[0][5].set_color(CS[1])
-        tex_nf[2][5].set_color(CS[1])
+        ).move_to(LEFT*4 - UP)
         arrows_nf = [
             self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+0.3, y+0.3), CS[-1])
             for i in range(16)
@@ -813,7 +803,7 @@ class Projection(Scene):
         )
         self.play(
             Write(tex_nf),
-            *(Create(arrow) for arrow in arrows_nf)
+            *(Create(arrow) for arrow in arrows_nf),
         )
         circle_c = self.get_circle((1, 0), 0.1, WHITE)
         line_c = self.get_line((0, 0), (1, 0), WHITE, 0.5)
@@ -833,7 +823,39 @@ class Projection(Scene):
             FadeOut(circle_c),
             FadeOut(line_c),
         )
-        # TODO: maximize [1,1] over xx=1, gradient acts as a force which pushes us towards the maximum,
+        tex_g = MathTex(
+            r"g(x, y) = {{ \begin{bmatrix} x & y \end{bmatrix} }} {{ \begin{bmatrix} x \\ y \end{bmatrix} }} = {{ x^2 + y^2 }}",
+            color=CS[-2],
+        ).move_to(LEFT*4 + UP)
+        circle_g = self.get_circle((0, 0), 4, CS[-2])
+        tex_ng = MathTex(
+            r"{{ \nabla g(x, y) }} = {{ \begin{bmatrix} \partial_x g \\ \partial_y g \end{bmatrix} }} = {{ \begin{bmatrix} 2x \\ 2y \end{bmatrix} }}",
+            color=CS[-1],
+        ).move_to(LEFT*4 - UP)
+        arrows_ng = [
+            self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+x*0.6, y+y*0.6), CS[-1])
+            for i in range(16)
+        ]
+        self.play(
+            ReplacementTransform(tex_f, tex_g),
+            FadeOut(circle_f),
+            FadeOut(line_f),
+            ReplacementTransform(tex_nf, tex_ng),
+            *(ReplacementTransform(arrow_nf, arrow_ng) for (arrow_nf, arrow_ng) in zip(arrows_nf, arrows_ng)),
+        )
+        self.play(GrowFromCenter(circle_g))
+        self.play(FadeOut(circle_g))
+        circle_c = self.get_circle((1, 0), 0.1, WHITE)
+        line_c = self.get_line((0, 0), (1, 0), WHITE, 0.5)
+        self.play(
+            GrowFromCenter(circle_c),
+            Create(line_c),
+        )
+        self.play(
+            Rotate(circle_c, 2*PI, about_point=self.origin),
+            Rotate(line_c, 2*PI, about_point=self.origin),
+        )
+        # TODO: maximize [x,x] over xx=1, gradient acts as a force which pushes us towards the maximum,
         # which on a circular boundary is the point where gradient aligns with arrow from origin.
         # TODO: \nabla AxAx or xAx optimized over xx=1
         # For symmetric metrix A, the gradient of length measurement function uAu is 2Au. Thus, length measurement peaks when Au aligns with u

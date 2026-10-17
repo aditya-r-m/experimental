@@ -590,7 +590,7 @@ class Projection(Scene):
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
 
-    def play_spectral_theorem(self, title):
+    def _play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
@@ -780,7 +780,59 @@ class Projection(Scene):
         self.play(Create(line_v))
         self.play(Create(line_h))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+
+    def play_spectral_theorem(self, title):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
+        tex_f = MathTex(
+            r"{{ f(x, y) }} = {{ \begin{bmatrix} 1 & 1 \end{bmatrix} }} {{ \begin{bmatrix} x \\ y \end{bmatrix} }} = {{ x + y }}",
+            color=CS[-2],
+        ).move_to(LEFT*3 + UP)
+        tex_f[0][2].set_color(CS[0])
+        tex_f[4][1].set_color(CS[0])
+        tex_f[6][0].set_color(CS[0])
+        tex_f[0][4].set_color(CS[1])
+        tex_f[4][2].set_color(CS[1])
+        tex_f[6][2].set_color(CS[1])
+        line_f, circle_f = self.get_lircle((1, 1), CS[-2])
+        tex_nf = MathTex(
+            r"{{ \nabla f(x, y) }} = {{ \begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} }} = {{ \begin{bmatrix} 1 \\ 1 \end{bmatrix} }}",
+            color=CS[-1],
+        ).move_to(LEFT*3 - UP)
+        tex_nf[0][3].set_color(CS[0])
+        tex_nf[2][2].set_color(CS[0])
+        tex_nf[0][5].set_color(CS[1])
+        tex_nf[2][5].set_color(CS[1])
+        arrows_nf = [
+            self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+0.3, y+0.3), CS[-1])
+            for i in range(16)
+        ]
+        self.play(
+            Write(tex_f),
+            GrowFromCenter(circle_f),
+            GrowFromPoint(line_f, self.origin),
+        )
+        self.play(
+            Write(tex_nf),
+            *(Create(arrow) for arrow in arrows_nf)
+        )
+        circle_c = self.get_circle((1, 0), 0.1, WHITE)
+        line_c = self.get_line((0, 0), (1, 0), WHITE, 0.5)
+        self.play(
+            GrowFromCenter(circle_c),
+            Create(line_c),
+        )
+        self.play(
+            Rotate(circle_c, PI/3, about_point=self.origin),
+            Rotate(line_c, PI/3, about_point=self.origin),
+        )
+        self.play(
+            Rotate(circle_c, -PI/12, about_point=self.origin),
+            Rotate(line_c, -PI/12, about_point=self.origin),
+        )
+        self.play(
+            FadeOut(circle_c),
+            FadeOut(line_c),
+        )
         # TODO: maximize [1,1] over xx=1, gradient acts as a force which pushes us towards the maximum,
         # which on a circular boundary is the point where gradient aligns with arrow from origin.
         # TODO: \nabla AxAx or xAx optimized over xx=1

@@ -783,14 +783,15 @@ class Projection(Scene):
 
     def play_spectral_theorem(self, title):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        circle_c = self.get_circle((1, 0), 0.1, WHITE)
-        line_c = self.get_line((0, 0), (1, 0), WHITE)
+        circle_c = self.get_circle((1, 0), 0.1, CS[1])
+        line_c = self.get_line((0, 0), (1, 0), CS[1])
         tex_f = VGroup(
             MathTex(r"f(x, y) = ", color=CS[-2]),
             Matrix([[1, 1]], h_buff=0.6),
             Matrix([["x"], ["y"]]),
             MathTex(r"= x + y", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
+        box_f = Underline(tex_f[2], color=CS[1])
         tex_f[1].get_entries()[:].set_color(CS[-2])
         tex_f[1].get_brackets().set_color(CS[-2])
         tex_f[2].get_entries()[:].set_color(CS[-2])
@@ -820,6 +821,7 @@ class Projection(Scene):
         self.play(
             GrowFromCenter(circle_c),
             Create(line_c),
+            Create(box_f),
             Write(tex_nf),
         )
         self.play(
@@ -843,6 +845,7 @@ class Projection(Scene):
         tex_g[1].get_brackets().set_color(CS[-2])
         tex_g[2].get_entries()[:].set_color(CS[-2])
         tex_g[2].get_brackets().set_color(CS[-2])
+        box_g = Underline(tex_g[2], color=CS[1])
         bracket_g = always_redraw(
             lambda: BraceBetweenPoints(
                 self.origin,
@@ -868,6 +871,7 @@ class Projection(Scene):
         )
         self.play(
             ReplacementTransform(tex_f, tex_g),
+            ReplacementTransform(box_f, box_g),
             FadeOut(circle_f),
             FadeOut(line_f),
             ReplacementTransform(tex_nf, tex_ng),
@@ -890,6 +894,7 @@ class Projection(Scene):
         tex_h[2].get_brackets().set_color(CS[-2])
         tex_h[3].get_entries()[:].set_color(CS[-2])
         tex_h[3].get_brackets().set_color(CS[-2])
+        box_h = Underline(tex_h[3], color=CS[1])
         # TODO : lircle_h, arrow_h, dash_h, bracket_h
         tex_nh = VGroup(
             MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
@@ -909,6 +914,7 @@ class Projection(Scene):
             ReplacementTransform(tex_g[0], tex_h[0]),
             ReplacementTransform(tex_g[1], tex_h[1]),
             ReplacementTransform(tex_g[2], tex_h[3]),
+            ReplacementTransform(box_g, box_h),
             ReplacementTransform(tex_ng[0], tex_nh[0]),
             ReplacementTransform(tex_ng[1].get_entries(), tex_nh[1].get_entries()),
             tex_ng[1].get_brackets().animate.move_to(tex_nh[1].get_brackets()),

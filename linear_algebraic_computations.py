@@ -844,6 +844,7 @@ class Projection(Scene):
         tex_g[2].get_entries()[:].set_color(CS[-2])
         tex_g[2].get_brackets().set_color(CS[-2])
         circle_g = self.get_circle((0, 0), 2, CS[-2])
+        # TODO : bracket_g
         tex_ng = VGroup(
             MathTex(r"\nabla g(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x g"], [r"\partial_y g"]]),
@@ -885,6 +886,7 @@ class Projection(Scene):
         tex_h[2].get_brackets().set_color(CS[-2])
         tex_h[3].get_entries()[:].set_color(CS[-2])
         tex_h[3].get_brackets().set_color(CS[-2])
+        # TODO : lircle_h, arrow_h, dash_h, bracket_h
         tex_nh = VGroup(
             MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x h"], [r"\partial_y h"]]),
@@ -925,10 +927,6 @@ class Projection(Scene):
         box_nh1 = SurroundingRectangle(tex_nh[3].get_rows()[1], color=CS[-2])
         self.play(*(Create(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
         self.play(*(FadeOut(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
-        # TODO: maximize [x,x] over xx=1, gradient acts as a force which pushes us towards the maximum,
-        # which on a circular boundary is the point where gradient aligns with arrow from origin.
-        # TODO: \nabla AxAx or xAx optimized over xx=1
-        # For symmetric metrix A, the gradient of length measurement function uAu is 2Au. Thus, length measurement peaks when Au aligns with u
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
 
     def play_eigenvector_computation(self, title):

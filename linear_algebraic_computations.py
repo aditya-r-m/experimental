@@ -787,7 +787,7 @@ class Projection(Scene):
         line_c = self.get_line((0, 0), (1, 0), WHITE)
         tex_f = VGroup(
             MathTex(r"f(x, y) = ", color=CS[-2]),
-            Matrix([[1, 1]]),
+            Matrix([[1, 1]], h_buff=0.6),
             Matrix([["x"], ["y"]]),
             MathTex(r"= x + y", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
@@ -835,7 +835,7 @@ class Projection(Scene):
         )
         tex_g = VGroup(
             MathTex(r"g(x, y) = ", color=CS[-2]),
-            Matrix([["x", "y"]]),
+            Matrix([["x", "y"]], h_buff=0.6),
             Matrix([["x"], ["y"]]),
             MathTex(r"= x^2 + y^2", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
@@ -875,8 +875,8 @@ class Projection(Scene):
         )
         tex_h = VGroup(
             MathTex(r"h(x, y) = ", color=CS[-2]),
-            Matrix([["x", "y"]]),
-            Matrix([["A_x", "A_d"], ["A_d", "A_x"]]),
+            Matrix([["x", "y"]], h_buff=0.6),
+            Matrix([["A_x", "A_d"], ["A_d", "A_x"]], h_buff=0.7),
             Matrix([["x"], ["y"]]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
         tex_h[1].get_entries()[:].set_color(CS[-2])
@@ -889,7 +889,7 @@ class Projection(Scene):
             MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x h"], [r"\partial_y h"]]),
             MathTex(r" = 2 ", color=CS[-1]),
-            Matrix([["A_x", "A_d"], ["A_d", "A_x"]]),
+            Matrix([["A_x", "A_d"], ["A_d", "A_x"]], h_buff=0.7),
             Matrix([["x"], ["y"]]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 - UP*1.5)
         tex_nh[1].get_entries()[:].set_color(CS[-1])

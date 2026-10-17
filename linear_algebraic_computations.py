@@ -882,6 +882,10 @@ class Projection(Scene):
             Rotate(circle_c, 2*PI, about_point=self.origin),
             Rotate(line_c, 2*PI, about_point=self.origin),
         )
+        self.play(
+            FadeOut(tex_g[3]),
+            FadeOut(bracket_g),
+        )
         tex_h = VGroup(
             MathTex(r"h(x, y) = ", color=CS[-2]),
             Matrix([["x", "y"]], h_buff=0.6),
@@ -895,7 +899,16 @@ class Projection(Scene):
         tex_h[3].get_entries()[:].set_color(CS[-2])
         tex_h[3].get_brackets().set_color(CS[-2])
         box_h = Underline(tex_h[3], color=CS[1])
-        # TODO : lircle_h, arrow_h, dash_h, bracket_h
+        box_hh = Underline(tex_h[2:], color=CS[0], buff=0.3)
+        arrow_h = always_redraw(
+            lambda: Arrow(
+                self.origin,
+                self.origin + np.dot(np.array([[2,1,0],[1,2,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
+                color=CS[0],
+                buff=0,
+            )
+        )
+        # TODO : dash_h, bracket_h
         tex_nh = VGroup(
             MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x h"], [r"\partial_y h"]]),
@@ -909,12 +922,12 @@ class Projection(Scene):
         tex_nh[3].get_brackets().set_color(CS[-1])
         tex_nh[4].get_entries()[:].set_color(CS[-1])
         tex_nh[4].get_brackets().set_color(CS[-1])
-        self.play(FadeOut(tex_g[3]))
         self.play(
             ReplacementTransform(tex_g[0], tex_h[0]),
             ReplacementTransform(tex_g[1], tex_h[1]),
             ReplacementTransform(tex_g[2], tex_h[3]),
             ReplacementTransform(box_g, box_h),
+            Create(arrow_h),
             ReplacementTransform(tex_ng[0], tex_nh[0]),
             ReplacementTransform(tex_ng[1].get_entries(), tex_nh[1].get_entries()),
             tex_ng[1].get_brackets().animate.move_to(tex_nh[1].get_brackets()),
@@ -923,7 +936,16 @@ class Projection(Scene):
         )
         self.play(
             Write(tex_h[2]),
+            Create(box_hh),
             Write(tex_nh[3]),
+        )
+        self.play(
+            Rotate(circle_c, PI, about_point=self.origin),
+            Rotate(line_c, PI, about_point=self.origin),
+        )
+        self.play(
+            Rotate(circle_c, PI, about_point=self.origin),
+            Rotate(line_c, PI, about_point=self.origin),
         )
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
         box_h01 = SurroundingRectangle(tex_h[2].get_columns()[0], color=CS[-1])

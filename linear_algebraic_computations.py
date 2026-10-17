@@ -829,7 +829,7 @@ class Projection(Scene):
         ).move_to(LEFT*4 + UP)
         circle_g = self.get_circle((0, 0), 4, CS[-2])
         tex_ng = MathTex(
-            r"{{ \nabla g(x, y) }} = {{ \begin{bmatrix} \partial_x g \\ \partial_y g \end{bmatrix} }} = {{ \begin{bmatrix} 2x \\ 2y \end{bmatrix} }}",
+            r"{{ \nabla g(x, y) }} = {{ \begin{bmatrix} \partial_x g \\ \partial_y g \end{bmatrix} }} = 2 {{ \begin{bmatrix} x \\ y \end{bmatrix} }}",
             color=CS[-1],
         ).move_to(LEFT*4 - UP)
         arrows_ng = [

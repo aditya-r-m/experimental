@@ -783,15 +783,20 @@ class Projection(Scene):
 
     def play_spectral_theorem(self, title):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        tex_f = MathTex(
-            r"f(x, y) = {{ \begin{bmatrix} 1 & 1 \end{bmatrix} }} {{ \begin{bmatrix} x \\ y \end{bmatrix} }} = {{ x + y }}",
-            color=CS[-2],
-        ).move_to(LEFT*4 + UP)
+        tex_f = VGroup(
+            MathTex(r"f(x, y) = ", color=CS[-2]),
+            Matrix([[1, 1]]),
+            Matrix([["x"], ["y"]]),
+            MathTex(r" = ", color=CS[-2]),
+            MathTex(r"x + y", color=CS[-2]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + UP)
         line_f, circle_f = self.get_lircle((1, 1), CS[-2])
-        tex_nf = MathTex(
-            r"{{ \nabla f(x, y) }} = {{ \begin{bmatrix} \partial_x f \\ \partial_y f \end{bmatrix} }} = {{ \begin{bmatrix} 1 \\ 1 \end{bmatrix} }}",
-            color=CS[-1],
-        ).move_to(LEFT*4 - UP)
+        tex_nf = VGroup(
+            MathTex(r"\nabla f(x, y) = ", color=CS[-1]),
+            Matrix([[r"\partial_x f"], [r"\partial_y f"]]),
+            MathTex(r" = ", color=CS[-1]),
+            Matrix([[1], [1]]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 - UP)
         arrows_nf = [
             self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+0.3, y+0.3), CS[-1])
             for i in range(16)
@@ -823,15 +828,20 @@ class Projection(Scene):
             FadeOut(circle_c),
             FadeOut(line_c),
         )
-        tex_g = MathTex(
-            r"g(x, y) = {{ \begin{bmatrix} x & y \end{bmatrix} }} {{ \begin{bmatrix} x \\ y \end{bmatrix} }} = {{ x^2 + y^2 }}",
-            color=CS[-2],
-        ).move_to(LEFT*4 + UP)
+        tex_g = VGroup(
+            MathTex(r"g(x, y) = ", color=CS[-2]),
+            Matrix([["x", "y"]]),
+            Matrix([["x"], ["y"]]),
+            MathTex(r" = ", color=CS[-2]),
+            MathTex(r"x^2 + y^2", color=CS[-2]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + UP)
         circle_g = self.get_circle((0, 0), 4, CS[-2])
-        tex_ng = MathTex(
-            r"{{ \nabla g(x, y) }} = {{ \begin{bmatrix} \partial_x g \\ \partial_y g \end{bmatrix} }} = 2 {{ \begin{bmatrix} x \\ y \end{bmatrix} }}",
-            color=CS[-1],
-        ).move_to(LEFT*4 - UP)
+        tex_ng = VGroup(
+            MathTex(r"\nabla g(x, y) = ", color=CS[-1]),
+            Matrix([[r"\partial_x g"], [r"\partial_y g"]]),
+            MathTex(r" = 2 ", color=CS[-1]),
+            Matrix([["x"], ["y"]]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 - UP)
         arrows_ng = [
             self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+x*0.6, y+y*0.6), CS[-1])
             for i in range(16)

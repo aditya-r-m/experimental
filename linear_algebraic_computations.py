@@ -783,6 +783,8 @@ class Projection(Scene):
 
     def play_spectral_theorem(self, title):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
+        circle_c = self.get_circle((1, 0), 0.1, WHITE)
+        line_c = self.get_line((0, 0), (1, 0), WHITE)
         tex_f = VGroup(
             MathTex(r"f(x, y) = ", color=CS[-2]),
             Matrix([[1, 1]]),
@@ -804,24 +806,24 @@ class Projection(Scene):
         tex_nf[1].get_brackets().set_color(CS[-1])
         tex_nf[3].get_entries()[:].set_color(CS[-1])
         tex_nf[3].get_brackets().set_color(CS[-1])
-        arrows_nf = [
-            self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+0.3, y+0.3), CS[-1])
-            for i in range(16)
-        ]
+        arrow_nf = always_redraw(
+            lambda: Arrow(
+                start=circle_c.get_center(),
+                end=circle_c.get_center() + self.axes.c2p(1, 1) - self.origin,
+                color=CS[-1], buff=0)
+        )
         self.play(
             Write(tex_f),
             GrowFromCenter(circle_f),
             GrowFromPoint(line_f, self.origin),
         )
         self.play(
-            Write(tex_nf),
-            *(Create(arrow) for arrow in arrows_nf),
-        )
-        circle_c = self.get_circle((1, 0), 0.1, WHITE)
-        line_c = self.get_line((0, 0), (1, 0), WHITE, 0.5)
-        self.play(
             GrowFromCenter(circle_c),
             Create(line_c),
+            Write(tex_nf),
+        )
+        self.play(
+            Create(arrow_nf),
         )
         self.play(
             Rotate(circle_c, PI/3, about_point=self.origin),
@@ -830,10 +832,6 @@ class Projection(Scene):
         self.play(
             Rotate(circle_c, -PI/12, about_point=self.origin),
             Rotate(line_c, -PI/12, about_point=self.origin),
-        )
-        self.play(
-            FadeOut(circle_c),
-            FadeOut(line_c),
         )
         tex_g = VGroup(
             MathTex(r"g(x, y) = ", color=CS[-2]),
@@ -856,33 +854,24 @@ class Projection(Scene):
         tex_ng[1].get_brackets().set_color(CS[-1])
         tex_ng[3].get_entries()[:].set_color(CS[-1])
         tex_ng[3].get_brackets().set_color(CS[-1])
-        arrows_ng = [
-            self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+x*0.6, y+y*0.6), CS[-1])
-            for i in range(16)
-        ]
+        arrow_ng = always_redraw(
+            lambda: Arrow(
+                start=circle_c.get_center(),
+                end=2*circle_c.get_center() - self.origin,
+                color=CS[-1], buff=0)
+        )
         self.play(
             ReplacementTransform(tex_f, tex_g),
             FadeOut(circle_f),
             FadeOut(line_f),
             ReplacementTransform(tex_nf, tex_ng),
-            *(ReplacementTransform(arrow_nf, arrow_ng) for (arrow_nf, arrow_ng) in zip(arrows_nf, arrows_ng)),
+            ReplacementTransform(arrow_nf, arrow_ng),
         )
         self.play(GrowFromCenter(circle_g))
         self.play(FadeOut(circle_g))
-        circle_c = self.get_circle((1, 0), 0.1, WHITE)
-        line_c = self.get_line((0, 0), (1, 0), WHITE, 0.5)
-        self.play(
-            GrowFromCenter(circle_c),
-            Create(line_c),
-        )
         self.play(
             Rotate(circle_c, 2*PI, about_point=self.origin),
             Rotate(line_c, 2*PI, about_point=self.origin),
-        )
-        self.play(
-            FadeOut(circle_c),
-            FadeOut(line_c),
-            *(FadeOut(arrow) for arrow in arrows_ng),
         )
         tex_h = VGroup(
             MathTex(r"h(x, y) = ", color=CS[-2]),

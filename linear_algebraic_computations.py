@@ -790,6 +790,10 @@ class Projection(Scene):
             MathTex(r" = ", color=CS[-2]),
             MathTex(r"x + y", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + UP)
+        tex_f[1].get_entries()[:].set_color(CS[-2])
+        tex_f[1].get_brackets().set_color(CS[-2])
+        tex_f[2].get_entries()[:].set_color(CS[-2])
+        tex_f[2].get_brackets().set_color(CS[-2])
         line_f, circle_f = self.get_lircle((1, 1), CS[-2])
         tex_nf = VGroup(
             MathTex(r"\nabla f(x, y) = ", color=CS[-1]),
@@ -797,6 +801,10 @@ class Projection(Scene):
             MathTex(r" = ", color=CS[-1]),
             Matrix([[1], [1]]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 - UP)
+        tex_nf[1].get_entries()[:].set_color(CS[-1])
+        tex_nf[1].get_brackets().set_color(CS[-1])
+        tex_nf[3].get_entries()[:].set_color(CS[-1])
+        tex_nf[3].get_brackets().set_color(CS[-1])
         arrows_nf = [
             self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+0.3, y+0.3), CS[-1])
             for i in range(16)
@@ -835,6 +843,10 @@ class Projection(Scene):
             MathTex(r" = ", color=CS[-2]),
             MathTex(r"x^2 + y^2", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + UP)
+        tex_g[1].get_entries()[:].set_color(CS[-2])
+        tex_g[1].get_brackets().set_color(CS[-2])
+        tex_g[2].get_entries()[:].set_color(CS[-2])
+        tex_g[2].get_brackets().set_color(CS[-2])
         circle_g = self.get_circle((0, 0), 4, CS[-2])
         tex_ng = VGroup(
             MathTex(r"\nabla g(x, y) = ", color=CS[-1]),
@@ -842,6 +854,10 @@ class Projection(Scene):
             MathTex(r" = 2 ", color=CS[-1]),
             Matrix([["x"], ["y"]]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 - UP)
+        tex_ng[1].get_entries()[:].set_color(CS[-1])
+        tex_ng[1].get_brackets().set_color(CS[-1])
+        tex_ng[3].get_entries()[:].set_color(CS[-1])
+        tex_ng[3].get_brackets().set_color(CS[-1])
         arrows_ng = [
             self.get_arrow((x := math.cos(2*i*PI / 16), y := math.sin(2*i*PI / 16)), (x+x*0.6, y+y*0.6), CS[-1])
             for i in range(16)

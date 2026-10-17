@@ -913,6 +913,18 @@ class Projection(Scene):
             Write(tex_h[2]),
             Write(tex_nh[3]),
         )
+        box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
+        box_h01 = SurroundingRectangle(tex_h[2].get_columns()[0], color=CS[-1])
+        box_nh = SurroundingRectangle(tex_nh[2][0][1], color=CS[-2])
+        box_nh0 = SurroundingRectangle(tex_nh[3].get_rows()[0], color=CS[-2])
+        self.play(*(Create(box) for box in [box_h00, box_h01, box_nh, box_nh0]))
+        self.play(*(FadeOut(box) for box in [box_h00, box_h01, box_nh, box_nh0]))
+        box_h10 = SurroundingRectangle(tex_h[2].get_rows()[1], color=CS[-1])
+        box_h11 = SurroundingRectangle(tex_h[2].get_columns()[1], color=CS[-1])
+        box_nh = SurroundingRectangle(tex_nh[2][0][1], color=CS[-2])
+        box_nh1 = SurroundingRectangle(tex_nh[3].get_rows()[1], color=CS[-2])
+        self.play(*(Create(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
+        self.play(*(FadeOut(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
         # TODO: maximize [x,x] over xx=1, gradient acts as a force which pushes us towards the maximum,
         # which on a circular boundary is the point where gradient aligns with arrow from origin.
         # TODO: \nabla AxAx or xAx optimized over xx=1

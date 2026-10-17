@@ -20,7 +20,7 @@ class Projection(Scene):
             "Projection Matrix",
             "    Linear Regression\n(Ordinary Least Squares)",
         ]
-        title_texts = list(map(lambda t: Text(t, color=WHITE, font="Consolas", font_size=16), title_texts))
+        title_texts = list(map(lambda t: Text(t, color=WHITE, font="Noto Mono", font_size=16), title_texts))
         layout = [
             np.array([-5,3,0]),
             np.array([5,3,0]),
@@ -596,7 +596,7 @@ class Projection(Scene):
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*5)
         matrix.set_column_colors(*CS)
-        eigen_tex = MathTex("v = \lambda v").next_to(matrix, RIGHT)
+        eigen_tex = MathTex(r"v = \lambda v").next_to(matrix, RIGHT)
         eigen_tex[0][::3].set_color(CS[-1])
         self.play(
             Create(g_arrow),
@@ -787,8 +787,7 @@ class Projection(Scene):
             MathTex(r"f(x, y) = ", color=CS[-2]),
             Matrix([[1, 1]]),
             Matrix([["x"], ["y"]]),
-            MathTex(r" = ", color=CS[-2]),
-            MathTex(r"x + y", color=CS[-2]),
+            MathTex(r"= x + y", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
         tex_f[1].get_entries()[:].set_color(CS[-2])
         tex_f[1].get_brackets().set_color(CS[-2])
@@ -840,8 +839,7 @@ class Projection(Scene):
             MathTex(r"g(x, y) = ", color=CS[-2]),
             Matrix([["x", "y"]]),
             Matrix([["x"], ["y"]]),
-            MathTex(r" = ", color=CS[-2]),
-            MathTex(r"x^2 + y^2", color=CS[-2]),
+            MathTex(r"= x^2 + y^2", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
         tex_g[1].get_entries()[:].set_color(CS[-2])
         tex_g[1].get_brackets().set_color(CS[-2])
@@ -880,6 +878,51 @@ class Projection(Scene):
         self.play(
             Rotate(circle_c, 2*PI, about_point=self.origin),
             Rotate(line_c, 2*PI, about_point=self.origin),
+        )
+        self.play(
+            FadeOut(circle_c),
+            FadeOut(line_c),
+            *(FadeOut(arrow) for arrow in arrows_ng),
+        )
+        tex_h = VGroup(
+            MathTex(r"h(x, y) = ", color=CS[-2]),
+            Matrix([["x", "y"]]),
+            Matrix([["A_x", "A_d"], ["A_d", "A_x"]]),
+            Matrix([["x"], ["y"]]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
+        tex_h[1].get_entries()[:].set_color(CS[-2])
+        tex_h[1].get_brackets().set_color(CS[-2])
+        tex_h[2].get_entries()[:].set_color(CS[-2])
+        tex_h[2].get_brackets().set_color(CS[-2])
+        tex_h[3].get_entries()[:].set_color(CS[-2])
+        tex_h[3].get_brackets().set_color(CS[-2])
+        tex_nh = VGroup(
+            MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
+            Matrix([[r"\partial_x h"], [r"\partial_y h"]]),
+            MathTex(r" = 2 ", color=CS[-1]),
+            Matrix([["A_x", "A_d"], ["A_d", "A_x"]]),
+            Matrix([["x"], ["y"]]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 - UP*1.5)
+        tex_nh[1].get_entries()[:].set_color(CS[-1])
+        tex_nh[1].get_brackets().set_color(CS[-1])
+        tex_nh[3].get_entries()[:].set_color(CS[-1])
+        tex_nh[3].get_brackets().set_color(CS[-1])
+        tex_nh[4].get_entries()[:].set_color(CS[-1])
+        tex_nh[4].get_brackets().set_color(CS[-1])
+        self.play(FadeOut(tex_g[3]))
+        self.play(
+            ReplacementTransform(tex_g[0], tex_h[0]),
+            ReplacementTransform(tex_g[1], tex_h[1]),
+            ReplacementTransform(tex_g[2], tex_h[3]),
+            ReplacementTransform(tex_ng[0], tex_nh[0]),
+            ReplacementTransform(tex_ng[1].get_entries(), tex_nh[1].get_entries()),
+            tex_ng[1].get_brackets().animate.move_to(tex_nh[1].get_brackets()),
+            ReplacementTransform(tex_ng[2], tex_nh[2]),
+            ReplacementTransform(tex_ng[3], tex_nh[4]),
+        )
+        self.play(
+            Write(tex_h[2]),
+            Write(tex_nh[3]),
         )
         # TODO: maximize [x,x] over xx=1, gradient acts as a force which pushes us towards the maximum,
         # which on a circular boundary is the point where gradient aligns with arrow from origin.
@@ -947,7 +990,7 @@ class Projection(Scene):
     def construct(self):
         selected_chapter = 3
         Text.set_default(font_size=24)
-        MathTex.set_default(font_size=42)
+        MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)

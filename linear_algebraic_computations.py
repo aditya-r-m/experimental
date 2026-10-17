@@ -899,7 +899,7 @@ class Projection(Scene):
         tex_h[3].get_entries()[:].set_color(CS[-2])
         tex_h[3].get_brackets().set_color(CS[-2])
         box_h = Underline(tex_h[3], color=CS[1])
-        box_hh = Underline(tex_h[2:], color=CS[0], buff=0.3)
+        box_ht = Underline(tex_h[2:], color=CS[0], buff=0.3)
         arrow_h = always_redraw(
             lambda: Arrow(
                 self.origin,
@@ -923,6 +923,7 @@ class Projection(Scene):
         tex_nh[3].get_brackets().set_color(CS[-1])
         tex_nh[4].get_entries()[:].set_color(CS[-1])
         tex_nh[4].get_brackets().set_color(CS[-1])
+        box_hnt = Underline(tex_nh[3:], color=CS[0], buff=0.3)
         self.play(
             ReplacementTransform(tex_g[0], tex_h[0]),
             ReplacementTransform(tex_g[1], tex_h[1]),
@@ -937,7 +938,8 @@ class Projection(Scene):
         )
         self.play(
             Write(tex_h[2]),
-            Create(box_hh),
+            Create(box_ht),
+            Create(box_hnt),
             Write(tex_nh[3]),
         )
         self.play(

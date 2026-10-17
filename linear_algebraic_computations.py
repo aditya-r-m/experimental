@@ -843,8 +843,13 @@ class Projection(Scene):
         tex_g[1].get_brackets().set_color(CS[-2])
         tex_g[2].get_entries()[:].set_color(CS[-2])
         tex_g[2].get_brackets().set_color(CS[-2])
-        circle_g = self.get_circle((0, 0), 2, CS[-2])
-        # TODO : bracket_g
+        bracket_g = always_redraw(
+            lambda: BraceBetweenPoints(
+                self.origin,
+                circle_c.get_center(),
+                color=CS[-2],
+            )
+        )
         tex_ng = VGroup(
             MathTex(r"\nabla g(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x g"], [r"\partial_y g"]]),
@@ -867,9 +872,8 @@ class Projection(Scene):
             FadeOut(line_f),
             ReplacementTransform(tex_nf, tex_ng),
             ReplacementTransform(arrow_nf, arrow_ng),
+            GrowFromCenter(bracket_g),
         )
-        self.play(GrowFromCenter(circle_g))
-        self.play(FadeOut(circle_g))
         self.play(
             Rotate(circle_c, 2*PI, about_point=self.origin),
             Rotate(line_c, 2*PI, about_point=self.origin),

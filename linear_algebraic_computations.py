@@ -903,13 +903,12 @@ class Projection(Scene):
         arrow_h = always_redraw(
             lambda: Arrow(
                 self.origin,
-                self.origin + np.dot(np.array([[2,1,0],[1,2,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
+                self.origin + np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
                 color=CS[0],
                 buff=0,
-                stroke_opacity=0.5,
             )
         )
-        # TODO : dash_h, bracket_h, arrow_nh
+        # TODO : dash_h, bracket_h
         tex_nh = VGroup(
             MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x h"], [r"\partial_y h"]]),
@@ -923,6 +922,14 @@ class Projection(Scene):
         tex_nh[3].get_brackets().set_color(CS[-1])
         tex_nh[4].get_entries()[:].set_color(CS[-1])
         tex_nh[4].get_brackets().set_color(CS[-1])
+        arrow_nh = always_redraw(
+            lambda: Arrow(
+                circle_c.get_center(),
+                circle_c.get_center() + 2*np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
+                color=CS[-1],
+                buff=0,
+            )
+        )
         box_hnt = Underline(tex_nh[3:], color=CS[0], buff=0.3)
         self.play(
             ReplacementTransform(tex_g[0], tex_h[0]),
@@ -935,6 +942,7 @@ class Projection(Scene):
             tex_ng[1].get_brackets().animate.move_to(tex_nh[1].get_brackets()),
             ReplacementTransform(tex_ng[2], tex_nh[2]),
             ReplacementTransform(tex_ng[3], tex_nh[4]),
+            ReplacementTransform(arrow_ng, arrow_nh),
         )
         self.play(
             Write(tex_h[2]),
@@ -943,12 +951,8 @@ class Projection(Scene):
             Write(tex_nh[3]),
         )
         self.play(
-            Rotate(circle_c, PI, about_point=self.origin),
-            Rotate(line_c, PI, about_point=self.origin),
-        )
-        self.play(
-            Rotate(circle_c, PI, about_point=self.origin),
-            Rotate(line_c, PI, about_point=self.origin),
+            Rotate(circle_c, PI/3, about_point=self.origin),
+            Rotate(line_c, PI/3, about_point=self.origin),
         )
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
         box_h01 = SurroundingRectangle(tex_h[2].get_columns()[0], color=CS[-1])
@@ -962,6 +966,14 @@ class Projection(Scene):
         box_nh1 = SurroundingRectangle(tex_nh[3].get_rows()[1], color=CS[-2])
         self.play(*(Create(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
         self.play(*(FadeOut(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
+        self.play(
+            Rotate(circle_c, -PI/2, about_point=self.origin),
+            Rotate(line_c, -PI/2, about_point=self.origin),
+        )
+        self.play(
+            Rotate(circle_c, PI/6, about_point=self.origin),
+            Rotate(line_c, PI/6, about_point=self.origin),
+        )
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
 
     def play_eigenvector_computation(self, title):

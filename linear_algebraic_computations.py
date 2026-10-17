@@ -906,9 +906,10 @@ class Projection(Scene):
                 self.origin + np.dot(np.array([[2,1,0],[1,2,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
                 color=CS[0],
                 buff=0,
+                stroke_opacity=0.5,
             )
         )
-        # TODO : dash_h, bracket_h
+        # TODO : dash_h, bracket_h, arrow_nh
         tex_nh = VGroup(
             MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x h"], [r"\partial_y h"]]),

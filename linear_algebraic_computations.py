@@ -986,12 +986,12 @@ class Projection(Scene):
         self.play(*(Create(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
         self.play(*(FadeOut(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
         self.play(
-            Rotate(circle_c, -PI/2, about_point=self.origin),
-            Rotate(line_c, -PI/2, about_point=self.origin),
+            Rotate(circle_c, -2*PI/3, about_point=self.origin),
+            Rotate(line_c, -2*PI/3, about_point=self.origin),
         )
         self.play(
-            Rotate(circle_c, PI/6, about_point=self.origin),
-            Rotate(line_c, PI/6, about_point=self.origin),
+            Rotate(circle_c, PI/3, about_point=self.origin),
+            Rotate(line_c, PI/3, about_point=self.origin),
         )
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
 

@@ -866,7 +866,7 @@ class Projection(Scene):
         arrow_ng = always_redraw(
             lambda: Arrow(
                 start=circle_c.get_center(),
-                end=2*circle_c.get_center() - self.origin,
+                end=3*circle_c.get_center() - 2*self.origin,
                 color=CS[-1], buff=0)
         )
         self.play(
@@ -884,7 +884,6 @@ class Projection(Scene):
         )
         self.play(
             FadeOut(tex_g[3]),
-            FadeOut(bracket_g),
         )
         tex_h = VGroup(
             MathTex(r"h(x, y) = ", color=CS[-2]),
@@ -900,7 +899,7 @@ class Projection(Scene):
         tex_h[3].get_brackets().set_color(CS[-2])
         box_h = Underline(tex_h[3], color=CS[1])
         box_ht = Underline(tex_h[2:], color=CS[0], buff=0.3)
-        arrow_h = always_redraw(
+        arrow_hv = always_redraw(
             lambda: Arrow(
                 self.origin,
                 self.origin + np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
@@ -908,7 +907,24 @@ class Projection(Scene):
                 buff=0,
             )
         )
-        # TODO : dash_h, bracket_h
+        arrow_h = always_redraw(
+            lambda: Arrow(
+                start=self.origin,
+                end=self.origin
+                    + (v := circle_c.get_center() - self.origin) * np.dot(v, np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), v)),
+                color=CS[-2],
+                buff=0,
+            )
+        )
+        dash_h = always_redraw(
+            lambda: DashedLine(
+                start=self.origin + np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
+                end=self.origin
+                    + (v := circle_c.get_center() - self.origin) * np.dot(v, np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), v)),
+                color=CS[-2],
+                buff=0,
+            )
+        )
         tex_nh = VGroup(
             MathTex(r"\nabla h(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x h"], [r"\partial_y h"]]),
@@ -936,7 +952,10 @@ class Projection(Scene):
             ReplacementTransform(tex_g[1], tex_h[1]),
             ReplacementTransform(tex_g[2], tex_h[3]),
             ReplacementTransform(box_g, box_h),
+            FadeOut(bracket_g),
+            Create(arrow_hv),
             Create(arrow_h),
+            Create(dash_h),
             ReplacementTransform(tex_ng[0], tex_nh[0]),
             ReplacementTransform(tex_ng[1].get_entries(), tex_nh[1].get_entries()),
             tex_ng[1].get_brackets().animate.move_to(tex_nh[1].get_brackets()),

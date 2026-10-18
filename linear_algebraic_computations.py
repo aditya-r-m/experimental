@@ -1005,9 +1005,8 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
 
-        self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        matrix = np.array([[1,0.5,0],[0.5,1,0],[0,0,0]])
         x_u, y_u = math.cos(PI/4), math.sin(PI/4)
         x_v, y_v = -math.sin(PI/4), math.cos(PI/4)
         arrow_u = self.get_arrow((0, 0), (x_u, y_u), CS[0])
@@ -1064,7 +1063,6 @@ class Projection(Scene):
                 ArcBetweenPoints(tex[2].get_entries()[1].get_center(), tex[0].get_entries()[1].get_center(), angle=PI)),
             tex[1].get_entries()[1].animate.move_to(tex[1].get_entries()[2]),
             tex[1].get_entries()[2].animate.move_to(tex[1].get_entries()[1]),
-            Create(arrow_v),
         )
         for box in [box_l, box_l0, box_l1]: box.set_color(CS[0])
         for box in [box_r, box_r0, box_r1]: box.set_color(CS[1])

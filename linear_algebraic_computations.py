@@ -742,6 +742,7 @@ class Projection(Scene):
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+
         tex = MathTex(
             r"f(x, y) = xy",
             r"\implies \partial_x f = y"
@@ -781,7 +782,6 @@ class Projection(Scene):
         self.play(Create(line_h))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
-    def play_spectral_theorem(self, title):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         circle_c = self.get_circle((1, 0), 0.1, CS[1])
         line_c = self.get_line((0, 0), (1, 0), CS[1])
@@ -993,7 +993,11 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
+
+    def play_spectral_theorem(self, title):
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
+        self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
+        pass
 
     def play_eigenvector_computation(self, title):
         '''
@@ -1065,7 +1069,7 @@ class Projection(Scene):
             *(Create(title_arrow) for title_arrow in title_arrows),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
-        self.play(title_texts[selected_chapter].animate.scale(2.0).to_edge(UP+LEFT))
+        self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
         if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])
         if selected_chapter == 2: self.play_rotation_inverse(title_texts[selected_chapter])

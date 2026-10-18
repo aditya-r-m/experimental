@@ -997,6 +997,13 @@ class Projection(Scene):
     def play_spectral_theorem(self, title):
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
+        matrix = np.array([[1,0.5,0],[0.5,1,0],[0,0,0]])
+        x_u, y_u = math.cos(PI/4), math.sin(PI/4)
+        x_v, y_v = -math.sin(PI/4), math.cos(PI/4)
+        arrow_u = self.get_arrow((0, 0), (x_u, y_u), CS[0])
+        line_v, circle_v = self.get_lircle((x_v, y_v), CS[1])
+        arrow_v = self.get_arrow((0, 0), (x_v, y_v), CS[1])
+        line_u, circle_u = self.get_lircle((x_u, y_u), CS[0])
         tex = VGroup(
             Matrix([["x_u", "y_u"]], h_buff=0.7),
             Matrix([["A_x", "A_d"], ["A_d", "A_y"]]),
@@ -1010,7 +1017,12 @@ class Projection(Scene):
         box_r = SurroundingRectangle(tex[2].get_columns()[0], color=CS[1])
         box_r0 = SurroundingRectangle(tex[1].get_rows()[0], color=CS[1])
         box_r1 = SurroundingRectangle(tex[1].get_rows()[1], color=CS[1])
-        self.play(Write(tex))
+        self.play(
+            Write(tex),
+            Create(arrow_u),
+            Create(line_v),
+            Create(circle_v),
+        )
         self.play(*(FadeIn(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeOut(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
@@ -1030,6 +1042,9 @@ class Projection(Scene):
                 ArcBetweenPoints(tex[2].get_entries()[1].get_center(), tex[0].get_entries()[1].get_center(), angle=PI)),
             tex[1].get_entries()[1].animate.move_to(tex[1].get_entries()[2]),
             tex[1].get_entries()[2].animate.move_to(tex[1].get_entries()[1]),
+            Create(arrow_v),
+            Create(line_u),
+            Create(circle_u),
         )
         for box in [box_l, box_l0, box_l1]: box.set_color(CS[1])
         for box in [box_r, box_r0, box_r1]: box.set_color(CS[0])

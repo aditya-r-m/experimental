@@ -995,7 +995,7 @@ class Projection(Scene):
         )
 
     def play_spectral_theorem(self, title):
-        # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
+        # TODO: Induction via fixed orthogonal plane
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         matrix = np.array([[1,0.5,0],[0.5,1,0],[0,0,0]])
         x_u, y_u = math.cos(PI/4), math.sin(PI/4)
@@ -1058,14 +1058,14 @@ class Projection(Scene):
         )
         for box in [box_l, box_l0, box_l1]: box.set_color(CS[0])
         for box in [box_r, box_r0, box_r1]: box.set_color(CS[1])
-        self.play(
-            Create(box_v),
-            ReplacementTransform(arrow_v, span_v),
-        )
         self.play(*(FadeIn(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeOut(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
         self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
+        self.play(
+            Create(box_v),
+            ReplacementTransform(arrow_v, span_v),
+        )
         self.play(FadeOut(box_v))
 
     def play_eigenvector_computation(self, title):

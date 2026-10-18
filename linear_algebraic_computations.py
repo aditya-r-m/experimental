@@ -590,7 +590,7 @@ class Projection(Scene):
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
 
-    def _play_spectral_theorem(self, title):
+    def play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
@@ -1079,9 +1079,42 @@ class Projection(Scene):
         self.play(FadeOut(box_v))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
-    def play_spectral_theorem(self, title):
-        # TODO: Induction via fixed orthogonal plane
-        pass
+        get_grid = lambda color: VGroup(*([
+            Line(start=(i, -4, 0), end=(i, 4, 0), color=color, stroke_opacity=0.5) for i in range(-3, 4)
+        ] + [
+            Line(start=(-4, i, 0), end=(4, i, 0), color=color, stroke_opacity=0.5) for i in range(-3, 4)
+        ]))
+        space = get_grid(CS[-1])
+        self.play(Create(Dot()))
+        self.play(Create(space))
+        for theta in [PI/3, -PI/5]:
+            v = (math.cos(theta), math.sin(theta), 0)
+            eigen_space = get_grid(CS[1])
+            eigen_space.rotate(angle=PI/2, axis=[-v[1],v[0],0])
+            arrow = Arrow(start=(0, 0, 0), end=v, color=CS[0], buff=0)
+            hidden_arrow = Arrow(start=(0, 0, 0), end=(-v[1], v[0], 0))
+            angle = RightAngle(arrow, hidden_arrow, length=0.2, color=LIGHT_GRAY)
+            self.play(Create(arrow))
+            self.play(
+                Create(angle),
+                FadeIn(eigen_space),
+            )
+            self.play(
+                FadeOut(arrow),
+                FadeOut(angle),
+                FadeOut(space),
+            )
+            space = get_grid(CS[-1])
+            self.play(ReplacementTransform(eigen_space, space))
+        arrow_g = Arrow(start=(0, 0, 0), end=(math.cos(PI/4), math.sin(PI/4), 0), color=CS[0], buff=0)
+        arrow_r = Arrow(start=(0, 0, 0), end=(math.cos(PI/2+PI/4), math.sin(PI/2+PI/4), 0), color=CS[1], buff=0)
+        angle = RightAngle(arrow_g, arrow_r, length=0.2, color=LIGHT_GRAY)
+        self.play(
+            Create(arrow_g),
+            Create(arrow_r),
+            Create(angle),
+        )
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
     def play_eigenvector_computation(self, title):
         '''

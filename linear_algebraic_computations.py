@@ -997,7 +997,46 @@ class Projection(Scene):
     def play_spectral_theorem(self, title):
         # TODO: Induction via fixed orthogonal plane : px = 0 and Ax = (\lambda)x => (pA)x = 0
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        pass
+        tex = VGroup(
+            Matrix([["x_u", "y_u"]], h_buff=0.7),
+            Matrix([["A_x", "A_d"], ["A_d", "A_y"]]),
+            Matrix([["x_v"], ["y_v"]]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*4)
+        tex[0].get_entries().set_color(CS[0])
+        tex[2].get_entries().set_color(CS[1])
+        box_l = SurroundingRectangle(tex[0].get_rows()[0], color=CS[0])
+        box_l0 = SurroundingRectangle(tex[1].get_columns()[0], color=CS[0])
+        box_l1 = SurroundingRectangle(tex[1].get_columns()[1], color=CS[0])
+        box_r = SurroundingRectangle(tex[2].get_columns()[0], color=CS[1])
+        box_r0 = SurroundingRectangle(tex[1].get_rows()[0], color=CS[1])
+        box_r1 = SurroundingRectangle(tex[1].get_rows()[1], color=CS[1])
+        self.play(Write(tex))
+        self.play(*(FadeIn(box) for box in [box_l, box_l0, box_l1]))
+        self.play(*(FadeOut(box) for box in [box_l, box_l0, box_l1]))
+        self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
+        self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
+        self.play(
+            MoveAlongPath(
+                tex[0].get_entries()[0],
+                ArcBetweenPoints(tex[0].get_entries()[0].get_center(), tex[2].get_entries()[0].get_center(), angle=PI)),
+            MoveAlongPath(
+                tex[0].get_entries()[1],
+                ArcBetweenPoints(tex[0].get_entries()[1].get_center(), tex[2].get_entries()[1].get_center(), angle=PI)),
+            MoveAlongPath(
+                tex[2].get_entries()[0],
+                ArcBetweenPoints(tex[2].get_entries()[0].get_center(), tex[0].get_entries()[0].get_center(), angle=PI)),
+            MoveAlongPath(
+                tex[2].get_entries()[1],
+                ArcBetweenPoints(tex[2].get_entries()[1].get_center(), tex[0].get_entries()[1].get_center(), angle=PI)),
+            tex[1].get_entries()[1].animate.move_to(tex[1].get_entries()[2]),
+            tex[1].get_entries()[2].animate.move_to(tex[1].get_entries()[1]),
+        )
+        for box in [box_l, box_l0, box_l1]: box.set_color(CS[1])
+        for box in [box_r, box_r0, box_r1]: box.set_color(CS[0])
+        self.play(*(FadeIn(box) for box in [box_l, box_l0, box_l1]))
+        self.play(*(FadeOut(box) for box in [box_l, box_l0, box_l1]))
+        self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
+        self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
 
     def play_eigenvector_computation(self, title):
         '''

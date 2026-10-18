@@ -753,6 +753,7 @@ class Projection(Scene):
         tex = MathTex(r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = c^2").move_to(LEFT*4)
         tex.set_color_by_gradient(CS[:2])
         self.play(Write(tex))
+        # TODO: A = R^T S R
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         tex = MathTex(

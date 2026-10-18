@@ -590,7 +590,7 @@ class Projection(Scene):
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
 
-    def _play_spectral_theorem(self, title):
+    def play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
@@ -741,6 +741,18 @@ class Projection(Scene):
             self.play(Create(eigen_line))
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
+        self.play(
+            FadeOut(self.axes),
+            FadeOut(g_arrow_imbalanced_counter_sheared),
+            FadeOut(r_arrow_imbalanced_counter_sheared),
+            FadeOut(matrix_imbalanced_counter_sheared),
+            FadeOut(eigen_tex),
+            *(FadeOut(line) for line in lines_imbalanced_counter_sheared),
+            *(Rotate(arrow, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=self.origin) for arrow in arrows_imbalanced_counter_sheared),
+        )
+        tex = MathTex(r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = c^2").move_to(LEFT*4)
+        tex.set_color_by_gradient(CS[:2])
+        self.play(Write(tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         tex = MathTex(
@@ -994,8 +1006,6 @@ class Projection(Scene):
             Rotate(line_c, PI/3, about_point=self.origin),
         )
 
-    def play_spectral_theorem(self, title):
-        # TODO: Induction via fixed orthogonal plane
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         matrix = np.array([[1,0.5,0],[0.5,1,0],[0,0,0]])
         x_u, y_u = math.cos(PI/4), math.sin(PI/4)
@@ -1067,6 +1077,10 @@ class Projection(Scene):
             ReplacementTransform(arrow_v, span_v),
         )
         self.play(FadeOut(box_v))
+
+    def _play_spectral_theorem(self, title):
+        # TODO: Induction via fixed orthogonal plane
+        pass
 
     def play_eigenvector_computation(self, title):
         '''

@@ -1001,32 +1001,44 @@ class Projection(Scene):
         x_u, y_u = math.cos(PI/4), math.sin(PI/4)
         x_v, y_v = -math.sin(PI/4), math.cos(PI/4)
         arrow_u = self.get_arrow((0, 0), (x_u, y_u), CS[0])
-        line_v, circle_v = self.get_lircle((x_v, y_v), CS[1])
+        span_u = self.get_line((-4, -4), (4, 4), CS[0])
         arrow_v = self.get_arrow((0, 0), (x_v, y_v), CS[1])
-        line_u, circle_u = self.get_lircle((x_u, y_u), CS[0])
+        span_v = self.get_line((4, -4), (-4, 4), CS[1])
+        angle_uv = RightAngle(arrow_u, arrow_v, length=0.2, color=LIGHT_GRAY)
         tex = VGroup(
-            Matrix([["x_u", "y_u"]], h_buff=0.7),
+            Matrix([["x_v", "y_v"]], h_buff=0.7),
             Matrix([["A_x", "A_d"], ["A_d", "A_y"]]),
-            Matrix([["x_v"], ["y_v"]]),
+            Matrix([["x_u"], ["y_u"]]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4)
-        tex[0].get_entries().set_color(CS[0])
-        tex[2].get_entries().set_color(CS[1])
-        box_l = SurroundingRectangle(tex[0].get_rows()[0], color=CS[0])
-        box_l0 = SurroundingRectangle(tex[1].get_columns()[0], color=CS[0])
-        box_l1 = SurroundingRectangle(tex[1].get_columns()[1], color=CS[0])
-        box_r = SurroundingRectangle(tex[2].get_columns()[0], color=CS[1])
-        box_r0 = SurroundingRectangle(tex[1].get_rows()[0], color=CS[1])
-        box_r1 = SurroundingRectangle(tex[1].get_rows()[1], color=CS[1])
+        tex[0].get_entries().set_color(CS[1])
+        tex[2].get_entries().set_color(CS[0])
+        tex_0 = MathTex(" = 0").next_to(tex, DOWN)
+        box_u = Underline(tex[1:], color=CS[0])
+        box_v = Underline(tex[1:], color=CS[1])
+        box_l = SurroundingRectangle(tex[0].get_rows()[0], color=CS[1])
+        box_l0 = SurroundingRectangle(tex[1].get_columns()[0], color=CS[1])
+        box_l1 = SurroundingRectangle(tex[1].get_columns()[1], color=CS[1])
+        box_r = SurroundingRectangle(tex[2].get_columns()[0], color=CS[0])
+        box_r0 = SurroundingRectangle(tex[1].get_rows()[0], color=CS[0])
+        box_r1 = SurroundingRectangle(tex[1].get_rows()[1], color=CS[0])
         self.play(
             Write(tex),
             Create(arrow_u),
-            Create(line_v),
-            Create(circle_v),
+            Create(arrow_v),
+        )
+        self.play(
+            Create(box_u),
+            ReplacementTransform(arrow_u, span_u),
+        )
+        self.play(
+            Write(tex_0),
+            Create(angle_uv),
         )
         self.play(*(FadeIn(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeOut(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
         self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
+        self.play(FadeOut(box_u))
         self.play(
             MoveAlongPath(
                 tex[0].get_entries()[0],
@@ -1043,15 +1055,18 @@ class Projection(Scene):
             tex[1].get_entries()[1].animate.move_to(tex[1].get_entries()[2]),
             tex[1].get_entries()[2].animate.move_to(tex[1].get_entries()[1]),
             Create(arrow_v),
-            Create(line_u),
-            Create(circle_u),
         )
-        for box in [box_l, box_l0, box_l1]: box.set_color(CS[1])
-        for box in [box_r, box_r0, box_r1]: box.set_color(CS[0])
+        for box in [box_l, box_l0, box_l1]: box.set_color(CS[0])
+        for box in [box_r, box_r0, box_r1]: box.set_color(CS[1])
+        self.play(
+            Create(box_v),
+            ReplacementTransform(arrow_v, span_v),
+        )
         self.play(*(FadeIn(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeOut(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
         self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
+        self.play(FadeOut(box_v))
 
     def play_eigenvector_computation(self, title):
         '''

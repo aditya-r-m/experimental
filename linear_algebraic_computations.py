@@ -590,7 +590,7 @@ class Projection(Scene):
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Create(r_tex))
 
-    def play_spectral_theorem(self, title):
+    def _play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
@@ -1077,8 +1077,9 @@ class Projection(Scene):
             ReplacementTransform(arrow_v, span_v),
         )
         self.play(FadeOut(box_v))
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
-    def _play_spectral_theorem(self, title):
+    def play_spectral_theorem(self, title):
         # TODO: Induction via fixed orthogonal plane
         pass
 

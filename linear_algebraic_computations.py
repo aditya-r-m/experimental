@@ -1114,7 +1114,6 @@ class Projection(Scene):
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
     def wip(self):
-        # TODO: A = R^T S R
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         tex_e = MathTex("=").move_to(LEFT*7 + DOWN)
         tex_r = Matrix([["g_x","r_x"],["g_y","r_y"]]).next_to(tex_e, RIGHT)
@@ -1147,11 +1146,13 @@ class Projection(Scene):
             )
             for i in range(16)
         ]
+        arrow_g = self.get_arrow((0, 0), ev[1], CS[0])
+        arrow_r = self.get_arrow((0, 0), -ev[0], CS[1])
         lines_i = [
             self.get_line(
                 start=(-(x := math.cos(i*PI/16)), -(y := math.sin(i*PI/16))),
                 end=(x, y),
-                color=CS[0]*abs(8-i)/8 + CS[1]*(8-abs(8-i))/8,
+                color=CS[1]*(abs(np.dot(ev[0],(x,y)))**2) + CS[0]*(abs(np.dot(ev[1],(x,y)))**2),
             )
             for i in range(16)
         ]
@@ -1163,6 +1164,8 @@ class Projection(Scene):
             )
             for line in lines_i
         ]
+        arrow_gt = self.get_arrow(start=(0, 0), end=np.dot(ev.T, (arrow_g.get_end() - self.origin)[:2]), color=CS[0])
+        arrow_rt = self.get_arrow(start=(0, 0), end=np.dot(ev.T, (arrow_r.get_end() - self.origin)[:2]), color=CS[1])
         lines_s = [
             self.get_line(
                 start=np.dot([[es[0],0],[0,es[1]]], (line.get_start() - self.origin)[:2]),
@@ -1186,18 +1189,28 @@ class Projection(Scene):
         self.play(
             *(ReplacementTransform(line, line_f) for (line, line_f) in zip(lines_a, lines_af)),
         )
+        self.play(
+            Create(arrow_g),
+            Create(arrow_r),
+        )
+        self.play(
+            *(line.animate.shift(2*UP + 2*LEFT) for line in lines_af),
+        )
         self.play(Write(tex_e))
         self.play(Write(tex_r))
         self.play(Write(tex_s))
         self.play(Write(tex_t))
         self.play(
-            *(line.animate.shift(2*UP + 2*LEFT) for line in lines_af),
-        )
-        self.play(
             *(GrowFromCenter(line) for line in lines_i),
         )
         self.play(
             *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_i, lines_t)),
+            ReplacementTransform(arrow_g, arrow_gt),
+            ReplacementTransform(arrow_r, arrow_rt),
+        )
+        self.play(
+            FadeOut(arrow_gt),
+            FadeOut(arrow_rt),
         )
         self.play(
             *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_t, lines_s)),

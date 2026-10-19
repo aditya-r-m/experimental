@@ -1129,7 +1129,34 @@ class Projection(Scene):
         tex_a = Matrix([["A_x","A_d"],["A_d","A_y"]]).next_to(tex_s, UP)
         tex_a.get_columns()[0].set_color(CS[-1])
         tex_a.get_columns()[1].set_color(CS[-2])
+        a = np.array([[1,0.5],[0.5,1]])
+        lines_a = [
+            self.get_line(
+                start=(-(x := math.cos(i*PI/16)), -(y := math.sin(i*PI/16))),
+                end=(x, y),
+                color=CS[-1]*abs(8-i)/8 + CS[-2]*(8-abs(8-i))/8,
+            )
+            for i in range(16)
+        ]
+        lines_af = [
+            self.get_line(
+                start=np.dot(a, (-(x := math.cos(i*PI/16)), -(y := math.sin(i*PI/16)))),
+                end=np.dot(a, (x, y)),
+                color=CS[-1]*abs(8-i)/8 + CS[-2]*(8-abs(8-i))/8,
+                stroke_opacity=0.4,
+            )
+            for i in range(16)
+        ]
+        arrow_a0f = self.get_arrow((0, 0), a[0], color=CS[-1])
+        arrow_a1f = self.get_arrow((0, 0), a[1], color=CS[-2])
+        eigen_values, eigen_vectors = np.linalg.eig(np.array(a))
         self.play(Write(tex_a))
+        self.play(
+            *(GrowFromCenter(line) for line in lines_a),
+        )
+        self.play(
+            *(ReplacementTransform(line, line_f) for (line, line_f) in zip(lines_a, lines_af)),
+        )
         self.play(Write(tex_e))
         self.play(Write(tex_r))
         self.play(Write(tex_s))

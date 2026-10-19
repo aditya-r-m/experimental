@@ -1113,7 +1113,19 @@ class Projection(Scene):
             Create(angle),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+    def wip(self):
         # TODO: A = R^T S R
+        self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
+        tex_e = MathTex("=").move_to(LEFT*7 + DOWN)
+        tex_r = Matrix([["g_x","r_x"],["g_y","r_y"]]).next_to(tex_e, RIGHT)
+        tex_s = Matrix([["g_s","0"],["0","r_s"]]).next_to(tex_r, RIGHT)
+        tex_t = Matrix([["g_x","g_y"],["r_x","r_y"]]).next_to(tex_s, RIGHT)
+        tex_a = Matrix([["A_x","A_d"],["A_d","A_y"]]).next_to(tex_s, UP)
+        self.play(Write(tex_a))
+        self.play(Write(tex_e))
+        self.play(Write(tex_r))
+        self.play(Write(tex_s))
+        self.play(Write(tex_t))
 
     def play_eigenvector_computation(self, title):
         '''
@@ -1189,7 +1201,7 @@ class Projection(Scene):
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
         if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])
         if selected_chapter == 2: self.play_rotation_inverse(title_texts[selected_chapter])
-        if selected_chapter == 3: self.play_spectral_theorem(title_texts[selected_chapter])
+        if selected_chapter == 3: self.wip() # self.play_spectral_theorem(title_texts[selected_chapter])
         if selected_chapter == 4: self.play_eigenvector_computation(title_texts[selected_chapter])
         if selected_chapter == 5: self.play_svd(title_texts[selected_chapter])
         self.play(FadeOut(*(obj for obj in self.mobjects)))

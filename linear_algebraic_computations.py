@@ -1143,13 +1143,11 @@ class Projection(Scene):
                 start=np.dot(a, (-(x := math.cos(i*PI/16)), -(y := math.sin(i*PI/16)))),
                 end=np.dot(a, (x, y)),
                 color=CS[-1]*abs(8-i)/8 + CS[-2]*(8-abs(8-i))/8,
-                stroke_opacity=0.4,
             )
             for i in range(16)
         ]
         arrow_a0f = self.get_arrow((0, 0), a[0], color=CS[-1])
         arrow_a1f = self.get_arrow((0, 0), a[1], color=CS[-2])
-        eigen_values, eigen_vectors = np.linalg.eig(np.array(a))
         self.play(Write(tex_a))
         self.play(
             *(GrowFromCenter(line) for line in lines_a),
@@ -1161,6 +1159,10 @@ class Projection(Scene):
         self.play(Write(tex_r))
         self.play(Write(tex_s))
         self.play(Write(tex_t))
+        self.play(
+            *(line.animate.shift(2*UP + 2*LEFT) for line in lines_af),
+        )
+        eigen_values, eigen_vectors = np.linalg.eig(np.array(a))
 
     def play_eigenvector_computation(self, title):
         '''

@@ -1130,6 +1130,7 @@ class Projection(Scene):
         tex_a.get_columns()[0].set_color(CS[-1])
         tex_a.get_columns()[1].set_color(CS[-2])
         a = np.array([[1,0.5],[0.5,1]])
+        es, ev = np.linalg.eig(np.array(a))
         lines_a = [
             self.get_line(
                 start=(-(x := math.cos(i*PI/16)), -(y := math.sin(i*PI/16))),
@@ -1146,8 +1147,38 @@ class Projection(Scene):
             )
             for i in range(16)
         ]
-        arrow_a0f = self.get_arrow((0, 0), a[0], color=CS[-1])
-        arrow_a1f = self.get_arrow((0, 0), a[1], color=CS[-2])
+        lines_i = [
+            self.get_line(
+                start=(-(x := math.cos(i*PI/16)), -(y := math.sin(i*PI/16))),
+                end=(x, y),
+                color=CS[0]*abs(8-i)/8 + CS[1]*(8-abs(8-i))/8,
+            )
+            for i in range(16)
+        ]
+        lines_t = [
+            self.get_line(
+                start=np.dot(ev.T, (line.get_start() - self.origin)[:2]),
+                end=np.dot(ev.T, (line.get_end() - self.origin)[:2]),
+                color=line.get_color(),
+            )
+            for line in lines_i
+        ]
+        lines_s = [
+            self.get_line(
+                start=np.dot([[es[0],0],[0,es[1]]], (line.get_start() - self.origin)[:2]),
+                end=np.dot([[es[0],0],[0,es[1]]], (line.get_end() - self.origin)[:2]),
+                color=line.get_color(),
+            )
+            for line in lines_t
+        ]
+        lines_r = [
+            self.get_line(
+                start=np.dot(ev, (line.get_start() - self.origin)[:2]),
+                end=np.dot(ev, (line.get_end() - self.origin)[:2]),
+                color=line.get_color(),
+            )
+            for line in lines_s
+        ]
         self.play(Write(tex_a))
         self.play(
             *(GrowFromCenter(line) for line in lines_a),
@@ -1162,7 +1193,21 @@ class Projection(Scene):
         self.play(
             *(line.animate.shift(2*UP + 2*LEFT) for line in lines_af),
         )
-        eigen_values, eigen_vectors = np.linalg.eig(np.array(a))
+        self.play(
+            *(GrowFromCenter(line) for line in lines_i),
+        )
+        self.play(
+            *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_i, lines_t)),
+        )
+        self.play(
+            *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_t, lines_s)),
+        )
+        self.play(
+            *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_s, lines_r)),
+        )
+        self.play(
+            *(line.animate.shift(2*DOWN + 2*RIGHT) for line in lines_af),
+        )
 
     def play_eigenvector_computation(self, title):
         '''

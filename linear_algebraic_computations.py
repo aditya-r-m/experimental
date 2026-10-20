@@ -1116,13 +1116,13 @@ class Projection(Scene):
     def wip(self):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         tex_e = MathTex("=").move_to(LEFT*7 + DOWN)
-        tex_r = Matrix([["g_x","r_x"],["g_y","r_y"]]).next_to(tex_e, RIGHT)
+        tex_r = Matrix([["r_x","g_x"],["r_y","g_y"]]).next_to(tex_e, RIGHT)
         tex_r.get_columns()[0].set_color(CS[0])
         tex_r.get_columns()[1].set_color(CS[1])
-        tex_s = Matrix([["g_s","0"],["0","r_s"]]).next_to(tex_r, RIGHT)
+        tex_s = Matrix([["r_s","0"],["0","g_s"]]).next_to(tex_r, RIGHT)
         tex_s.get_entries()[0].set_color(CS[0])
         tex_s.get_entries()[3].set_color(CS[1])
-        tex_t = Matrix([["g_x","g_y"],["r_x","r_y"]]).next_to(tex_s, RIGHT)
+        tex_t = Matrix([["r_x","r_y"],["g_x","g_y"]]).next_to(tex_s, RIGHT)
         tex_t.get_rows()[0].set_color(CS[0])
         tex_t.get_rows()[1].set_color(CS[1])
         tex_a = Matrix([["A_x","A_d"],["A_d","A_y"]]).next_to(tex_s, UP)
@@ -1146,13 +1146,13 @@ class Projection(Scene):
             )
             for i in range(16)
         ]
-        arrow_g = self.get_arrow((0, 0), ev[1], CS[0])
-        arrow_r = self.get_arrow((0, 0), -ev[0], CS[1])
+        arrow_r = self.get_arrow((0, 0), ev[1], CS[1])
+        arrow_g = self.get_arrow((0, 0), -ev[0], CS[0])
         lines_i = [
             self.get_line(
                 start=(-(x := math.cos(i*PI/16)), -(y := math.sin(i*PI/16))),
                 end=(x, y),
-                color=CS[1]*(abs(np.dot(ev[0],(x,y)))**2) + CS[0]*(abs(np.dot(ev[1],(x,y)))**2),
+                color=CS[0]*(abs(np.dot(ev[0],(x,y)))**2) + CS[1]*(abs(np.dot(ev[1],(x,y)))**2),
             )
             for i in range(16)
         ]
@@ -1164,8 +1164,8 @@ class Projection(Scene):
             )
             for line in lines_i
         ]
-        arrow_gt = self.get_arrow(start=(0, 0), end=np.dot(ev.T, (arrow_g.get_end() - self.origin)[:2]), color=CS[0])
         arrow_rt = self.get_arrow(start=(0, 0), end=np.dot(ev.T, (arrow_r.get_end() - self.origin)[:2]), color=CS[1])
+        arrow_gt = self.get_arrow(start=(0, 0), end=np.dot(ev.T, (arrow_g.get_end() - self.origin)[:2]), color=CS[0])
         lines_s = [
             self.get_line(
                 start=np.dot([[es[0],0],[0,es[1]]], (line.get_start() - self.origin)[:2]),

@@ -153,6 +153,7 @@ class Projection(Scene):
         self.play(triangles[2].animate
             .rotate(-math.atan2(4, 3), about_point=triangles[2].get_vertices()[0])
             .next_to(texs[0][4][0], DOWN)
+            .shift(0.16 * RIGHT)
         )
         self.play(Write(texs[0][:4]))
         self.play(Create(triangles[0]))
@@ -1280,7 +1281,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 3
+        selected_chapter = 0
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)

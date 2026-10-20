@@ -1113,7 +1113,7 @@ class Projection(Scene):
             Create(angle),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-    def wip(self):
+
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         tex_e = MathTex("=").move_to(LEFT*7 + DOWN)
         tex_r = Matrix([["r_x","g_x"],["r_y","g_y"]]).next_to(tex_e, RIGHT)
@@ -1296,7 +1296,7 @@ class Projection(Scene):
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
         if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])
         if selected_chapter == 2: self.play_rotation_inverse(title_texts[selected_chapter])
-        if selected_chapter == 3: self.wip() # self.play_spectral_theorem(title_texts[selected_chapter])
+        if selected_chapter == 3: self.play_spectral_theorem(title_texts[selected_chapter])
         if selected_chapter == 4: self.play_eigenvector_computation(title_texts[selected_chapter])
         if selected_chapter == 5: self.play_svd(title_texts[selected_chapter])
         self.play(FadeOut(*(obj for obj in self.mobjects)))

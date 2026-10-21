@@ -186,6 +186,8 @@ class Projection(Scene):
             MathTex("y", color=CS[1]),
             MathTex("1", color=CS[2]),
         ]
+        self.add_sound(f"media/circle_equation_0.wav")
+        self.wait(8)
         for (brace, label) in zip(braces, labels):
             brace.put_at_tip(label, buff=0.1)
             self.play(
@@ -201,6 +203,7 @@ class Projection(Scene):
             .next_to(texs[0][4][0], DOWN)
             .shift(0.16 * RIGHT)
         )
+        self.add_sound(f"media/circle_equation_1.wav")
         self.play(Write(texs[0][:4]))
         self.play(Create(triangles[0]))
         self.play(Create(triangles[1]))
@@ -230,8 +233,11 @@ class Projection(Scene):
             Create(squares[1]),
             Create(squares[2]),
         )
+        self.add_sound(f"media/circle_equation_2.wav")
         self.play(ReplacementTransform(texs[0], texs[1]))
+        self.wait(4)
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
+        self.wait(4)
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
         return
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])

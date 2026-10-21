@@ -240,8 +240,8 @@ class Projection(Scene):
         r_mat.set_column_colors(*CS)
         v_vec = Matrix([["v_g"],["v_r"]]).next_to(r_mat, RIGHT)
         v_arrow = self.get_arrow((0, 0), (2, 1), CS[2])
-        self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
-        self.play(Create(v_arrow))
+        self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
+        self.play(GrowArrow(v_arrow))
         self.play(Write(v_tex))
         self.play(Write(r_mat))
         self.play(Write(v_vec))
@@ -375,7 +375,7 @@ class Projection(Scene):
         self.play(
             Create(vector_1),
             Create(tex_1_l),
-            Create(arrow_1),
+            GrowArrow(arrow_1),
             Create(tex_1),
         )
         arrow_0 = self.get_arrow((0, 0), (-y, x), color_0)
@@ -391,7 +391,7 @@ class Projection(Scene):
         self.play(
             Create(vector_0),
             Create(tex_0_l),
-            Create(arrow_0),
+            GrowArrow(arrow_0),
             Create(angle_01),
             Create(tex_0),
         )
@@ -531,12 +531,12 @@ class Projection(Scene):
         )
         self.play(
             Create(tex_0),
-            Create(arrow_u),
-            Create(arrow_v),
+            GrowArrow(arrow_u),
+            GrowArrow(arrow_v),
         )
-        self.play(Create(arrow_vu))
+        self.play(GrowArrow(arrow_vu))
         self.play(
-            Create(arrow_vup),
+            GrowArrow(arrow_vup),
             Create(angle_v)
         )
         self.play(FadeOut(arrow_vu, arrow_vup, angle_v))
@@ -564,14 +564,14 @@ class Projection(Scene):
             tex_to_color_map={"v_u": CS[-1], r"\hat{u}^T": CS[0], "v": CS[1], r"\hat{u}": CS[0], r"u^T": CS[0], "u": CS[0]},
         ).next_to(tex_1, DOWN)
         self.play(Create(tex_2))
-        self.play(Create(arrow_vu))
+        self.play(GrowArrow(arrow_vu))
         tex_3 = MathTex(
             r"\implies {{v_{u^\perp}}} = {{v}} - {{v_u}}",
             tex_to_color_map={"v": CS[1], "v_u": CS[-1], r"v_{u^\perp}": CS[2]},
         ).next_to(tex_0, RIGHT)
         self.play(Create(tex_3))
         self.play(
-            Create(arrow_vup),
+            GrowArrow(arrow_vup),
             Create(angle_v),
         )
 
@@ -584,7 +584,7 @@ class Projection(Scene):
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]]).move_to(LEFT*4)
         r_tex.set_column_colors(*CS)
-        self.play(Create(i_arrow), Create(j_arrow), Create(ij_angle))
+        self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
         self.play(
             Create(r_tex),
             *(Rotate(obj, theta, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle]),
@@ -621,8 +621,8 @@ class Projection(Scene):
         y_matrix = Matrix([["v_x"],["v_y"]]).next_to(g_matrix, RIGHT)
         y_matrix.set_column_colors(CS[2])
         self.play(
-            Create(g_arrow),
-            Create(y_arrow),
+            GrowArrow(g_arrow),
+            GrowArrow(y_arrow),
             Create(g_matrix),
             Create(y_matrix),
         )
@@ -644,8 +644,8 @@ class Projection(Scene):
         eigen_tex = MathTex(r"v = \lambda v").next_to(matrix, RIGHT)
         eigen_tex[0][::3].set_color(CS[-1])
         self.play(
-            Create(g_arrow),
-            Create(r_arrow),
+            GrowArrow(g_arrow),
+            GrowArrow(r_arrow),
             Create(matrix),
             Create(eigen_tex),
         )
@@ -687,7 +687,7 @@ class Projection(Scene):
             ReplacementTransform(matrix, matrix_sheared),
             eigen_tex.animate.next_to(matrix_sheared, RIGHT),
             *(ReplacementTransform(line, line_sheared) for (line, line_sheared) in zip(lines, lines_sheared)),
-            *(Create(arrow_sheared) for arrow_sheared in arrows_sheared),
+            *(GrowArrow(arrow_sheared) for arrow_sheared in arrows_sheared),
         )
         eigen_line = self.get_line((-4*eigen_vectors[0][0], -4*eigen_vectors[1][0]), (4*eigen_vectors[0][0], 4*eigen_vectors[1][0]), CS[-1])
         self.play(Create(eigen_line))
@@ -882,7 +882,7 @@ class Projection(Scene):
             Write(tex_nf),
         )
         self.play(
-            Create(arrow_nf),
+            GrowArrow(arrow_nf),
         )
         self.play(
             Rotate(circle_c, PI/3, about_point=self.origin),
@@ -1010,8 +1010,8 @@ class Projection(Scene):
             ReplacementTransform(tex_g[2], tex_h[3]),
             ReplacementTransform(box_g, box_h),
             FadeOut(bracket_g),
-            Create(arrow_hv),
-            Create(arrow_h),
+            GrowArrow(arrow_hv),
+            GrowArrow(arrow_h),
             Create(dash_h),
             ReplacementTransform(tex_ng[0], tex_nh[0]),
             ReplacementTransform(tex_ng[1].get_entries(), tex_nh[1].get_entries()),
@@ -1077,8 +1077,8 @@ class Projection(Scene):
         box_r1 = SurroundingRectangle(tex[1].get_rows()[1], color=CS[0])
         self.play(
             Write(tex),
-            Create(arrow_u),
-            Create(arrow_v),
+            GrowArrow(arrow_u),
+            GrowArrow(arrow_v),
         )
         self.play(
             Create(box_u),
@@ -1137,7 +1137,7 @@ class Projection(Scene):
             arrow = Arrow(start=(0, 0, 0), end=v, color=CS[0], buff=0)
             hidden_arrow = Arrow(start=(0, 0, 0), end=(-v[1], v[0], 0))
             angle = RightAngle(arrow, hidden_arrow, length=0.2, color=LIGHT_GRAY)
-            self.play(Create(arrow))
+            self.play(GrowArrow(arrow))
             self.play(
                 Create(angle),
                 FadeIn(eigen_space),
@@ -1153,8 +1153,8 @@ class Projection(Scene):
         arrow_r = Arrow(start=(0, 0, 0), end=(math.cos(PI/2+PI/4), math.sin(PI/2+PI/4), 0), color=CS[1], buff=0)
         angle = RightAngle(arrow_g, arrow_r, length=0.2, color=LIGHT_GRAY)
         self.play(
-            Create(arrow_g),
-            Create(arrow_r),
+            GrowArrow(arrow_g),
+            GrowArrow(arrow_r),
             Create(angle),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
@@ -1235,8 +1235,8 @@ class Projection(Scene):
             *(ReplacementTransform(line, line_f) for (line, line_f) in zip(lines_a, lines_af)),
         )
         self.play(
-            Create(arrow_g),
-            Create(arrow_r),
+            GrowArrow(arrow_g),
+            GrowArrow(arrow_r),
         )
         self.play(
             *(line.animate.shift(2*UP + 2*LEFT) for line in lines_af),
@@ -1293,10 +1293,10 @@ class Projection(Scene):
         m = np.array([[3,1],[1,3]])
         q = np.array([[1,0],[0,1]])
         arrows = get_arrows(grid, m, q)
-        self.play(Create(arrows[0]),
-                  Create(arrows[1]),
-                  Create(arrows[2]),
-                  Create(arrows[3]),
+        self.play(GrowArrow(arrows[0]),
+                  GrowArrow(arrows[1]),
+                  GrowArrow(arrows[2]),
+                  GrowArrow(arrows[3]),
         )
         for _ in range(10):
             q = m @ q
@@ -1336,7 +1336,7 @@ class Projection(Scene):
         self.play_introduction()
         self.play(
             *(Write(title_text) for title_text in title_texts),
-            *(Create(title_arrow) for title_arrow in title_arrows),
+            *(GrowArrow(title_arrow) for title_arrow in title_arrows),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
@@ -1367,7 +1367,7 @@ class Determinant(Scene):
         self.play(Create(line, run_time=1, lag_ratio=0.1))
         self.play(
             Create(matrix),
-            Create(arrow),
+            GrowArrow(arrow),
         )
         self.wait(8) # The determinant measures the size of some very special n-dimensional shapes formed by n-vectors.
         self.wait(8) # The basic computation can be performed by an efficient vector-reduction algorithm, as well as an elegant closed form.
@@ -1437,13 +1437,13 @@ class Determinant(Scene):
         self.play(
             Create(matrices[0]),
             Create(polygons[0]),
-            Create(arrows[0][0]),
-            Create(arrows[0][1]),
+            GrowArrow(arrows[0][0]),
+            GrowArrow(arrows[0][1]),
         )
         self.wait(8) # 2D version of this measure is area of the parallelogram.
         self.wait(8) # This value can be computed by aligning the vectors with coordinate axes without changing the covered area.
         self.play(
-            Create(diff_arrows[0]),
+            GrowArrow(diff_arrows[0]),
             Create(secondary_matrices[0]),
         )
         self.wait(8) # This shear transformation slides the area as smoothly connected parallel lines, by subtracting one vector direction from another.
@@ -1457,7 +1457,7 @@ class Determinant(Scene):
         )
         self.wait(8) # Note : the standard row-reduction pushes both vectors in the direction of a coordinate axis by a left-shear-multiplication instead.
         self.play(
-            Create(diff_arrows[1]),
+            GrowArrow(diff_arrows[1]),
             Create(secondary_matrices[1]),
         )
         self.wait(8) # Finally, we can get a rectangle with edge lengths in the diagonal matrix, the determinant will be base times height.
@@ -1573,14 +1573,14 @@ class Determinant(Scene):
         self.play(
             Create(tex),
             Create(polygons[0]),
-            Create(arrows[0]),
-            Create(arrows[1]),
+            GrowArrow(arrows[0]),
+            GrowArrow(arrows[1]),
         )
         self.wait(8) # To get all the permutations, we can split the terms aligned with components of any of the vectors as shown.
         self.play(FadeOut(arrows[1]))
-        self.play(Create(arrows[2]))
-        self.play(Create(arrows[3]))
-        self.play(Create(arrows[4]))
+        self.play(GrowArrow(arrows[2]))
+        self.play(GrowArrow(arrows[3]))
+        self.play(GrowArrow(arrows[4]))
         self.play(ReplacementTransform(polygons[0], polygons[1]))
         self.wait(8) # Using this property, the determinant can be expanded level-by-level while clearing rows one-by-one.
         self.play(
@@ -1626,7 +1626,7 @@ class Determinant(Scene):
                         arrow = Arrow(start=matrice_groups[i-1][0].get_bottom(), end=matrix.get_top())
                         arrow.set_stroke(width=1)
                         arrow.tip.scale(0.5)
-                        self.play(Create(arrow))
+                        self.play(GrowArrow(arrow))
                     else:
                         tex = MathTex("+")
                         tex.scale(0.5)

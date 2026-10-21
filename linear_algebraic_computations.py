@@ -325,6 +325,7 @@ class Projection(Scene):
         self.play(GrowFromCenter(brace))
         self.play(Write(label))
         self.wait(12)
+        self.add_sound("media/half_turn.wav")
         self.play(
             FadeOut(*(mob for mob in self.mobjects if mob not in [
                 self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),
@@ -338,8 +339,11 @@ class Projection(Scene):
             Write(tex_180),
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(4)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(4)
         self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.add_sound("media/quarter_turn.wav")
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
         tex_90 = MathTex(r"\text{1/4 turn : } x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
@@ -352,7 +356,9 @@ class Projection(Scene):
             Write(tex_90),
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(4)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(4)
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
 
     def play_projection_covector(self, title):

@@ -8,6 +8,46 @@ CS = [GREEN,RED,YELLOW,TEAL]
 Z = np.array([0., 0., 0.,])
 
 class Projection(Scene):
+    def play_introduction(self):
+        imbalanced_counter_shear = [[1.5, 0.5],[0.5, 1]]
+        g_arrow_imbalanced_counter_sheared = Arrow(start=(0, 0), end=(imbalanced_counter_shear[0][0], imbalanced_counter_shear[1][0]), color=CS[0], buff=0)
+        r_arrow_imbalanced_counter_sheared = Arrow(start=(0, 0), end=(imbalanced_counter_shear[0][1], imbalanced_counter_shear[1][1]), color=CS[1], buff=0)
+        lines_imbalanced_counter_sheared = []
+        for t in range(32):
+            theta = 2*PI*t/32
+            x, y = 4*math.cos(theta), 4*math.sin(theta)
+            c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
+            x, y = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
+            lines_imbalanced_counter_sheared.append(Line(start=(0, 0), end=(x, y), color=c, buff=0, stroke_opacity=0.5))
+        arrows_imbalanced_counter_sheared = []
+        for t in range(32):
+            theta = 2*PI*t/32
+            x, y = math.cos(theta), math.sin(theta)
+            c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
+            x_u, y_u = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
+            arrows_imbalanced_counter_sheared.append(Arrow(start=(x, y), end=(x_u, y_u), color=c, buff=0))
+        self.play(
+            Create(g_arrow_imbalanced_counter_sheared),
+            Create(r_arrow_imbalanced_counter_sheared),
+            *(Create(line_imbalanced_counter_sheared) for (line_imbalanced_counter_sheared) in zip(lines_imbalanced_counter_sheared)),
+            *(Create(arrow_imbalanced_counter_sheared) for (arrow_imbalanced_counter_sheared) in zip(arrows_imbalanced_counter_sheared)),
+        )
+        _, eigen_vectors = np.linalg.eig(np.array(imbalanced_counter_shear))
+        for i in range(2):
+            eigen_line = Line(start=(-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), end=(4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), color=CS[-1], buff=0)
+            self.play(Create(eigen_line))
+            eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
+            self.play(Uncreate(eigen_line))
+        self.play(
+            FadeOut(g_arrow_imbalanced_counter_sheared),
+            FadeOut(r_arrow_imbalanced_counter_sheared),
+            FadeOut(matrix_imbalanced_counter_sheared),
+            FadeOut(eigen_tex),
+            *(FadeOut(line) for line in lines_imbalanced_counter_sheared),
+            *(Rotate(arrow, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=(0, 0)) for arrow in arrows_imbalanced_counter_sheared),
+        )
+        self.play(FadeOut(*(obj for obj in self.mobjects)))
+
     def get_titles(self):
         title_texts = [
             "Rotation Matrix",
@@ -1288,12 +1328,15 @@ class Projection(Scene):
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
+        self.add_sound("media/introduction.wav")
+        self.play_introduction()
         self.play(
             *(Write(title_text) for title_text in title_texts),
             *(Create(title_arrow) for title_arrow in title_arrows),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
+        return
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
         if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])
         if selected_chapter == 2: self.play_rotation_inverse(title_texts[selected_chapter])

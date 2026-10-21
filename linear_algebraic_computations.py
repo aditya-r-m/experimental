@@ -52,7 +52,6 @@ class Projection(Scene):
         self.play(
             *(Rotate(arrow_counter_sheared, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=(0, 0, 0)) for arrow_counter_sheared in arrows_counter_sheared),
         )
-        self.play(FadeOut(*(obj for obj in self.mobjects)))
 
     def get_titles(self):
         title_texts = [
@@ -1334,12 +1333,16 @@ class Projection(Scene):
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
-        self.add_sound("media/introduction.wav")
         self.play_introduction()
+        self.add_sound(f"media/pre_intro_{selected_chapter}.wav")
+        self.play(FadeOut(*(obj for obj in self.mobjects)))
+        self.wait(8)
         self.play(
             *(Write(title_text) for title_text in title_texts),
             *(GrowArrow(title_arrow) for title_arrow in title_arrows),
         )
+        self.add_sound(f"media/intro_{selected_chapter}.wav")
+        self.wait(12)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         return

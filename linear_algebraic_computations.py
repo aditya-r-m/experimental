@@ -239,7 +239,6 @@ class Projection(Scene):
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
         self.wait(4)
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
-        return
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
@@ -249,6 +248,7 @@ class Projection(Scene):
         r_mat.set_column_colors(*CS)
         v_vec = Matrix([["v_g"],["v_r"]]).next_to(r_mat, RIGHT)
         v_arrow = self.get_arrow((0, 0), (2, 1), CS[2])
+        self.add_sound(f"media/rotation_matrix.wav")
         self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
         self.play(GrowArrow(v_arrow))
         self.play(Write(v_tex))
@@ -305,6 +305,7 @@ class Projection(Scene):
             FadeIn(r_mat_0.get_brackets()[0]),
             FadeIn(r_mat_1.get_brackets()[1]),
         )
+        self.wait(6)
         brace = BraceBetweenPoints(
             np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
             np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
@@ -320,8 +321,10 @@ class Projection(Scene):
         label[2].set_color(CS[0])
         label[4].set_color(CS[1])
         label.next_to(brace.get_tip(), UP, aligned_edge=LEFT)
+        self.add_sound("media/rotation_row.wav")
         self.play(GrowFromCenter(brace))
         self.play(Write(label))
+        self.wait(12)
         self.play(
             FadeOut(*(mob for mob in self.mobjects if mob not in [
                 self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),

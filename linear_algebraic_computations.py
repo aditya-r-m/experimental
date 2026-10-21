@@ -232,6 +232,7 @@ class Projection(Scene):
         self.play(ReplacementTransform(texs[0], texs[1]))
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
+        return
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
@@ -1333,19 +1334,20 @@ class Projection(Scene):
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
-        self.play_introduction()
         self.add_sound(f"media/pre_intro_{selected_chapter}.wav")
+        self.play_introduction()
+        self.wait(2)
         self.play(FadeOut(*(obj for obj in self.mobjects)))
-        self.wait(8)
         self.play(
             *(Write(title_text) for title_text in title_texts),
             *(GrowArrow(title_arrow) for title_arrow in title_arrows),
         )
         self.add_sound(f"media/intro_{selected_chapter}.wav")
         self.wait(12)
+        self.add_sound(f"media/post_intro_{selected_chapter}.wav")
+        self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
-        return
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
         if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])
         if selected_chapter == 2: self.play_rotation_inverse(title_texts[selected_chapter])

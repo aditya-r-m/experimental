@@ -262,7 +262,7 @@ class Projection(Scene):
             ReplacementTransform(r_mat.get_columns()[1], r_mat_1.get_columns()[0]),
             ReplacementTransform(v_vec.get_rows()[0], v_vec_0),
             ReplacementTransform(v_vec.get_rows()[1], v_vec_1),
-            Create(p_tex),
+            Write(p_tex),
         )
         self.play(
             FadeIn(r_mat_0.get_brackets()),
@@ -322,8 +322,8 @@ class Projection(Scene):
         matrix_180.set_column_colors(*CS)
         tex_180 = MathTex(r"\text{1/2 turn : } x \leftrightarrow -x,\ y \leftrightarrow -y").next_to(matrix_180, UP)
         self.play(
-            Create(matrix_180),
-            Create(tex_180),
+            Write(matrix_180),
+            Write(tex_180),
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
@@ -336,8 +336,8 @@ class Projection(Scene):
             FadeOut(tex_180),
         )
         self.play(
-            Create(matrix_90),
-            Create(tex_90),
+            Write(matrix_90),
+            Write(tex_90),
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
@@ -358,13 +358,13 @@ class Projection(Scene):
         covector.set_column_colors(color_c, color_c)
         line_c, circle_c = self.get_lircle((x, y), color_c)
         self.play(
-            Create(covector),
+            Write(covector),
             Create(x_line),
             Create(y_line),
             Create(x_brace),
             Create(y_brace),
-            Create(x_tex),
-            Create(y_tex),
+            Write(x_tex),
+            Write(y_tex),
             Create(circle_c),
         )
         arrow_1 = self.get_arrow((0, 0), (x, y), color_1)
@@ -373,10 +373,10 @@ class Projection(Scene):
         tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
         tex_1_l = MathTex("= 1", color=color_1).next_to(vector_1, RIGHT)
         self.play(
-            Create(vector_1),
-            Create(tex_1_l),
+            Write(vector_1),
+            Write(tex_1_l),
             GrowArrow(arrow_1),
-            Create(tex_1),
+            Write(tex_1),
         )
         arrow_0 = self.get_arrow((0, 0), (-y, x), color_0)
         angle_01 = RightAngle(arrow_0, arrow_1, length=0.25, color=LIGHT_GRAY)
@@ -389,11 +389,11 @@ class Projection(Scene):
             FadeOut(tex_1_l),
         )
         self.play(
-            Create(vector_0),
-            Create(tex_0_l),
+            Write(vector_0),
+            Write(tex_0_l),
             GrowArrow(arrow_0),
             Create(angle_01),
-            Create(tex_0),
+            Write(tex_0),
         )
         angle_1c = RightAngle(arrow_1, line_c, length=0.25, quadrant=(-1,1), color=LIGHT_GRAY)
         vector_01 = Matrix([["x - cy"], ["y + cx"]]).next_to(covector)
@@ -409,7 +409,7 @@ class Projection(Scene):
         tex_1_l.next_to(vector_01, DOWN)
         tex_1_l.set_color(CS[-1])
         self.play(
-            Create(vector_01),
+            Write(vector_01),
             GrowFromPoint(line_c, self.origin),
             Create(angle_1c),
             FadeIn(tex_1_l),
@@ -461,8 +461,8 @@ class Projection(Scene):
         covector_4.get_entries()[:].set_color(CS[2])
         vector_4 = Matrix([["w"],["x"],["y"],["z"]]).next_to(covector_4, RIGHT)
         vector_4.get_entries()[:].set_color(CS[-1])
-        self.play(Create(covector_4))
-        self.play(Create(vector_4))
+        self.play(Write(covector_4))
+        self.play(Write(vector_4))
         tex_p = MathTex("+")
         vector_4_l = Matrix([["w"],["x"],[0],[0]])
         vector_4_l.get_entries()[:2].set_color(CS[-1])
@@ -473,7 +473,7 @@ class Projection(Scene):
         vector_4_r.get_entries()[2:].set_color(CS[-1])
         vector_4_r.next_to(covector_4_r, RIGHT)
         self.play(
-            Create(tex_p),
+            Write(tex_p),
             ReplacementTransform(vector_4, vector_4_l),
             ReplacementTransform(vector_4.copy(), vector_4_r),
             ReplacementTransform(covector_4, covector_4_l),
@@ -506,8 +506,8 @@ class Projection(Scene):
         tex_p_l = tex_p.copy().next_to(covector_4_l_f.get_entries()[1], LEFT)
         tex_p_r = tex_p.copy().next_to(vector_4_r.get_entries()[2], RIGHT)
         self.play(
-            Create(tex_p_l),
-            Create(tex_p_r),
+            Write(tex_p_l),
+            Write(tex_p_r),
         )
         self.play(
             vector_4_l.get_entries()[0].animate.next_to(tex_p_l, LEFT),
@@ -530,7 +530,7 @@ class Projection(Scene):
             FadeIn(self.unit_circle),
         )
         self.play(
-            Create(tex_0),
+            Write(tex_0),
             GrowArrow(arrow_u),
             GrowArrow(arrow_v),
         )
@@ -545,7 +545,7 @@ class Projection(Scene):
             r"{{\hat{u}}} = \frac{ {{u}} }{\sqrt{ {{u^T}} {{u}} }}",
             tex_to_color_map={r"\hat{u}": CS[0], "u": CS[0], r"u^T": CS[0]},
         ).next_to(tex_0, DOWN)
-        self.play(Create(tex_1))
+        self.play(Write(tex_1))
         line_u, circle_u = self.get_lircle((2, 1), CS[0])
         self.play(
             arrow_u.animate.set_opacity(0.5),
@@ -563,13 +563,13 @@ class Projection(Scene):
             r"{{ v_u }} = \left( {{ \hat{u}^T }} {{ v }} \right) {{ \hat{u} }} = \left( \frac{u^T v}{u^T u} \right) u",
             tex_to_color_map={"v_u": CS[-1], r"\hat{u}^T": CS[0], "v": CS[1], r"\hat{u}": CS[0], r"u^T": CS[0], "u": CS[0]},
         ).next_to(tex_1, DOWN)
-        self.play(Create(tex_2))
+        self.play(Write(tex_2))
         self.play(GrowArrow(arrow_vu))
         tex_3 = MathTex(
             r"\implies {{v_{u^\perp}}} = {{v}} - {{v_u}}",
             tex_to_color_map={"v": CS[1], "v_u": CS[-1], r"v_{u^\perp}": CS[2]},
         ).next_to(tex_0, RIGHT)
-        self.play(Create(tex_3))
+        self.play(Write(tex_3))
         self.play(
             GrowArrow(arrow_vup),
             Create(angle_v),
@@ -586,7 +586,7 @@ class Projection(Scene):
         r_tex.set_column_colors(*CS)
         self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
         self.play(
-            Create(r_tex),
+            Write(r_tex),
             *(Rotate(obj, theta, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle]),
         )
         self.play(r_tex.animate.shift(RIGHT*1.5))
@@ -597,9 +597,9 @@ class Projection(Scene):
         i_line, i_circle = self.get_lircle((x, y), CS[0])
         j_line, j_circle = self.get_lircle((-y, x), CS[1])
         self.play(
-            Create(s_tex),
-            Create(e_tex),
-            Create(t_tex),
+            Write(s_tex),
+            Write(e_tex),
+            Write(t_tex),
             i_arrow.animate.set_opacity(0.5),
             ReplacementTransform(i_arrow.copy(), i_circle),
             GrowFromPoint(i_line, self.origin),
@@ -623,8 +623,8 @@ class Projection(Scene):
         self.play(
             GrowArrow(g_arrow),
             GrowArrow(y_arrow),
-            Create(g_matrix),
-            Create(y_matrix),
+            Write(g_matrix),
+            Write(y_matrix),
         )
         self.play(
             Rotate(g_arrow, -theta, about_point=self.origin),
@@ -633,7 +633,7 @@ class Projection(Scene):
         y_line = DashedLine(start=y_arrow.get_end(), end=[y_arrow.get_end()[0], y_arrow.get_start()[1], 0], color=CS[2])
         self.play(Create(y_line))
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
-        self.play(Create(r_tex))
+        self.play(Write(r_tex))
 
     def play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
@@ -646,8 +646,8 @@ class Projection(Scene):
         self.play(
             GrowArrow(g_arrow),
             GrowArrow(r_arrow),
-            Create(matrix),
-            Create(eigen_tex),
+            Write(matrix),
+            Write(eigen_tex),
         )
         lines = []
         for t in range(32):

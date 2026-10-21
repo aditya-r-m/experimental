@@ -163,6 +163,7 @@ class Projection(Scene):
         ]
         self.play(Create(lines[0]))
         self.play(Create(lines[1]))
+        self.wait(4)
         texs = [
             MathTex(r"{{A_x}} + {{A_y}} = {{A_1}}").move_to(LEFT*4),
             MathTex(r"{{c x^2}} + {{c y^2}} = {{c 1^2}}").move_to(LEFT*4),
@@ -1343,9 +1344,8 @@ class Projection(Scene):
             *(GrowArrow(title_arrow) for title_arrow in title_arrows),
         )
         self.add_sound(f"media/intro_{selected_chapter}.wav")
-        self.wait(12)
-        self.add_sound(f"media/post_intro_{selected_chapter}.wav")
         self.wait(8)
+        self.add_sound(f"media/post_intro_{selected_chapter}.wav")
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])

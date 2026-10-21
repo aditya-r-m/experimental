@@ -9,42 +9,46 @@ Z = np.array([0., 0., 0.,])
 
 class Projection(Scene):
     def play_introduction(self):
-        imbalanced_counter_shear = [[1.5, 0.5],[0.5, 1]]
-        g_arrow_imbalanced_counter_sheared = Arrow(start=(0, 0), end=(imbalanced_counter_shear[0][0], imbalanced_counter_shear[1][0]), color=CS[0], buff=0)
-        r_arrow_imbalanced_counter_sheared = Arrow(start=(0, 0), end=(imbalanced_counter_shear[0][1], imbalanced_counter_shear[1][1]), color=CS[1], buff=0)
-        lines_imbalanced_counter_sheared = []
+        circle = Circle(radius=1, color=LIGHT_GRAY)
+        counter_shear = [[1, 0.5],[0.5, 1]]
+        g_arrow = Arrow(start=(0, 0, 0), end=(1, 0, 0), color=CS[0], buff=0)
+        r_arrow = Arrow(start=(0, 0, 0), end=(0, 1, 0), color=CS[1], buff=0)
+        g_arrow_counter_sheared = Arrow(start=(0, 0, 0), end=(counter_shear[0][0], counter_shear[1][0], 0), color=CS[0], buff=0)
+        r_arrow_counter_sheared = Arrow(start=(0, 0, 0), end=(counter_shear[0][1], counter_shear[1][1], 0), color=CS[1], buff=0)
+        lines = []
+        lines_counter_sheared = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
-            x, y = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
-            lines_imbalanced_counter_sheared.append(Line(start=(0, 0), end=(x, y), color=c, buff=0, stroke_opacity=0.5))
-        arrows_imbalanced_counter_sheared = []
+            lines.append(Line(start=(0, 0, 0), end=(x, y, 0), color=c, buff=0, stroke_opacity=0.5))
+            x, y = counter_shear[0][0]*x + counter_shear[0][1]*y, counter_shear[1][0]*x + counter_shear[1][1]*y
+            lines_counter_sheared.append(Line(start=(0, 0, 0), end=(x, y, 0), color=c, buff=0, stroke_opacity=0.5))
+        arrows_counter_sheared = []
         for t in range(32):
             theta = 2*PI*t/32
             x, y = math.cos(theta), math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
-            x_u, y_u = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
-            arrows_imbalanced_counter_sheared.append(Arrow(start=(x, y), end=(x_u, y_u), color=c, buff=0))
+            x_u, y_u = counter_shear[0][0]*x + counter_shear[0][1]*y, counter_shear[1][0]*x + counter_shear[1][1]*y
+            arrows_counter_sheared.append(Arrow(start=(x, y, 0), end=(x_u, y_u, 0), color=c, buff=0))
+        self.play(Create(circle))
         self.play(
-            Create(g_arrow_imbalanced_counter_sheared),
-            Create(r_arrow_imbalanced_counter_sheared),
-            *(Create(line_imbalanced_counter_sheared) for (line_imbalanced_counter_sheared) in zip(lines_imbalanced_counter_sheared)),
-            *(Create(arrow_imbalanced_counter_sheared) for (arrow_imbalanced_counter_sheared) in zip(arrows_imbalanced_counter_sheared)),
+            GrowArrow(g_arrow),
+            GrowArrow(r_arrow),
+            *(Create(line) for (line) in lines),
         )
-        _, eigen_vectors = np.linalg.eig(np.array(imbalanced_counter_shear))
-        for i in range(2):
-            eigen_line = Line(start=(-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), end=(4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), color=CS[-1], buff=0)
-            self.play(Create(eigen_line))
-            eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
-            self.play(Uncreate(eigen_line))
         self.play(
-            FadeOut(g_arrow_imbalanced_counter_sheared),
-            FadeOut(r_arrow_imbalanced_counter_sheared),
-            FadeOut(matrix_imbalanced_counter_sheared),
-            FadeOut(eigen_tex),
-            *(FadeOut(line) for line in lines_imbalanced_counter_sheared),
-            *(Rotate(arrow, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=(0, 0)) for arrow in arrows_imbalanced_counter_sheared),
+            ReplacementTransform(g_arrow, g_arrow_counter_sheared),
+            ReplacementTransform(r_arrow, r_arrow_counter_sheared),
+            *(ReplacementTransform(line, line_counter_sheared) for (line, line_counter_sheared) in zip(lines, lines_counter_sheared)),
+            *(GrowArrow(arrow_counter_sheared) for arrow_counter_sheared in arrows_counter_sheared),
+        )
+        _, eigen_vectors = np.linalg.eig(np.array(counter_shear))
+        self.play(
+            FadeOut(g_arrow_counter_sheared),
+            FadeOut(r_arrow_counter_sheared),
+            *(FadeOut(line_counter_sheared) for line_counter_sheared in lines_counter_sheared),
+            *(Rotate(arrow_counter_sheared, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=(0, 0, 0)) for arrow_counter_sheared in arrows_counter_sheared),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects)))
 

@@ -339,9 +339,9 @@ class Projection(Scene):
             Write(tex_180),
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(4)
+        self.wait(2)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(4)
+        self.wait(2)
         self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.add_sound("media/quarter_turn.wav")
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
@@ -355,11 +355,13 @@ class Projection(Scene):
             Write(matrix_90),
             Write(tex_90),
         )
+        self.wait(4)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(4)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(4)
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(4)
+        self.add_sound("media/rotation_end.wav")
+        self.wait(6)
 
     def play_projection_covector(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))

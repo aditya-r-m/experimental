@@ -43,11 +43,13 @@ class Projection(Scene):
             *(ReplacementTransform(line, line_counter_sheared) for (line, line_counter_sheared) in zip(lines, lines_counter_sheared)),
             *(GrowArrow(arrow_counter_sheared) for arrow_counter_sheared in arrows_counter_sheared),
         )
-        _, eigen_vectors = np.linalg.eig(np.array(counter_shear))
         self.play(
             FadeOut(g_arrow_counter_sheared),
             FadeOut(r_arrow_counter_sheared),
             *(FadeOut(line_counter_sheared) for line_counter_sheared in lines_counter_sheared),
+        )
+        _, eigen_vectors = np.linalg.eig(np.array(counter_shear))
+        self.play(
             *(Rotate(arrow_counter_sheared, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=(0, 0, 0)) for arrow_counter_sheared in arrows_counter_sheared),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects)))

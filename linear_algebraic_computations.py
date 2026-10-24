@@ -661,6 +661,7 @@ class Projection(Scene):
 
     def play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
+        self.add_sound("3_1") # Spectral theorem states that for Symmetric matrices, we can always find a full set of orthogonal vectors which retain the direction post transformation.
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*5)
@@ -679,11 +680,13 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             lines.append(self.get_line((0, 0), (x, y), c, 0.5))
+        self.add_sound("3_2") # A trivial example of this is identity transformation, where every vector is an eigenvector.
         self.play(*(Create(line) for line in lines))
         eigen_vector = self.get_line((-4, 0), (4, 0), CS[-1])
         self.play(GrowFromCenter(eigen_vector))
         self.play(Rotate(eigen_vector, PI, about_point=self.origin))
         self.play(ShrinkToCenter(eigen_vector))
+        self.wait(4)
         
         shear = [[1, 0],[0.5, 1]]
         g_arrow_sheared = self.get_arrow((0, 0), (shear[0][0], shear[1][0]), CS[0])
@@ -705,6 +708,7 @@ class Projection(Scene):
             x_u, y_u = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][1]*y
             arrows_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
         _, eigen_vectors = np.linalg.eig(np.array(shear))
+        self.add_sound("3_3") # For this shear example, a single line of vectors retain their direction post transformation
         self.play(
             ReplacementTransform(g_arrow, g_arrow_sheared),
             ReplacementTransform(r_arrow, r_arrow_sheared),
@@ -717,6 +721,7 @@ class Projection(Scene):
         self.play(Create(eigen_line))
         eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
         self.play(Uncreate(eigen_line))
+        self.wait(4)
         aligned_shear = [[1, -0.5],[0.5, 1]]
         g_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][0], aligned_shear[1][0]), CS[0])
         r_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][1], aligned_shear[1][1]), CS[1])
@@ -736,6 +741,7 @@ class Projection(Scene):
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = aligned_shear[0][0]*x + aligned_shear[0][1]*y, aligned_shear[1][0]*x + aligned_shear[1][1]*y
             arrows_aligned_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
+        self.add_sound("3_4") # Aligned shearing tilts all vectors, rotating the entire space, leaving no eigenvectors.
         self.play(
             ReplacementTransform(g_arrow_sheared, g_arrow_aligned_sheared),
             ReplacementTransform(r_arrow_sheared, r_arrow_aligned_sheared),
@@ -744,6 +750,7 @@ class Projection(Scene):
             *(ReplacementTransform(line_sheared, line_aligned_sheared) for (line_sheared, line_aligned_sheared) in zip(lines_sheared, lines_aligned_sheared)),
             *(ReplacementTransform(arrow_sheared, arrow_aligned_sheared) for (arrow_sheared, arrow_aligned_sheared) in zip(arrows_sheared, arrows_aligned_sheared)),
         )
+        self.wait(4)
         counter_shear = [[1, 0.5],[0.5, 1]]
         g_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][0], counter_shear[1][0]), CS[0])
         r_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][1], counter_shear[1][1]), CS[1])
@@ -763,6 +770,7 @@ class Projection(Scene):
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = counter_shear[0][0]*x + counter_shear[0][1]*y, counter_shear[1][0]*x + counter_shear[1][1]*y
             arrows_counter_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
+        self.add_sound("3_5") # A symmetric tilt of x & y axis towards each other forms lines where the vertical & horizontal push perfectly balances out.
         self.play(
             ReplacementTransform(g_arrow_aligned_sheared, g_arrow_counter_sheared),
             ReplacementTransform(r_arrow_aligned_sheared, r_arrow_counter_sheared),
@@ -771,6 +779,7 @@ class Projection(Scene):
             *(ReplacementTransform(line_aligned_sheared, line_counter_sheared) for (line_aligned_sheared, line_counter_sheared) in zip(lines_aligned_sheared, lines_counter_sheared)),
             *(ReplacementTransform(arrow_aligned_sheared, arrow_counter_sheared) for (arrow_aligned_sheared, arrow_counter_sheared) in zip(arrows_aligned_sheared, arrows_counter_sheared)),
         )
+        self.wait(4)
         _, eigen_vectors = np.linalg.eig(np.array(counter_shear))
         for i in range(2):
             eigen_line = self.get_line((-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), (4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), CS[-1])
@@ -796,6 +805,7 @@ class Projection(Scene):
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
             arrows_imbalanced_counter_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
+        self.add_sound("3_6") # These directions can also be found if the axes are scaled differently in the symmetric matrix.
         self.play(
             ReplacementTransform(g_arrow_counter_sheared, g_arrow_imbalanced_counter_sheared),
             ReplacementTransform(r_arrow_counter_sheared, r_arrow_imbalanced_counter_sheared),
@@ -819,9 +829,12 @@ class Projection(Scene):
             *(FadeOut(line) for line in lines_imbalanced_counter_sheared),
             *(Rotate(arrow, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=self.origin) for arrow in arrows_imbalanced_counter_sheared),
         )
+        self.wait(4)
+        self.add_sound("3_7") # Spectral theorem implies that Symmetric matrices are simply scaling the unit circle into an ellipse along some rotated basis.
         tex = MathTex(r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = c^2").move_to(LEFT*4)
         tex.set_color_by_gradient(CS[:2])
         self.play(Write(tex))
+        self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         tex = MathTex(

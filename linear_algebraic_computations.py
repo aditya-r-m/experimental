@@ -163,7 +163,6 @@ class Projection(Scene):
         ]
         self.play(Create(lines[0]))
         self.play(Create(lines[1]))
-        self.wait(4)
         texs = [
             MathTex(r"{{A_x}} + {{A_y}} = {{A_1}}").move_to(LEFT*4),
             MathTex(r"{{c x^2}} + {{c y^2}} = {{c 1^2}}").move_to(LEFT*4),
@@ -186,8 +185,6 @@ class Projection(Scene):
             MathTex("y", color=CS[1]),
             MathTex("1", color=CS[2]),
         ]
-        self.add_sound(f"media/circle_equation_0.wav")
-        self.wait(8)
         for (brace, label) in zip(braces, labels):
             brace.put_at_tip(label, buff=0.1)
             self.play(
@@ -203,7 +200,6 @@ class Projection(Scene):
             .next_to(texs[0][4][0], DOWN)
             .shift(0.16 * RIGHT)
         )
-        self.add_sound(f"media/circle_equation_1.wav")
         self.play(Write(texs[0][:4]))
         self.play(Create(triangles[0]))
         self.play(Create(triangles[1]))
@@ -233,11 +229,8 @@ class Projection(Scene):
             Create(squares[1]),
             Create(squares[2]),
         )
-        self.add_sound(f"media/circle_equation_2.wav")
         self.play(ReplacementTransform(texs[0], texs[1]))
-        self.wait(4)
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
-        self.wait(4)
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
@@ -248,7 +241,6 @@ class Projection(Scene):
         r_mat.set_column_colors(*CS)
         v_vec = Matrix([["v_g"],["v_r"]]).next_to(r_mat, RIGHT)
         v_arrow = self.get_arrow((0, 0), (2, 1), CS[2])
-        self.add_sound(f"media/rotation_matrix.wav")
         self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
         self.play(GrowArrow(v_arrow))
         self.play(Write(v_tex))
@@ -305,7 +297,6 @@ class Projection(Scene):
             FadeIn(r_mat_0.get_brackets()[0]),
             FadeIn(r_mat_1.get_brackets()[1]),
         )
-        self.wait(6)
         brace = BraceBetweenPoints(
             np.array([v_arrow.get_start()[0], v_arrow.get_end()[1], 0]),
             np.array([v_arrow.get_end()[0], v_arrow.get_end()[1], 0]),
@@ -321,11 +312,8 @@ class Projection(Scene):
         label[2].set_color(CS[0])
         label[4].set_color(CS[1])
         label.next_to(brace.get_tip(), UP, aligned_edge=LEFT)
-        self.add_sound("media/rotation_row.wav")
         self.play(GrowFromCenter(brace))
         self.play(Write(label))
-        self.wait(12)
-        self.add_sound("media/half_turn.wav")
         self.play(
             FadeOut(*(mob for mob in self.mobjects if mob not in [
                 self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),
@@ -339,11 +327,8 @@ class Projection(Scene):
             Write(tex_180),
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(2)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(2)
         self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.add_sound("media/quarter_turn.wav")
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
         tex_90 = MathTex(r"\text{1/4 turn : } x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
@@ -355,13 +340,9 @@ class Projection(Scene):
             Write(matrix_90),
             Write(tex_90),
         )
-        self.wait(4)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(4)
-        self.add_sound("media/rotation_end.wav")
-        self.wait(6)
 
     def play_projection_covector(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
@@ -1345,24 +1326,20 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 0
+        selected_chapter = 1
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
-        self.add_sound(f"media/pre_intro_{selected_chapter}.wav")
-        self.play_introduction()
-        self.wait(2)
-        self.play(FadeOut(*(obj for obj in self.mobjects)))
+        if selected_chapter == 0:
+            self.play_introduction()
+            self.play(FadeOut(*(obj for obj in self.mobjects)))
         self.play(
             *(Write(title_text) for title_text in title_texts),
             *(GrowArrow(title_arrow) for title_arrow in title_arrows),
         )
-        self.add_sound(f"media/intro_{selected_chapter}.wav")
-        self.wait(8)
-        self.add_sound(f"media/post_intro_{selected_chapter}.wav")
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])

@@ -195,6 +195,7 @@ class Projection(Scene):
             for i in range(3):
                 tex[i*2].set_color(CS[i])
         self.play(Create(triangles[2]), Write(texs[0][4]))
+        self.wait(8) # A point on the unit circle forms a right triangle with the axes.
         self.play(triangles[2].animate
             .rotate(-math.atan2(4, 3), about_point=triangles[2].get_vertices()[0])
             .next_to(texs[0][4][0], DOWN)
@@ -230,6 +231,7 @@ class Projection(Scene):
             Create(squares[2]),
         )
         self.play(ReplacementTransform(texs[0], texs[1]))
+        self.wait(8) # Two similar smaller right triangles add up to the large one, which is where the square in the equation comes from.
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
         i_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
@@ -304,6 +306,7 @@ class Projection(Scene):
             buff=0,
             color=CS[2]
         )
+        self.wait(8) # As long as the columns of a metrix are unit & orthogonal, the transformation preserves all lengths, only performing rotation/reflection.
         label = MathTex(
             r"{{v_x}}",
             r"= \begin{bmatrix} {{g_x}} & {{r_x}} \end{bmatrix}",
@@ -314,6 +317,7 @@ class Projection(Scene):
         label.next_to(brace.get_tip(), UP, aligned_edge=LEFT)
         self.play(GrowFromCenter(brace))
         self.play(Write(label))
+        self.wait(8) # A critical observation is that result coordinates can independently obtained by a single row multiplied by the original vector.
         self.play(
             FadeOut(*(mob for mob in self.mobjects if mob not in [
                 self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),
@@ -328,6 +332,7 @@ class Projection(Scene):
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(8) # Half turn is the same as two reflections.
         self.play(*(Rotate(obj, -PI, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
@@ -342,7 +347,9 @@ class Projection(Scene):
         )
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(8) # Quarter turn is the same as a swap followed by a reflection.
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
+        self.wait(8)
 
     def play_projection_covector(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
@@ -1326,7 +1333,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 1
+        selected_chapter = 0
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -1335,11 +1342,13 @@ class Projection(Scene):
         title_texts, title_arrows = self.get_titles()
         if selected_chapter == 0:
             self.play_introduction()
+            self.wait(8) # Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
             self.play(FadeOut(*(obj for obj in self.mobjects)))
         self.play(
             *(Write(title_text) for title_text in title_texts),
             *(GrowArrow(title_arrow) for title_arrow in title_arrows),
         )
+        self.wait(8) # Table of Contents
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])

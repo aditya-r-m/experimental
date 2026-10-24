@@ -345,8 +345,8 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.wait(4)
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.add_sound("0_6")
-        self.wait(4)
+        # self.add_sound("0_6")
+        # self.wait(4)
 
     def play_projection_covector(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
@@ -602,6 +602,7 @@ class Projection(Scene):
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]]).move_to(LEFT*4)
         r_tex.set_column_colors(*CS)
+        self.add_sound("2_1") # Inverting rotations is trivial once we understand covectors. The transpose operation on an orthonormal matrix results in matrix with orthonormal covectors.
         self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
         self.play(
             Write(r_tex),
@@ -629,6 +630,9 @@ class Projection(Scene):
             i_arrow.animate.set_opacity(1),
             j_arrow.animate.set_opacity(1),
         )
+        self.wait(4)
+        self.add_sound("2_2") # These covectors precisely measure values taken from individual coordinate axes and assign back to them without any spillover or duplication.
+        self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
         theta = PI/3
         x, y = math.cos(theta), math.sin(theta)
@@ -638,6 +642,7 @@ class Projection(Scene):
         g_matrix.set_row_colors(CS[0])
         y_matrix = Matrix([["v_x"],["v_y"]]).next_to(g_matrix, RIGHT)
         y_matrix.set_column_colors(CS[2])
+        self.add_sound("2_2") # An interesting implication of this is that the "dot product" between a covector and a vector achieves projection by aligning the covector reference point with the x-axis and ignoring all orthogonal values.
         self.play(
             GrowArrow(g_arrow),
             GrowArrow(y_arrow),
@@ -652,6 +657,7 @@ class Projection(Scene):
         self.play(Create(y_line))
         r_tex = MathTex("g_x v_x + g_y v_y", tex_to_color_map={"g_x": CS[0], "g_y": CS[0], "v_x": CS[2], "v_y": CS[2]}).next_to(y_line, UP)
         self.play(Write(r_tex))
+        self.wait(4)
 
     def play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))

@@ -830,13 +830,19 @@ class Projection(Scene):
             *(Rotate(arrow, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=self.origin) for arrow in arrows_imbalanced_counter_sheared),
         )
         self.wait(4)
-        self.add_sound("3_7") # Spectral theorem implies that Symmetric matrices are simply scaling the unit circle into an ellipse along some rotated basis.
+        self.add_sound("3_7")
+        # Spectral theorem implies that Symmetric matrices are simply scaling the unit circle into an ellipse along some rotated basis.
+        # One way to prove it rigorously is to focus on the unit vector which gets scaled the most.
+        # Intuitively, this may be the part which balences the vertical+horizontal push perfectly.
+        # For this, we need to understand gradients of vector functions.
         tex = MathTex(r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = c^2").move_to(LEFT*4)
         tex.set_color_by_gradient(CS[:2])
         self.play(Write(tex))
         self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
+        self.add_sound("3_8")
+        # First, we see note that rate of change with respect to x of xy is y.
         tex = MathTex(
             r"f(x, y) = xy",
             r"\implies \partial_x f = y"
@@ -855,6 +861,9 @@ class Projection(Scene):
         )
         self.play(Create(line_v))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        self.wait(4)
+        self.add_sound("3_9")
+        # It can also be seen that the function x^2 changes by 2x times the increment, for a very small increment to x.
         tex = MathTex(
             r"f(x, y) = x^2",
             r"\implies \partial_x f = 2x"
@@ -874,8 +883,14 @@ class Projection(Scene):
         )
         self.play(Create(line_v))
         self.play(Create(line_h))
+        self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
+        self.add_sound("3_10")
+        # If we put rates of change of a linear covector function with respect to all axes in a single vector, we get the gradient.
+        # In this example, the gradient points to top-right for any point.
+        # We can observe that moving in the direction of gradient increases the function, and moving orthogonal to it doesn't.
+        # Visually, the optimization over unit circle resembles following the push of the gradient till it aligns with the radially outward direction.
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         circle_c = self.get_circle((1, 0), 0.1, CS[1])
         line_c = self.get_line((0, 0), (1, 0), CS[1])
@@ -929,6 +944,9 @@ class Projection(Scene):
             Rotate(circle_c, -PI/12, about_point=self.origin),
             Rotate(line_c, -PI/12, about_point=self.origin),
         )
+        self.wait(8)
+        self.add_audio("3_11")
+        # For a pure length measurement function, the gradient always points radially outwards, and all points [naturally] have the same value.
         tex_g = VGroup(
             MathTex(r"g(x, y) = ", color=CS[-2]),
             Matrix([["x", "y"]], h_buff=0.6),
@@ -979,6 +997,12 @@ class Projection(Scene):
         self.play(
             FadeOut(tex_g[3]),
         )
+
+        self.wait(8)
+        self.add_audio("3_12")
+        # For a function that measures the projected length transformed by a symmetric matrix,
+        # we can see that gradient is always parallel to the transformed vector.
+        # This follows from the fact that ith row and ith column contribute all coefficients for the ith row of the result.
         tex_h = VGroup(
             MathTex(r"h(x, y) = ", color=CS[-2]),
             Matrix([["x", "y"]], h_buff=0.6),
@@ -1067,6 +1091,10 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
+        self.wait(8)
+        self.add_audio("3_13")
+        # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
+        # This is an eigen vector pointing straight out.
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
         box_h01 = SurroundingRectangle(tex_h[2].get_columns()[0], color=CS[-1])
         box_nh = SurroundingRectangle(tex_nh[2][0][1], color=CS[-2])
@@ -1087,8 +1115,14 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
+        self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
 
+        self.add_audio("3_14")
+        # We also note that the result of measuring a transformed vector measured by a covector doesn't change if we tranpose and reverse order.
+        # Since we are working with a symmetric matrix, this doesn't change the matrix either.
+        # This implies that if we have one vector which preserves the direction when transformed,
+        # the space orthogonal to it must also preserve the orthogonality after the transformation.
         x_u, y_u = math.cos(PI/4), math.sin(PI/4)
         x_v, y_v = -math.sin(PI/4), math.cos(PI/4)
         arrow_u = self.get_arrow((0, 0), (x_u, y_u), CS[0])
@@ -1159,6 +1193,11 @@ class Projection(Scene):
         self.play(FadeOut(box_v))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
+        self.add_audio("3_15")
+        # Now we have a simple iterative procedure to prove existance of full set of orthogonal eigenvectors.
+        # Find an eigenvector by looking at largest scaled vector.
+        # Restrict the focus to the subspace orthogonal to this eigenvector.
+        # Repeat till all eigenvectors found.
         get_grid = lambda color: VGroup(*([
             Line(start=(i, -4, 0), end=(i, 4, 0), color=color, stroke_opacity=0.5) for i in range(-3, 4)
         ] + [
@@ -1196,6 +1235,9 @@ class Projection(Scene):
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
+        self.add_audio("3_16")
+        # This shows that Symmetric matrices are simply performing scaling across orthogonal set of basis vectors.
+        # Turning the unit circle (or hyperspheres) into ellipse (or hyperellipsoids).
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         tex_e = MathTex("=").move_to(LEFT*7 + DOWN)
         tex_r = Matrix([["r_x","g_x"],["r_y","g_y"]]).next_to(tex_e, RIGHT)

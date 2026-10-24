@@ -362,6 +362,7 @@ class Projection(Scene):
         covector = Matrix([["x", "y"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
         line_c, circle_c = self.get_lircle((x, y), color_c)
+        self.add_sound("1_1") # Every row of a matrix acts as a function that maps vectors to values. These objects are called covectors.
         self.play(
             Write(covector),
             Create(x_line),
@@ -377,12 +378,16 @@ class Projection(Scene):
         vector_1.set_column_colors(color_1)
         tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
         tex_1_l = MathTex("= 1", color=color_1).next_to(vector_1, RIGHT)
+        self.wait(8)
+        self.add_sound("1_1") # A covector maps its own dual covector to squared length, this follows from the equation of the circle.
         self.play(
             Write(vector_1),
             Write(tex_1_l),
             GrowArrow(arrow_1),
             Write(tex_1),
         )
+        self.wait(8)
+        self.add_sound("1_2") # Swapping the coordinates and flipping a sign naturally results in 0. This implies that the covector ignores orthogonal movement.
         arrow_0 = self.get_arrow((0, 0), (-y, x), color_0)
         angle_01 = RightAngle(arrow_0, arrow_1, length=0.25, color=LIGHT_GRAY)
         vector_0 = Matrix([["-y"], ["x"]]).next_to(covector)
@@ -407,6 +412,8 @@ class Projection(Scene):
         vector_01.get_entries()[1][0][0:2].set_color(color_1)
         vector_01.get_entries()[1][0][2:].set_color(color_0)
         vector_01.get_brackets().set_color(CS[-1])
+        self.wait(8)
+        self.add_sound("1_3") # The linear form of the equation implies that the entire line highlighted maps to the same value.
         self.play(
             FadeOut(vector_0),
             FadeOut(tex_0_l),
@@ -432,6 +439,8 @@ class Projection(Scene):
                 arrow_1_c.animate.put_start_and_end_on(self.origin, self.axes.c2p(ax, ay)),
                 tex_1_c.animate.next_to(arrow_1_c.target.get_end(), UP),
         )
+        self.add_sound("1_4") # This unit contour often how a covector is visually represented.
+        self.wait(8)
         self.play(
             FadeOut(angle_01),
             FadeOut(angle_1c),
@@ -450,6 +459,7 @@ class Projection(Scene):
             FadeOut(x_tex),
             FadeOut(y_tex),
         )
+        self.add_sound("1_5") # It is worth noting that the unit contour is closer if the covector point is farther from the origin.
         self.play(covector.animate.move_to(LEFT*4))
         for diff in [(1, 0), (0, -0.5), (-1, 0), (0, 0.5)]:
             x += diff[0]
@@ -468,6 +478,8 @@ class Projection(Scene):
         vector_4.get_entries()[:].set_color(CS[-1])
         self.play(Write(covector_4))
         self.play(Write(vector_4))
+        self.add_sound("1_6") # While orthogonal vectors are not easy to specify in higher dimensions, the general projection equation naturally builds from the 2D case by breaking vectors into components and ignoring orthogonal movement.
+        self.wait(8)
         tex_p = MathTex("+")
         vector_4_l = Matrix([["w"],["x"],[0],[0]])
         vector_4_l.get_entries()[:2].set_color(CS[-1])
@@ -530,6 +542,7 @@ class Projection(Scene):
         arrow_vu = self.get_arrow((0, 0), (2*8/5, 1*8/5), CS[-1])
         arrow_vup = self.get_arrow((2*8/5, 1*8/5), (2, 4), CS[2])
         angle_v = RightAngle(arrow_vu, arrow_vup, length=0.4, quadrant=(-1, 1), color=LIGHT_GRAY)
+        self.add_sound("1_7") # Using these ideas, we can break a vector down into components parallel and orthogonal to any reference vector. This is achieved by normalizing reference vector, measuring target, and scaling base by this measurement.
         self.play(
             FadeIn(self.axes),
             FadeIn(self.unit_circle),

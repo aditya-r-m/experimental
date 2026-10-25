@@ -200,7 +200,7 @@ class Projection(Scene):
             for i in range(3):
                 tex[i*2].set_color(CS[i])
         self.play(Create(triangles[2]), Write(texs[0][4]))
-        self.wait(8)
+        self.wait(4)
         self.play(triangles[2].animate
             .rotate(-math.atan2(4, 3), about_point=triangles[2].get_vertices()[0])
             .next_to(texs[0][4][0], DOWN)
@@ -238,7 +238,7 @@ class Projection(Scene):
             Create(squares[2]),
         )
         self.play(ReplacementTransform(texs[0], texs[1]))
-        self.wait(8)
+        self.wait(4)
         self.play(Unwrite(texs[1][0][0]), Unwrite(texs[1][2][0]), Unwrite(texs[1][4][0]))
         self.wait(4)
         self.play(*(FadeOut(obj) for obj in lines + triangles + braces + labels + [texs[1]] + squares))
@@ -246,10 +246,11 @@ class Projection(Scene):
         j_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         v_tex = MathTex("v =").move_to(LEFT*6)
-        v_tex[0].set_color(CS[2])
+        v_tex[0][0].set_color(CS[2])
         r_mat = Matrix([["g_x","r_x"],["g_y","r_y"]]).next_to(v_tex, RIGHT)
         r_mat.set_column_colors(*CS)
         v_vec = Matrix([["v_g"],["v_r"]]).next_to(r_mat, RIGHT)
+        v_vec.get_entries().set_color(CS[2])
         v_arrow = self.get_arrow((0, 0), (2, 1), CS[2])
         self.add_sound("0_3")
         # As long as the columns of a metrix are unit & orthogonal, the transformation preserves all lengths, only performing rotation/reflection.
@@ -261,11 +262,11 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI/4, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         r_mat_0 = Matrix([["g_x"],["g_y"]]).next_to(v_tex, RIGHT)
         r_mat_0.set_column_colors(CS[0])
-        v_vec_0 = MathTex("v_g").next_to(r_mat_0, RIGHT)
+        v_vec_0 = MathTex("v_g", color=CS[2]).next_to(r_mat_0, RIGHT)
         p_tex = MathTex("+").next_to(v_vec_0, RIGHT)
         r_mat_1 = Matrix([["r_x"],["r_y"]]).next_to(p_tex, RIGHT)
         r_mat_1.set_column_colors(CS[1])
-        v_vec_1 = MathTex("v_r").next_to(r_mat_1, RIGHT)
+        v_vec_1 = MathTex("v_r", color=CS[2]).next_to(r_mat_1, RIGHT)
         self.play(
             FadeOut(r_mat.get_brackets()),
             FadeOut(v_vec.get_brackets())
@@ -316,7 +317,7 @@ class Projection(Scene):
             buff=0,
             color=CS[2]
         )
-        self.wait(4)
+        self.wait(2)
         self.add_sound("0_4")
         # A critical observation is that result coordinates can independently obtained by a single row multiplied by the original vector.
         label = MathTex(
@@ -326,6 +327,8 @@ class Projection(Scene):
         label[0].set_color(CS[2])
         label[2].set_color(CS[0])
         label[4].set_color(CS[1])
+        label[7].set_color(CS[2])
+        label[9].set_color(CS[2])
         label.next_to(brace.get_tip(), UP, aligned_edge=LEFT)
         self.play(GrowFromCenter(brace))
         self.play(Write(label))
@@ -347,7 +350,7 @@ class Projection(Scene):
         self.wait(4)
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP+RIGHT) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        self.wait(4)
+        self.wait(2)
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.add_sound("0_6")
         # These can be used to derive vector projection
@@ -1437,7 +1440,7 @@ class Projection(Scene):
             self.add_sound("0_i")
             # Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
             self.play_introduction()
-            self.wait(12)
+            self.wait(8)
             self.play(FadeOut(*(obj for obj in self.mobjects)))
         self.add_sound("0_0")
         # Table of Contents

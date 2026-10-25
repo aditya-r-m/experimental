@@ -1124,10 +1124,7 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
-        self.wait(20)
-        self.add_sound("3_13")
-        # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
-        # This is an eigen vector pointing straight out.
+        self.wait(16)
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
         box_h01 = SurroundingRectangle(tex_h[2].get_columns()[0], color=CS[-1])
         box_nh = SurroundingRectangle(tex_nh[2][0][1], color=CS[-2])
@@ -1140,6 +1137,10 @@ class Projection(Scene):
         box_nh1 = SurroundingRectangle(tex_nh[3].get_rows()[1], color=CS[-2])
         self.play(*(Create(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
         self.play(*(FadeOut(box) for box in [box_h10, box_h11, box_nh, box_nh1]))
+        self.wait(4)
+        self.add_sound("3_13")
+        # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
+        # This is an eigen vector pointing straight out.
         self.play(
             Rotate(circle_c, -2*PI/3, about_point=self.origin),
             Rotate(line_c, -2*PI/3, about_point=self.origin),
@@ -1148,7 +1149,7 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
-        self.wait(4)
+        self.wait(12)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
 
         self.add_sound("3_14")

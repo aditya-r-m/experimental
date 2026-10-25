@@ -327,7 +327,7 @@ class Projection(Scene):
         label[0].set_color(CS[2])
         label[2].set_color(CS[0])
         label[4].set_color(CS[1])
-        label[5].set_color(CS[2])
+        label[6][1:5].set_color(CS[2])
         label.next_to(brace.get_tip(), UP, aligned_edge=LEFT)
         self.play(GrowFromCenter(brace))
         self.play(Write(label))

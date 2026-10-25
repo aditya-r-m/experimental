@@ -703,15 +703,16 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             lines.append(self.get_line((0, 0), (x, y), c, 0.5))
-        self.wait(10)
+        self.wait(12)
         self.add_sound("3_2")
         # A trivial example of this is identity transformation, where every vector is an eigenvector.
         self.play(*(Create(line) for line in lines))
         eigen_vector = self.get_line((-4, 0), (4, 0), CS[-1])
         self.play(GrowFromCenter(eigen_vector))
+        self.wait(6)
         self.play(Rotate(eigen_vector, PI, about_point=self.origin))
         self.play(ShrinkToCenter(eigen_vector))
-        self.wait(10)
+        self.wait(2)
         
         shear = [[1, 0],[0.5, 1]]
         g_arrow_sheared = self.get_arrow((0, 0), (shear[0][0], shear[1][0]), CS[0])
@@ -745,9 +746,10 @@ class Projection(Scene):
         )
         eigen_line = self.get_line((-4*eigen_vectors[0][0], -4*eigen_vectors[1][0]), (4*eigen_vectors[0][0], 4*eigen_vectors[1][0]), CS[-1])
         self.play(Create(eigen_line))
+        self.wait(6)
         eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
         self.play(Uncreate(eigen_line))
-        self.wait(10)
+        self.wait(2)
         aligned_shear = [[1, -0.5],[0.5, 1]]
         g_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][0], aligned_shear[1][0]), CS[0])
         r_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][1], aligned_shear[1][1]), CS[1])
@@ -777,7 +779,7 @@ class Projection(Scene):
             *(ReplacementTransform(line_sheared, line_aligned_sheared) for (line_sheared, line_aligned_sheared) in zip(lines_sheared, lines_aligned_sheared)),
             *(ReplacementTransform(arrow_sheared, arrow_aligned_sheared) for (arrow_sheared, arrow_aligned_sheared) in zip(arrows_sheared, arrows_aligned_sheared)),
         )
-        self.wait(10)
+        self.wait(8)
         counter_shear = [[1, 0.5],[0.5, 1]]
         g_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][0], counter_shear[1][0]), CS[0])
         r_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][1], counter_shear[1][1]), CS[1])
@@ -843,12 +845,14 @@ class Projection(Scene):
             *(ReplacementTransform(line_counter_sheared, line_imbalanced_counter_sheared) for (line_counter_sheared, line_imbalanced_counter_sheared) in zip(lines_counter_sheared, lines_imbalanced_counter_sheared)),
             *(ReplacementTransform(arrow_counter_sheared, arrow_imbalanced_counter_sheared) for (arrow_counter_sheared, arrow_imbalanced_counter_sheared) in zip(arrows_counter_sheared, arrows_imbalanced_counter_sheared)),
         )
+        self.wait(6)
         _, eigen_vectors = np.linalg.eig(np.array(imbalanced_counter_shear))
         for i in range(2):
             eigen_line = self.get_line((-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), (4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), CS[-1])
             self.play(Create(eigen_line))
             eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
             self.play(Uncreate(eigen_line))
+        self.wait(4)
         self.play(
             FadeOut(self.axes),
             FadeOut(g_arrow_imbalanced_counter_sheared),
@@ -858,13 +862,12 @@ class Projection(Scene):
             *(FadeOut(line) for line in lines_imbalanced_counter_sheared),
             *(Rotate(arrow, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=self.origin) for arrow in arrows_imbalanced_counter_sheared),
         )
-        self.wait(10)
         self.add_sound("3_7")
         # Spectral theorem implies that Symmetric matrices are simply scaling the unit circle into an ellipse along some rotated basis.
         # One way to prove it rigorously is to focus on the unit vector which gets scaled the most.
         # Intuitively, this may be the part which balences the vertical+horizontal push perfectly.
         # For this, we need to understand gradients of vector functions.
-        tex = MathTex(r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = c^2").move_to(LEFT*4)
+        tex = MathTex(r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = c^2").move_to(LEFT*3)
         tex.set_color_by_gradient(CS[:2])
         self.play(Write(tex))
         self.wait(28)
@@ -889,7 +892,7 @@ class Projection(Scene):
             Write(tex_h),
         )
         self.play(Create(line_v))
-        self.wait(10)
+        self.wait(12)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         self.add_sound("3_9")
         # It can also be seen that the function x^2 changes by 2x times the increment, for a very small increment to x.
@@ -912,7 +915,7 @@ class Projection(Scene):
         )
         self.play(Create(line_v))
         self.play(Create(line_h))
-        self.wait(10)
+        self.wait(6)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("3_10")

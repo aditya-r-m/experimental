@@ -388,7 +388,7 @@ class Projection(Scene):
         tex_1_l = MathTex("= 1", color=color_1).next_to(vector_1, RIGHT)
         self.wait(8)
         self.add_sound("1_1")
-        # A covector maps its own dual covector to squared length, this follows from the equation of the circle.
+        # A covector maps its own dual vector to squared length, this follows from the equation of the circle.
         self.play(
             Write(vector_1),
             Write(tex_1_l),
@@ -607,6 +607,7 @@ class Projection(Scene):
             GrowArrow(arrow_vup),
             Create(angle_v),
         )
+        self.wait(4)
 
     def play_rotation_inverse(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
@@ -1428,7 +1429,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 0
+        selected_chapter = 1
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -1441,7 +1442,7 @@ class Projection(Scene):
             self.play_introduction()
             self.wait(8)
             self.play(FadeOut(*(obj for obj in self.mobjects)))
-        self.add_sound("0_0")
+        self.add_sound(f"{selected_chapter}_0")
         # Table of Contents
         self.play(
             *(Write(title_text) for title_text in title_texts),

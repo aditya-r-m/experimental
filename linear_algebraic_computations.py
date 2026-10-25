@@ -973,7 +973,7 @@ class Projection(Scene):
             Rotate(line_c, -PI/12, about_point=self.origin),
         )
         self.wait(8)
-        self.add_audio("3_11")
+        self.add_sound("3_11")
         # For a pure length measurement function, the gradient always points radially outwards, and all points [naturally] have the same value.
         tex_g = VGroup(
             MathTex(r"g(x, y) = ", color=CS[-2]),
@@ -1027,7 +1027,7 @@ class Projection(Scene):
         )
 
         self.wait(8)
-        self.add_audio("3_12")
+        self.add_sound("3_12")
         # For a function that measures the projected length transformed by a symmetric matrix,
         # we can see that gradient is always parallel to the transformed vector.
         # This follows from the fact that ith row and ith column contribute all coefficients for the ith row of the result.
@@ -1120,7 +1120,7 @@ class Projection(Scene):
             Rotate(line_c, PI/3, about_point=self.origin),
         )
         self.wait(8)
-        self.add_audio("3_13")
+        self.add_sound("3_13")
         # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
         # This is an eigen vector pointing straight out.
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
@@ -1146,7 +1146,7 @@ class Projection(Scene):
         self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
 
-        self.add_audio("3_14")
+        self.add_sound("3_14")
         # We also note that the result of measuring a transformed vector measured by a covector doesn't change if we tranpose and reverse order.
         # Since we are working with a symmetric matrix, this doesn't change the matrix either.
         # This implies that if we have one vector which preserves the direction when transformed,
@@ -1221,7 +1221,7 @@ class Projection(Scene):
         self.play(FadeOut(box_v))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
-        self.add_audio("3_15")
+        self.add_sound("3_15")
         # Now we have a simple iterative procedure to prove existance of full set of orthogonal eigenvectors.
         # Find an eigenvector by looking at largest scaled vector.
         # Restrict the focus to the subspace orthogonal to this eigenvector.
@@ -1263,7 +1263,7 @@ class Projection(Scene):
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
-        self.add_audio("3_16")
+        self.add_sound("3_16")
         # This shows that Symmetric matrices are simply performing scaling across orthogonal set of basis vectors.
         # Turning the unit circle (or hyperspheres) into ellipse (or hyperellipsoids).
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))

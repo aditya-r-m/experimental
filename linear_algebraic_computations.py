@@ -9,7 +9,7 @@ Z = np.array([0., 0., 0.,])
 
 class Projection(Scene):
     def add_sound(self, path):
-        super().add_sound(f"media/{path}.wav", gain=8)
+        super().add_sound(f"media/{path}.m4a", gain=8)
 
     def play_introduction(self):
         circle = Circle(radius=1, color=LIGHT_GRAY)

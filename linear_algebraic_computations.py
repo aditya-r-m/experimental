@@ -369,7 +369,6 @@ class Projection(Scene):
         covector = Matrix([["x", "y"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
         line_c, circle_c = self.get_lircle((x, y), color_c)
-        self.add_sound("1_1")
         # Every row of a matrix acts as a function that maps vectors to values. These objects are called covectors.
         self.play(
             Write(covector),
@@ -386,7 +385,6 @@ class Projection(Scene):
         vector_1.set_column_colors(color_1)
         tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
         tex_1_l = MathTex("= 1", color=color_1).next_to(vector_1, RIGHT)
-        self.wait(8)
         self.add_sound("1_1")
         # A covector maps its own dual vector to squared length, this follows from the equation of the circle.
         self.play(
@@ -395,7 +393,7 @@ class Projection(Scene):
             GrowArrow(arrow_1),
             Write(tex_1),
         )
-        self.wait(8)
+        self.wait(10)
         self.add_sound("1_2")
         # Swapping the coordinates and flipping a sign naturally results in 0. This implies that the covector ignores orthogonal movement.
         arrow_0 = self.get_arrow((0, 0), (-y, x), color_0)
@@ -422,7 +420,7 @@ class Projection(Scene):
         vector_01.get_entries()[1][0][0:2].set_color(color_1)
         vector_01.get_entries()[1][0][2:].set_color(color_0)
         vector_01.get_brackets().set_color(CS[-1])
-        self.wait(8)
+        self.wait(10)
         self.add_sound("1_3")
         # The linear form of the equation implies that the entire line highlighted maps to the same value.
         self.play(
@@ -450,6 +448,7 @@ class Projection(Scene):
                 arrow_1_c.animate.put_start_and_end_on(self.origin, self.axes.c2p(ax, ay)),
                 tex_1_c.animate.next_to(arrow_1_c.target.get_end(), UP),
         )
+        self.wait(4)
         self.add_sound("1_4")
         # This unit contour often how a covector is visually represented.
         self.wait(8)
@@ -482,6 +481,7 @@ class Projection(Scene):
                 ReplacementTransform(circle_c, new_circle_c),
                 ReplacementTransform(line_c, new_line_c),
             )
+            self.wait(2)
             circle_c = new_circle_c
             line_c = new_line_c
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
@@ -493,7 +493,7 @@ class Projection(Scene):
         self.play(Write(vector_4))
         self.add_sound("1_6")
         # While orthogonal vectors are not easy to specify in higher dimensions, the general projection equation naturally builds from the 2D case by breaking vectors into components and ignoring orthogonal movement.
-        self.wait(8)
+        self.wait(12)
         tex_p = MathTex("+")
         vector_4_l = Matrix([["w"],["x"],[0],[0]])
         vector_4_l.get_entries()[:2].set_color(CS[-1])
@@ -572,6 +572,7 @@ class Projection(Scene):
             GrowArrow(arrow_vup),
             Create(angle_v)
         )
+        self.wait(2)
         self.play(FadeOut(arrow_vu, arrow_vup, angle_v))
         self.play(tex_0.animate.shift(UP))
         tex_1 = MathTex(
@@ -592,6 +593,7 @@ class Projection(Scene):
             ReplacementTransform(circle_u, circle_uu),
             ReplacementTransform(line_u, line_uu),
         )
+        self.wait(2)
         tex_2 = MathTex(
             r"{{ v_u }} = \left( {{ \hat{u}^T }} {{ v }} \right) {{ \hat{u} }} = \left( \frac{u^T v}{u^T u} \right) u",
             tex_to_color_map={"v_u": CS[-1], r"\hat{u}^T": CS[0], "v": CS[1], r"\hat{u}": CS[0], r"u^T": CS[0], "u": CS[0]},
@@ -607,7 +609,7 @@ class Projection(Scene):
             GrowArrow(arrow_vup),
             Create(angle_v),
         )
-        self.wait(4)
+        self.wait(6)
 
     def play_rotation_inverse(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))

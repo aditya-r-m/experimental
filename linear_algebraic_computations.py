@@ -3,14 +3,13 @@
 import math
 import numpy as np
 from manim import *
-config.extra_write_args = ["-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac"]
 
 CS = [GREEN,RED,YELLOW,TEAL]
 Z = np.array([0., 0., 0.,])
 
 class Projection(Scene):
     def add_sound(self, path):
-        super().add_sound(f"media/{path}.wav")
+        super().add_sound(f"media/{path}.wav", gain=8)
 
     def play_introduction(self):
         circle = Circle(radius=1, color=LIGHT_GRAY)
@@ -165,7 +164,8 @@ class Projection(Scene):
             self.get_line((0, 0), (3/5, 4/5), LIGHT_GRAY),
             self.get_line((3/5, 4/5), (3/5, 0), LIGHT_GRAY),
         ]
-        self.add_sound("0_1") # A point on the unit circle forms a right triangle with the axes.
+        self.add_sound("0_1")
+        # A point on the unit circle forms a right triangle with the axes.
         self.play(Create(lines[0]))
         self.play(Create(lines[1]))
         texs = [
@@ -206,7 +206,8 @@ class Projection(Scene):
             .next_to(texs[0][4][0], DOWN)
             .shift(0.16 * RIGHT)
         )
-        self.add_sound("0_2") # Two similar smaller right triangles add up to the large one, which is where the square in the equation comes from.
+        self.add_sound("0_2")
+        # Two similar smaller right triangles add up to the large one, which is where the square in the equation comes from.
         self.play(Write(texs[0][:4]))
         self.play(Create(triangles[0]))
         self.play(Create(triangles[1]))
@@ -250,7 +251,8 @@ class Projection(Scene):
         r_mat.set_column_colors(*CS)
         v_vec = Matrix([["v_g"],["v_r"]]).next_to(r_mat, RIGHT)
         v_arrow = self.get_arrow((0, 0), (2, 1), CS[2])
-        self.add_sound("0_3") # As long as the columns of a metrix are unit & orthogonal, the transformation preserves all lengths, only performing rotation/reflection.
+        self.add_sound("0_3")
+        # As long as the columns of a metrix are unit & orthogonal, the transformation preserves all lengths, only performing rotation/reflection.
         self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
         self.play(GrowArrow(v_arrow))
         self.play(Write(v_tex))
@@ -315,7 +317,8 @@ class Projection(Scene):
             color=CS[2]
         )
         self.wait(4)
-        self.add_sound("0_4") # A critical observation is that result coordinates can independently obtained by a single row multiplied by the original vector.
+        self.add_sound("0_4")
+        # A critical observation is that result coordinates can independently obtained by a single row multiplied by the original vector.
         label = MathTex(
             r"{{v_x}}",
             r"= \begin{bmatrix} {{g_x}} & {{r_x}} \end{bmatrix}",
@@ -332,7 +335,8 @@ class Projection(Scene):
                 self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),
             *(Rotate(obj, -PI/4, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]),
         )
-        self.add_sound("0_5") # Quarter turn is the same as swap+flip.
+        self.add_sound("0_5")
+        # Quarter turn is the same as swap+flip.
         matrix_90 = Matrix([[0, -1],[1, 0]]).move_to(LEFT*4)
         matrix_90.set_column_colors(*CS)
         tex_90 = MathTex(r"\text{1/4 turn : } x \leftrightarrow y,\ y \leftrightarrow -y").next_to(matrix_90, UP)
@@ -345,8 +349,9 @@ class Projection(Scene):
         self.play(*(Rotate(obj, PI, about_point=self.origin, axis=UP) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
         self.wait(4)
         self.play(*(Rotate(obj, -PI/2, about_point=self.origin) for obj in [i_arrow, j_arrow, ij_angle, v_arrow]))
-        # self.add_sound("0_6")
-        # self.wait(4)
+        self.add_sound("0_6")
+        # These can be used to derive vector projection
+        self.wait(4)
 
     def play_projection_covector(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
@@ -362,7 +367,8 @@ class Projection(Scene):
         covector = Matrix([["x", "y"]]).move_to(LEFT*5)
         covector.set_column_colors(color_c, color_c)
         line_c, circle_c = self.get_lircle((x, y), color_c)
-        self.add_sound("1_1") # Every row of a matrix acts as a function that maps vectors to values. These objects are called covectors.
+        self.add_sound("1_1")
+        # Every row of a matrix acts as a function that maps vectors to values. These objects are called covectors.
         self.play(
             Write(covector),
             Create(x_line),
@@ -379,7 +385,8 @@ class Projection(Scene):
         tex_1 = MathTex("1", color=color_1).next_to(arrow_1.get_end(), UP)
         tex_1_l = MathTex("= 1", color=color_1).next_to(vector_1, RIGHT)
         self.wait(8)
-        self.add_sound("1_1") # A covector maps its own dual covector to squared length, this follows from the equation of the circle.
+        self.add_sound("1_1")
+        # A covector maps its own dual covector to squared length, this follows from the equation of the circle.
         self.play(
             Write(vector_1),
             Write(tex_1_l),
@@ -387,7 +394,8 @@ class Projection(Scene):
             Write(tex_1),
         )
         self.wait(8)
-        self.add_sound("1_2") # Swapping the coordinates and flipping a sign naturally results in 0. This implies that the covector ignores orthogonal movement.
+        self.add_sound("1_2")
+        # Swapping the coordinates and flipping a sign naturally results in 0. This implies that the covector ignores orthogonal movement.
         arrow_0 = self.get_arrow((0, 0), (-y, x), color_0)
         angle_01 = RightAngle(arrow_0, arrow_1, length=0.25, color=LIGHT_GRAY)
         vector_0 = Matrix([["-y"], ["x"]]).next_to(covector)
@@ -413,7 +421,8 @@ class Projection(Scene):
         vector_01.get_entries()[1][0][2:].set_color(color_0)
         vector_01.get_brackets().set_color(CS[-1])
         self.wait(8)
-        self.add_sound("1_3") # The linear form of the equation implies that the entire line highlighted maps to the same value.
+        self.add_sound("1_3")
+        # The linear form of the equation implies that the entire line highlighted maps to the same value.
         self.play(
             FadeOut(vector_0),
             FadeOut(tex_0_l),
@@ -439,7 +448,8 @@ class Projection(Scene):
                 arrow_1_c.animate.put_start_and_end_on(self.origin, self.axes.c2p(ax, ay)),
                 tex_1_c.animate.next_to(arrow_1_c.target.get_end(), UP),
         )
-        self.add_sound("1_4") # This unit contour often how a covector is visually represented.
+        self.add_sound("1_4")
+        # This unit contour often how a covector is visually represented.
         self.wait(8)
         self.play(
             FadeOut(angle_01),
@@ -459,7 +469,8 @@ class Projection(Scene):
             FadeOut(x_tex),
             FadeOut(y_tex),
         )
-        self.add_sound("1_5") # It is worth noting that the unit contour is closer if the covector point is farther from the origin.
+        self.add_sound("1_5")
+        # It is worth noting that the unit contour is closer if the covector point is farther from the origin.
         self.play(covector.animate.move_to(LEFT*4))
         for diff in [(1, 0), (0, -0.5), (-1, 0), (0, 0.5)]:
             x += diff[0]
@@ -478,7 +489,8 @@ class Projection(Scene):
         vector_4.get_entries()[:].set_color(CS[-1])
         self.play(Write(covector_4))
         self.play(Write(vector_4))
-        self.add_sound("1_6") # While orthogonal vectors are not easy to specify in higher dimensions, the general projection equation naturally builds from the 2D case by breaking vectors into components and ignoring orthogonal movement.
+        self.add_sound("1_6")
+        # While orthogonal vectors are not easy to specify in higher dimensions, the general projection equation naturally builds from the 2D case by breaking vectors into components and ignoring orthogonal movement.
         self.wait(8)
         tex_p = MathTex("+")
         vector_4_l = Matrix([["w"],["x"],[0],[0]])
@@ -542,7 +554,8 @@ class Projection(Scene):
         arrow_vu = self.get_arrow((0, 0), (2*8/5, 1*8/5), CS[-1])
         arrow_vup = self.get_arrow((2*8/5, 1*8/5), (2, 4), CS[2])
         angle_v = RightAngle(arrow_vu, arrow_vup, length=0.4, quadrant=(-1, 1), color=LIGHT_GRAY)
-        self.add_sound("1_7") # Using these ideas, we can break a vector down into components parallel and orthogonal to any reference vector. This is achieved by normalizing reference vector, measuring target, and scaling base by this measurement.
+        self.add_sound("1_7")
+        # Using these ideas, we can break a vector down into components parallel and orthogonal to any reference vector. This is achieved by normalizing reference vector, measuring target, and scaling base by this measurement.
         self.play(
             FadeIn(self.axes),
             FadeIn(self.unit_circle),
@@ -602,7 +615,8 @@ class Projection(Scene):
         ij_angle = RightAngle(i_arrow, j_arrow, length=0.2, color=LIGHT_GRAY)
         r_tex = Matrix([["g_x","r_x"],["g_y","r_y"]]).move_to(LEFT*4)
         r_tex.set_column_colors(*CS)
-        self.add_sound("2_1") # Inverting rotations is trivial once we understand covectors. The transpose operation on an orthonormal matrix results in matrix with orthonormal covectors.
+        self.add_sound("2_1")
+        # Inverting rotations is trivial once we understand covectors. The transpose operation on an orthonormal matrix results in matrix with orthonormal covectors.
         self.play(GrowArrow(i_arrow), GrowArrow(j_arrow), Create(ij_angle))
         self.play(
             Write(r_tex),
@@ -631,7 +645,8 @@ class Projection(Scene):
             j_arrow.animate.set_opacity(1),
         )
         self.wait(4)
-        self.add_sound("2_2") # These covectors precisely measure values taken from individual coordinate axes and assign back to them without any spillover or duplication.
+        self.add_sound("2_2")
+        # These covectors precisely measure values taken from individual coordinate axes and assign back to them without any spillover or duplication.
         self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
         theta = PI/3
@@ -642,7 +657,8 @@ class Projection(Scene):
         g_matrix.set_row_colors(CS[0])
         y_matrix = Matrix([["v_x"],["v_y"]]).next_to(g_matrix, RIGHT)
         y_matrix.set_column_colors(CS[2])
-        self.add_sound("2_2") # An interesting implication of this is that the "dot product" between a covector and a vector achieves projection by aligning the covector reference point with the x-axis and ignoring all orthogonal values.
+        self.add_sound("2_2")
+        # An interesting implication of this is that the "dot product" between a covector and a vector achieves projection by aligning the covector reference point with the x-axis and ignoring all orthogonal values.
         self.play(
             GrowArrow(g_arrow),
             GrowArrow(y_arrow),
@@ -661,7 +677,8 @@ class Projection(Scene):
 
     def play_spectral_theorem(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
-        self.add_sound("3_1") # Spectral theorem states that for Symmetric matrices, we can always find a full set of orthogonal vectors which retain the direction post transformation.
+        self.add_sound("3_1")
+        # Spectral theorem states that for Symmetric matrices, we can always find a full set of orthogonal vectors which retain the direction post transformation.
         g_arrow = self.get_arrow((0, 0), (1, 0), CS[0])
         r_arrow = self.get_arrow((0, 0), (0, 1), CS[1])
         matrix = Matrix([[1,0],[0,1]]).move_to(LEFT*5)
@@ -680,7 +697,8 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             lines.append(self.get_line((0, 0), (x, y), c, 0.5))
-        self.add_sound("3_2") # A trivial example of this is identity transformation, where every vector is an eigenvector.
+        self.add_sound("3_2")
+        # A trivial example of this is identity transformation, where every vector is an eigenvector.
         self.play(*(Create(line) for line in lines))
         eigen_vector = self.get_line((-4, 0), (4, 0), CS[-1])
         self.play(GrowFromCenter(eigen_vector))
@@ -708,7 +726,8 @@ class Projection(Scene):
             x_u, y_u = shear[0][0]*x + shear[0][1]*y, shear[1][0]*x + shear[1][1]*y
             arrows_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
         _, eigen_vectors = np.linalg.eig(np.array(shear))
-        self.add_sound("3_3") # For this shear example, a single line of vectors retain their direction post transformation
+        self.add_sound("3_3")
+        # For this shear example, a single line of vectors retain their direction post transformation
         self.play(
             ReplacementTransform(g_arrow, g_arrow_sheared),
             ReplacementTransform(r_arrow, r_arrow_sheared),
@@ -741,7 +760,8 @@ class Projection(Scene):
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = aligned_shear[0][0]*x + aligned_shear[0][1]*y, aligned_shear[1][0]*x + aligned_shear[1][1]*y
             arrows_aligned_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
-        self.add_sound("3_4") # Aligned shearing tilts all vectors, rotating the entire space, leaving no eigenvectors.
+        self.add_sound("3_4")
+        # Aligned shearing tilts all vectors, rotating the entire space, leaving no eigenvectors.
         self.play(
             ReplacementTransform(g_arrow_sheared, g_arrow_aligned_sheared),
             ReplacementTransform(r_arrow_sheared, r_arrow_aligned_sheared),
@@ -770,7 +790,8 @@ class Projection(Scene):
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = counter_shear[0][0]*x + counter_shear[0][1]*y, counter_shear[1][0]*x + counter_shear[1][1]*y
             arrows_counter_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
-        self.add_sound("3_5") # A symmetric tilt of x & y axis towards each other forms lines where the vertical & horizontal push perfectly balances out.
+        self.add_sound("3_5")
+        # A symmetric tilt of x & y axis towards each other forms lines where the vertical & horizontal push perfectly balances out.
         self.play(
             ReplacementTransform(g_arrow_aligned_sheared, g_arrow_counter_sheared),
             ReplacementTransform(r_arrow_aligned_sheared, r_arrow_counter_sheared),
@@ -805,7 +826,8 @@ class Projection(Scene):
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             x_u, y_u = imbalanced_counter_shear[0][0]*x + imbalanced_counter_shear[0][1]*y, imbalanced_counter_shear[1][0]*x + imbalanced_counter_shear[1][1]*y
             arrows_imbalanced_counter_sheared.append(self.get_arrow((x, y), (x_u, y_u), c))
-        self.add_sound("3_6") # These directions can also be found if the axes are scaled differently in the symmetric matrix.
+        self.add_sound("3_6")
+        # These directions can also be found if the axes are scaled differently in the symmetric matrix.
         self.play(
             ReplacementTransform(g_arrow_counter_sheared, g_arrow_imbalanced_counter_sheared),
             ReplacementTransform(r_arrow_counter_sheared, r_arrow_imbalanced_counter_sheared),
@@ -1412,11 +1434,13 @@ class Projection(Scene):
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
         if selected_chapter == 0:
-            self.add_sound("0_i") # Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
+            self.add_sound("0_i")
+            # Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
             self.play_introduction()
-            self.wait(4)
+            self.wait(12)
             self.play(FadeOut(*(obj for obj in self.mobjects)))
-        self.add_sound("0_0") # Table of Contents
+        self.add_sound("0_0")
+        # Table of Contents
         self.play(
             *(Write(title_text) for title_text in title_texts),
             *(GrowArrow(title_arrow) for title_arrow in title_arrows),

@@ -327,12 +327,11 @@ class Projection(Scene):
         label[0].set_color(CS[2])
         label[2].set_color(CS[0])
         label[4].set_color(CS[1])
-        label[7].set_color(CS[2])
-        label[9].set_color(CS[2])
+        label[5].set_color(CS[2])
         label.next_to(brace.get_tip(), UP, aligned_edge=LEFT)
         self.play(GrowFromCenter(brace))
         self.play(Write(label))
-        self.wait(12)
+        self.wait(8)
         self.play(
             FadeOut(*(mob for mob in self.mobjects if mob not in [
                 self.axes, self.unit_circle, title, i_arrow, j_arrow, ij_angle, v_arrow])),

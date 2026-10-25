@@ -649,10 +649,10 @@ class Projection(Scene):
             i_arrow.animate.set_opacity(1),
             j_arrow.animate.set_opacity(1),
         )
-        self.wait(4)
+        self.wait(8)
         self.add_sound("2_2")
         # These covectors precisely measure values taken from individual coordinate axes and assign back to them without any spillover or duplication.
-        self.wait(8)
+        self.wait(12)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
         theta = PI/3
         x, y = math.cos(theta), math.sin(theta)
@@ -662,7 +662,7 @@ class Projection(Scene):
         g_matrix.set_row_colors(CS[0])
         y_matrix = Matrix([["v_x"],["v_y"]]).next_to(g_matrix, RIGHT)
         y_matrix.set_column_colors(CS[2])
-        self.add_sound("2_2")
+        self.add_sound("2_3")
         # An interesting implication of this is that the "dot product" between a covector and a vector achieves projection by aligning the covector reference point with the x-axis and ignoring all orthogonal values.
         self.play(
             GrowArrow(g_arrow),
@@ -670,6 +670,7 @@ class Projection(Scene):
             Write(g_matrix),
             Write(y_matrix),
         )
+        self.wait(8)
         self.play(
             Rotate(g_arrow, -theta, about_point=self.origin),
             Rotate(y_arrow, -theta, about_point=self.origin),
@@ -1431,7 +1432,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 1
+        selected_chapter = 2
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)

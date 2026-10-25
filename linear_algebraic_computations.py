@@ -1149,7 +1149,7 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
-        self.wait(12)
+        self.wait(16)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
 
         self.add_sound("3_14")

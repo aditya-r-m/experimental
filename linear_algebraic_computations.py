@@ -703,6 +703,7 @@ class Projection(Scene):
             x, y = 4*math.cos(theta), 4*math.sin(theta)
             c = (abs(x)*CS[0] + abs(y)*CS[1])/(abs(x)+abs(y))
             lines.append(self.get_line((0, 0), (x, y), c, 0.5))
+        self.wait(10)
         self.add_sound("3_2")
         # A trivial example of this is identity transformation, where every vector is an eigenvector.
         self.play(*(Create(line) for line in lines))
@@ -710,7 +711,7 @@ class Projection(Scene):
         self.play(GrowFromCenter(eigen_vector))
         self.play(Rotate(eigen_vector, PI, about_point=self.origin))
         self.play(ShrinkToCenter(eigen_vector))
-        self.wait(4)
+        self.wait(10)
         
         shear = [[1, 0],[0.5, 1]]
         g_arrow_sheared = self.get_arrow((0, 0), (shear[0][0], shear[1][0]), CS[0])
@@ -746,7 +747,7 @@ class Projection(Scene):
         self.play(Create(eigen_line))
         eigen_line.put_start_and_end_on(eigen_line.get_end(), eigen_line.get_start())
         self.play(Uncreate(eigen_line))
-        self.wait(4)
+        self.wait(10)
         aligned_shear = [[1, -0.5],[0.5, 1]]
         g_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][0], aligned_shear[1][0]), CS[0])
         r_arrow_aligned_sheared = self.get_arrow((0, 0), (aligned_shear[0][1], aligned_shear[1][1]), CS[1])
@@ -776,7 +777,7 @@ class Projection(Scene):
             *(ReplacementTransform(line_sheared, line_aligned_sheared) for (line_sheared, line_aligned_sheared) in zip(lines_sheared, lines_aligned_sheared)),
             *(ReplacementTransform(arrow_sheared, arrow_aligned_sheared) for (arrow_sheared, arrow_aligned_sheared) in zip(arrows_sheared, arrows_aligned_sheared)),
         )
-        self.wait(4)
+        self.wait(10)
         counter_shear = [[1, 0.5],[0.5, 1]]
         g_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][0], counter_shear[1][0]), CS[0])
         r_arrow_counter_sheared = self.get_arrow((0, 0), (counter_shear[0][1], counter_shear[1][1]), CS[1])
@@ -806,7 +807,7 @@ class Projection(Scene):
             *(ReplacementTransform(line_aligned_sheared, line_counter_sheared) for (line_aligned_sheared, line_counter_sheared) in zip(lines_aligned_sheared, lines_counter_sheared)),
             *(ReplacementTransform(arrow_aligned_sheared, arrow_counter_sheared) for (arrow_aligned_sheared, arrow_counter_sheared) in zip(arrows_aligned_sheared, arrows_counter_sheared)),
         )
-        self.wait(4)
+        self.wait(10)
         _, eigen_vectors = np.linalg.eig(np.array(counter_shear))
         for i in range(2):
             eigen_line = self.get_line((-4*eigen_vectors[0][i], -4*eigen_vectors[1][i]), (4*eigen_vectors[0][i], 4*eigen_vectors[1][i]), CS[-1])
@@ -857,7 +858,7 @@ class Projection(Scene):
             *(FadeOut(line) for line in lines_imbalanced_counter_sheared),
             *(Rotate(arrow, -math.atan2(eigen_vectors[1][0], eigen_vectors[0][0]), about_point=self.origin) for arrow in arrows_imbalanced_counter_sheared),
         )
-        self.wait(4)
+        self.wait(10)
         self.add_sound("3_7")
         # Spectral theorem implies that Symmetric matrices are simply scaling the unit circle into an ellipse along some rotated basis.
         # One way to prove it rigorously is to focus on the unit vector which gets scaled the most.
@@ -866,7 +867,7 @@ class Projection(Scene):
         tex = MathTex(r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = c^2").move_to(LEFT*4)
         tex.set_color_by_gradient(CS[:2])
         self.play(Write(tex))
-        self.wait(4)
+        self.wait(28)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("3_8")
@@ -888,8 +889,8 @@ class Projection(Scene):
             Write(tex_h),
         )
         self.play(Create(line_v))
+        self.wait(10)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        self.wait(4)
         self.add_sound("3_9")
         # It can also be seen that the function x^2 changes by 2x times the increment, for a very small increment to x.
         tex = MathTex(
@@ -911,7 +912,7 @@ class Projection(Scene):
         )
         self.play(Create(line_v))
         self.play(Create(line_h))
-        self.wait(4)
+        self.wait(10)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("3_10")
@@ -964,6 +965,7 @@ class Projection(Scene):
         self.play(
             GrowArrow(arrow_nf),
         )
+        self.wait(16)
         self.play(
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
@@ -972,7 +974,7 @@ class Projection(Scene):
             Rotate(circle_c, -PI/12, about_point=self.origin),
             Rotate(line_c, -PI/12, about_point=self.origin),
         )
-        self.wait(8)
+        self.wait(14)
         self.add_sound("3_11")
         # For a pure length measurement function, the gradient always points radially outwards, and all points [naturally] have the same value.
         tex_g = VGroup(
@@ -1018,6 +1020,7 @@ class Projection(Scene):
             ReplacementTransform(arrow_nf, arrow_ng),
             GrowFromCenter(bracket_g),
         )
+        self.wait(8)
         self.play(
             Rotate(circle_c, 2*PI, about_point=self.origin),
             Rotate(line_c, 2*PI, about_point=self.origin),
@@ -1025,8 +1028,7 @@ class Projection(Scene):
         self.play(
             FadeOut(tex_g[3]),
         )
-
-        self.wait(8)
+        self.wait(4)
         self.add_sound("3_12")
         # For a function that measures the projected length transformed by a symmetric matrix,
         # we can see that gradient is always parallel to the transformed vector.
@@ -1119,8 +1121,9 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
-        self.wait(8)
+        self.wait(12)
         self.add_sound("3_13")
+        self.wait(8)
         # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
         # This is an eigen vector pointing straight out.
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
@@ -1143,11 +1146,11 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
-        self.wait(8)
+        self.wait(16)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
 
         self.add_sound("3_14")
-        # We also note that the result of measuring a transformed vector measured by a covector doesn't change if we tranpose and reverse order.
+        # We also note that the result of measuring a transformed vector measured by a covector doesn't change if we transpose and reverse order.
         # Since we are working with a symmetric matrix, this doesn't change the matrix either.
         # This implies that if we have one vector which preserves the direction when transformed,
         # the space orthogonal to it must also preserve the orthogonality after the transformation.
@@ -1192,6 +1195,7 @@ class Projection(Scene):
         self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
         self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
         self.play(FadeOut(box_u))
+        self.wait(4)
         self.play(
             MoveAlongPath(
                 tex[0].get_entries()[0],
@@ -1219,6 +1223,7 @@ class Projection(Scene):
             ReplacementTransform(arrow_v, span_v),
         )
         self.play(FadeOut(box_v))
+        self.wait(24)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("3_15")
@@ -1234,6 +1239,7 @@ class Projection(Scene):
         space = get_grid(CS[-1])
         self.play(Create(Dot()))
         self.play(Create(space))
+        self.wait(4)
         for theta in [PI/3, -PI/5]:
             v = (math.cos(theta), math.sin(theta), 0)
             eigen_space = get_grid(CS[1])
@@ -1253,6 +1259,7 @@ class Projection(Scene):
             )
             space = get_grid(CS[-1])
             self.play(ReplacementTransform(eigen_space, space))
+            self.wait(4)
         arrow_g = Arrow(start=(0, 0, 0), end=(math.cos(PI/4), math.sin(PI/4), 0), color=CS[0], buff=0)
         arrow_r = Arrow(start=(0, 0, 0), end=(math.cos(PI/2+PI/4), math.sin(PI/2+PI/4), 0), color=CS[1], buff=0)
         angle = RightAngle(arrow_g, arrow_r, length=0.2, color=LIGHT_GRAY)
@@ -1261,6 +1268,7 @@ class Projection(Scene):
             GrowArrow(arrow_r),
             Create(angle),
         )
+        self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("3_16")
@@ -1373,6 +1381,7 @@ class Projection(Scene):
         self.play(
             *(line.animate.shift(2*DOWN + 2*RIGHT) for line in lines_af),
         )
+        self.wait(4)
 
     def play_eigenvector_computation(self, title):
         '''
@@ -1432,7 +1441,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 2
+        selected_chapter = 3
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)
@@ -1452,6 +1461,7 @@ class Projection(Scene):
             *(GrowArrow(title_arrow) for title_arrow in title_arrows),
         )
         self.wait(8)
+        if selected_chapter == 3: self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])

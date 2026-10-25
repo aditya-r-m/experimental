@@ -968,7 +968,7 @@ class Projection(Scene):
         self.play(
             GrowArrow(arrow_nf),
         )
-        self.wait(16)
+        self.wait(22)
         self.play(
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
@@ -977,7 +977,7 @@ class Projection(Scene):
             Rotate(circle_c, -PI/12, about_point=self.origin),
             Rotate(line_c, -PI/12, about_point=self.origin),
         )
-        self.wait(14)
+        self.wait(10)
         self.add_sound("3_11")
         # For a pure length measurement function, the gradient always points radially outwards, and all points [naturally] have the same value.
         tex_g = VGroup(
@@ -1023,7 +1023,7 @@ class Projection(Scene):
             ReplacementTransform(arrow_nf, arrow_ng),
             GrowFromCenter(bracket_g),
         )
-        self.wait(8)
+        self.wait(10)
         self.play(
             Rotate(circle_c, 2*PI, about_point=self.origin),
             Rotate(line_c, 2*PI, about_point=self.origin),
@@ -1031,7 +1031,7 @@ class Projection(Scene):
         self.play(
             FadeOut(tex_g[3]),
         )
-        self.wait(4)
+        self.wait(2)
         self.add_sound("3_12")
         # For a function that measures the projected length transformed by a symmetric matrix,
         # we can see that gradient is always parallel to the transformed vector.
@@ -1124,9 +1124,8 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
-        self.wait(12)
+        self.wait(20)
         self.add_sound("3_13")
-        self.wait(8)
         # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
         # This is an eigen vector pointing straight out.
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
@@ -1149,7 +1148,7 @@ class Projection(Scene):
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
         )
-        self.wait(16)
+        self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))
 
         self.add_sound("3_14")
@@ -1198,7 +1197,7 @@ class Projection(Scene):
         self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
         self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
         self.play(FadeOut(box_u))
-        self.wait(4)
+        self.wait(2)
         self.play(
             MoveAlongPath(
                 tex[0].get_entries()[0],
@@ -1221,12 +1220,13 @@ class Projection(Scene):
         self.play(*(FadeOut(box) for box in [box_l, box_l0, box_l1]))
         self.play(*(FadeIn(box) for box in [box_r, box_r0, box_r1]))
         self.play(*(FadeOut(box) for box in [box_r, box_r0, box_r1]))
+        self.wait(10)
         self.play(
             Create(box_v),
             ReplacementTransform(arrow_v, span_v),
         )
         self.play(FadeOut(box_v))
-        self.wait(24)
+        self.wait(8)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("3_15")
@@ -1242,7 +1242,7 @@ class Projection(Scene):
         space = get_grid(CS[-1])
         self.play(Create(Dot()))
         self.play(Create(space))
-        self.wait(4)
+        self.wait(6)
         for theta in [PI/3, -PI/5]:
             v = (math.cos(theta), math.sin(theta), 0)
             eigen_space = get_grid(CS[1])
@@ -1255,6 +1255,7 @@ class Projection(Scene):
                 Create(angle),
                 FadeIn(eigen_space),
             )
+            self.wait(4)
             self.play(
                 FadeOut(arrow),
                 FadeOut(angle),
@@ -1262,7 +1263,6 @@ class Projection(Scene):
             )
             space = get_grid(CS[-1])
             self.play(ReplacementTransform(eigen_space, space))
-            self.wait(4)
         arrow_g = Arrow(start=(0, 0, 0), end=(math.cos(PI/4), math.sin(PI/4), 0), color=CS[0], buff=0)
         arrow_r = Arrow(start=(0, 0, 0), end=(math.cos(PI/2+PI/4), math.sin(PI/2+PI/4), 0), color=CS[1], buff=0)
         angle = RightAngle(arrow_g, arrow_r, length=0.2, color=LIGHT_GRAY)

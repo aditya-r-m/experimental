@@ -1252,11 +1252,11 @@ class Projection(Scene):
             hidden_arrow = Arrow(start=(0, 0, 0), end=(-v[1], v[0], 0))
             angle = RightAngle(arrow, hidden_arrow, length=0.2, color=LIGHT_GRAY)
             self.play(GrowArrow(arrow))
+            self.wait(4)
             self.play(
                 Create(angle),
                 FadeIn(eigen_space),
             )
-            self.wait(4)
             self.play(
                 FadeOut(arrow),
                 FadeOut(angle),

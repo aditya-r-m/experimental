@@ -926,10 +926,10 @@ class Projection(Scene):
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
         arrow_c = self.get_arrow((0, 0), (1, 0), CS[1])
         tex_f = VGroup(
-            MathTex(r"f(x, y) = ", color=CS[-2]),
+            MathTex(r"f {{ (x, y) = }} \frac{1}{\sqrt{2}}", color=CS[-2]),
             Matrix([[1, 1]], h_buff=0.6),
             Matrix([["x"], ["y"]]),
-            MathTex(r"= x + y", color=CS[-2]),
+            MathTex(r"= \frac{1}{\sqrt{2}} (x + y)", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
         box_x = Underline(tex_f[2], color=CS[1])
         tex_f[1].get_entries()[:].set_color(CS[-2])
@@ -937,7 +937,7 @@ class Projection(Scene):
         tex_f[2].get_entries()[:].set_color(CS[-2])
         tex_f[2].get_brackets().set_color(CS[-2])
         box_f = Underline(tex_f[1], color=CS[0])
-        line_f, circle_f = self.get_lircle((1, 1), CS[0])
+        line_f, circle_f = self.get_lircle((1/math.sqrt(2), 1/math.sqrt(2)), CS[0])
         bracket_f = always_redraw(
             lambda: BraceBetweenPoints(
                 self.axes.c2p(-2, 2),
@@ -966,7 +966,7 @@ class Projection(Scene):
         tex_nf = VGroup(
             MathTex(r"\nabla f(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x f"], [r"\partial_y f"]]),
-            MathTex(r" = ", color=CS[-1]),
+            MathTex(r" = \frac{1}{\sqrt{2}}", color=CS[-1]),
             Matrix([[1], [1]]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 - UP*1.5)
         tex_nf[1].get_entries()[:].set_color(CS[-1])
@@ -976,7 +976,7 @@ class Projection(Scene):
         arrow_nf = always_redraw(
             lambda: Arrow(
                 start=arrow_c.get_end(),
-                end=arrow_c.get_end() + self.axes.c2p(1, 1) - self.origin,
+                end=arrow_c.get_end() + self.axes.c2p(1 / math.sqrt(2), 1 / math.sqrt(2)) - self.origin,
                 color=CS[-1], buff=0)
         )
         self.play(
@@ -1007,7 +1007,7 @@ class Projection(Scene):
         self.add_sound("3_11")
         # For a pure length measurement function, the gradient always points radially outwards, and all points [naturally] have the same value.
         tex_g = VGroup(
-            MathTex(r"g(x, y) = ", color=CS[-2]),
+            MathTex(r"g {{ (x, y) = }} ", color=CS[-2]),
             Matrix([["x", "y"]], h_buff=0.6),
             Matrix([["x"], ["y"]]),
             MathTex(r"= x^2 + y^2", color=CS[-2]),
@@ -1041,7 +1041,8 @@ class Projection(Scene):
                 color=CS[-1], buff=0)
         )
         self.play(
-            ReplacementTransform(tex_f, tex_g),
+            TransformMatchingTex(tex_f[0], tex_g[0]),
+            ReplacementTransform(tex_f[1:], tex_g[1:]),
             ReplacementTransform(box_x, box_g),
             FadeOut(box_f),
             FadeOut(circle_f),
@@ -1065,7 +1066,7 @@ class Projection(Scene):
         # we can see that gradient is always parallel to the transformed vector.
         # This follows from the fact that ith row and ith column contribute all coefficients for the ith row of the result.
         tex_h = VGroup(
-            MathTex(r"h(x, y) = ", color=CS[-2]),
+            MathTex(r"h {{ (x, y) = }} ", color=CS[-2]),
             Matrix([["x", "y"]], h_buff=0.6),
             Matrix([["A_x", "A_d"], ["A_d", "A_x"]], h_buff=0.7),
             Matrix([["x"], ["y"]]),
@@ -1086,10 +1087,10 @@ class Projection(Scene):
                 buff=0,
             )
         )
-        arrow_h = always_redraw(
-            lambda: Arrow(
-                start=self.origin,
-                end=self.origin
+        bracket_h = always_redraw(
+            lambda: BraceBetweenPoints(
+                self.origin,
+                self.origin
                     + (v := arrow_c.get_end() - self.origin) * np.dot(v, np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), v)),
                 color=CS[-2],
                 buff=0,
@@ -1127,13 +1128,12 @@ class Projection(Scene):
         )
         box_hnt = Underline(tex_nh[3:], color=CS[0], buff=0.3)
         self.play(
-            ReplacementTransform(tex_g[0], tex_h[0]),
+            TransformMatchingTex(tex_g[0], tex_h[0]),
             ReplacementTransform(tex_g[1], tex_h[1]),
             ReplacementTransform(tex_g[2], tex_h[3]),
             ReplacementTransform(box_g, box_h),
-            FadeOut(bracket_g),
             GrowArrow(arrow_hv),
-            GrowArrow(arrow_h),
+            ReplacementTransform(bracket_g, bracket_h),
             Create(dash_h),
             ReplacementTransform(tex_ng[0], tex_nh[0]),
             ReplacementTransform(tex_ng[1].get_entries(), tex_nh[1].get_entries()),
@@ -1149,7 +1149,7 @@ class Projection(Scene):
             Write(tex_nh[3]),
         )
         self.play(
-            Rotate(arrow_c, PI/3, about_point=self.origin),
+            Rotate(arrow_c, -PI/3, about_point=self.origin),
         )
         self.wait(16)
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
@@ -1169,10 +1169,8 @@ class Projection(Scene):
         # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
         # This is an eigen vector pointing straight out.
         self.play(
-            Rotate(arrow_c, -2*PI/3, about_point=self.origin),
-        )
-        self.play(
             Rotate(arrow_c, PI/3, about_point=self.origin),
+            run_time=2,
         )
         self.wait(16)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))

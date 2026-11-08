@@ -1338,7 +1338,7 @@ class Projection(Scene):
             )
             for line in lines_t
         ]
-        lines_r = [
+        _lines_r = [
             self.get_line(
                 start=np.dot(ev, (line.get_start() - self.origin)[:2]),
                 end=np.dot(ev, (line.get_end() - self.origin)[:2]),
@@ -1368,7 +1368,7 @@ class Projection(Scene):
             *(GrowFromCenter(line) for line in lines_i),
         )
         self.play(
-            *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_i, lines_t)),
+            *(Rotate(line, -PI/4) for line in lines_i),
             ReplacementTransform(arrow_g, arrow_gt),
             ReplacementTransform(arrow_r, arrow_rt),
         )
@@ -1377,10 +1377,10 @@ class Projection(Scene):
             FadeOut(arrow_rt),
         )
         self.play(
-            *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_t, lines_s)),
+            *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_i, lines_s)),
         )
         self.play(
-            *(ReplacementTransform(line, line_c) for (line, line_c) in zip(lines_s, lines_r)),
+            *(Rotate(line, PI/4) for line in lines_s),
         )
         self.play(
             *(line.animate.shift(2*DOWN + 2*RIGHT) for line in lines_af),

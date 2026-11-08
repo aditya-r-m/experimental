@@ -932,12 +932,38 @@ class Projection(Scene):
             Matrix([["x"], ["y"]]),
             MathTex(r"= x + y", color=CS[-2]),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
-        box_f = Underline(tex_f[2], color=CS[1])
+        box_x = Underline(tex_f[2], color=CS[1])
         tex_f[1].get_entries()[:].set_color(CS[-2])
         tex_f[1].get_brackets().set_color(CS[-2])
         tex_f[2].get_entries()[:].set_color(CS[-2])
         tex_f[2].get_brackets().set_color(CS[-2])
-        line_f, circle_f = self.get_lircle((1, 1), CS[-2])
+        box_f = Underline(tex_f[1], color=CS[0])
+        line_f, circle_f = self.get_lircle((1, 1), CS[0])
+        bracket_f = always_redraw(
+            lambda: BraceBetweenPoints(
+                self.axes.c2p(-2, 2),
+                self.axes.c2p(-2, 2)
+                + np.dot([1/math.sqrt(2),1/math.sqrt(2),0],
+                    circle_c.get_center() - self.origin)
+                * np.array([1/math.sqrt(2),1/math.sqrt(2),0]),
+                color=CS[-2],
+                direction=UP+LEFT,
+                buff=0)
+        )
+        dash_f0 = always_redraw(
+            lambda: DashedLine(
+                start=self.origin,
+                end=self.axes.c2p(-2, 2),
+                color=CS[-2])
+        )
+        dash_f1 = always_redraw(
+            lambda: DashedLine(
+                start=circle_c.get_center(),
+                end=self.axes.c2p(-2, 2)
+                    + np.dot([1/math.sqrt(2),1/math.sqrt(2),0], circle_c.get_center() - self.origin)
+                * np.array([1/math.sqrt(2),1/math.sqrt(2),0]),
+                color=CS[-2])
+        )
         tex_nf = VGroup(
             MathTex(r"\nabla f(x, y) = ", color=CS[-1]),
             Matrix([[r"\partial_x f"], [r"\partial_y f"]]),
@@ -962,13 +988,17 @@ class Projection(Scene):
         self.play(
             GrowFromCenter(circle_c),
             Create(line_c),
+            GrowFromCenter(bracket_f),
+            Create(dash_f0),
+            Create(dash_f1),
             Create(box_f),
+            Create(box_x),
             Write(tex_nf),
         )
         self.play(
             GrowArrow(arrow_nf),
         )
-        self.wait(22)
+        self.wait(28)
         self.play(
             Rotate(circle_c, PI/3, about_point=self.origin),
             Rotate(line_c, PI/3, about_point=self.origin),
@@ -977,7 +1007,7 @@ class Projection(Scene):
             Rotate(circle_c, -PI/12, about_point=self.origin),
             Rotate(line_c, -PI/12, about_point=self.origin),
         )
-        self.wait(10)
+        self.wait(4)
         self.add_sound("3_11")
         # For a pure length measurement function, the gradient always points radially outwards, and all points [naturally] have the same value.
         tex_g = VGroup(
@@ -1016,12 +1046,15 @@ class Projection(Scene):
         )
         self.play(
             ReplacementTransform(tex_f, tex_g),
-            ReplacementTransform(box_f, box_g),
+            ReplacementTransform(box_x, box_g),
+            FadeOut(box_f),
             FadeOut(circle_f),
             FadeOut(line_f),
             ReplacementTransform(tex_nf, tex_ng),
             ReplacementTransform(arrow_nf, arrow_ng),
-            GrowFromCenter(bracket_g),
+            ReplacementTransform(bracket_f, bracket_g),
+            FadeOut(dash_f0),
+            FadeOut(dash_f1),
         )
         self.wait(10)
         self.play(

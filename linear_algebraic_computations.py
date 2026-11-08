@@ -1295,7 +1295,6 @@ class Projection(Scene):
             GrowArrow(arrow_r),
             Create(angle),
         )
-        self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("3_16")

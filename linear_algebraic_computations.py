@@ -924,8 +924,7 @@ class Projection(Scene):
         # We can observe that moving in the direction of gradient increases the function, and moving orthogonal to it doesn't.
         # Visually, the optimization over unit circle resembles following the push of the gradient till it aligns with the radially outward direction.
         self.play(FadeIn(self.axes), FadeIn(self.unit_circle))
-        circle_c = self.get_circle((1, 0), 0.1, CS[1])
-        line_c = self.get_line((0, 0), (1, 0), CS[1])
+        arrow_c = self.get_arrow((0, 0), (1, 0), CS[1])
         tex_f = VGroup(
             MathTex(r"f(x, y) = ", color=CS[-2]),
             Matrix([[1, 1]], h_buff=0.6),
@@ -944,7 +943,7 @@ class Projection(Scene):
                 self.axes.c2p(-2, 2),
                 self.axes.c2p(-2, 2)
                 + np.dot([1/math.sqrt(2),1/math.sqrt(2),0],
-                    circle_c.get_center() - self.origin)
+                    arrow_c.get_end() - self.origin)
                 * np.array([1/math.sqrt(2),1/math.sqrt(2),0]),
                 color=CS[-2],
                 direction=UP+LEFT,
@@ -958,9 +957,9 @@ class Projection(Scene):
         )
         dash_f1 = always_redraw(
             lambda: DashedLine(
-                start=circle_c.get_center(),
+                start=arrow_c.get_end(),
                 end=self.axes.c2p(-2, 2)
-                    + np.dot([1/math.sqrt(2),1/math.sqrt(2),0], circle_c.get_center() - self.origin)
+                    + np.dot([1/math.sqrt(2),1/math.sqrt(2),0], arrow_c.get_end() - self.origin)
                 * np.array([1/math.sqrt(2),1/math.sqrt(2),0]),
                 color=CS[-2])
         )
@@ -976,8 +975,8 @@ class Projection(Scene):
         tex_nf[3].get_brackets().set_color(CS[-1])
         arrow_nf = always_redraw(
             lambda: Arrow(
-                start=circle_c.get_center(),
-                end=circle_c.get_center() + self.axes.c2p(1, 1) - self.origin,
+                start=arrow_c.get_end(),
+                end=arrow_c.get_end() + self.axes.c2p(1, 1) - self.origin,
                 color=CS[-1], buff=0)
         )
         self.play(
@@ -986,8 +985,7 @@ class Projection(Scene):
             GrowFromPoint(line_f, self.origin),
         )
         self.play(
-            GrowFromCenter(circle_c),
-            Create(line_c),
+            Create(arrow_c),
             GrowFromCenter(bracket_f),
             Create(dash_f0),
             Create(dash_f1),
@@ -1000,12 +998,10 @@ class Projection(Scene):
         )
         self.wait(28)
         self.play(
-            Rotate(circle_c, PI/3, about_point=self.origin),
-            Rotate(line_c, PI/3, about_point=self.origin),
+            Rotate(arrow_c, PI/3, about_point=self.origin),
         )
         self.play(
-            Rotate(circle_c, -PI/12, about_point=self.origin),
-            Rotate(line_c, -PI/12, about_point=self.origin),
+            Rotate(arrow_c, -PI/12, about_point=self.origin),
         )
         self.wait(4)
         self.add_sound("3_11")
@@ -1024,7 +1020,7 @@ class Projection(Scene):
         bracket_g = always_redraw(
             lambda: BraceBetweenPoints(
                 self.origin,
-                circle_c.get_center(),
+                arrow_c.get_end(),
                 color=CS[-2],
             )
         )
@@ -1040,8 +1036,8 @@ class Projection(Scene):
         tex_ng[3].get_brackets().set_color(CS[-1])
         arrow_ng = always_redraw(
             lambda: Arrow(
-                start=circle_c.get_center(),
-                end=3*circle_c.get_center() - 2*self.origin,
+                start=arrow_c.get_end(),
+                end=3*arrow_c.get_end() - 2*self.origin,
                 color=CS[-1], buff=0)
         )
         self.play(
@@ -1058,8 +1054,7 @@ class Projection(Scene):
         )
         self.wait(10)
         self.play(
-            Rotate(circle_c, 2*PI, about_point=self.origin),
-            Rotate(line_c, 2*PI, about_point=self.origin),
+            Rotate(arrow_c, 2*PI, about_point=self.origin),
         )
         self.play(
             FadeOut(tex_g[3]),
@@ -1086,7 +1081,7 @@ class Projection(Scene):
         arrow_hv = always_redraw(
             lambda: Arrow(
                 self.origin,
-                self.origin + np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
+                self.origin + np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (arrow_c.get_end() - self.origin)),
                 color=CS[0],
                 buff=0,
             )
@@ -1095,16 +1090,16 @@ class Projection(Scene):
             lambda: Arrow(
                 start=self.origin,
                 end=self.origin
-                    + (v := circle_c.get_center() - self.origin) * np.dot(v, np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), v)),
+                    + (v := arrow_c.get_end() - self.origin) * np.dot(v, np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), v)),
                 color=CS[-2],
                 buff=0,
             )
         )
         dash_h = always_redraw(
             lambda: DashedLine(
-                start=self.origin + np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
+                start=self.origin + np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (arrow_c.get_end() - self.origin)),
                 end=self.origin
-                    + (v := circle_c.get_center() - self.origin) * np.dot(v, np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), v)),
+                    + (v := arrow_c.get_end() - self.origin) * np.dot(v, np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), v)),
                 color=CS[-2],
                 buff=0,
             )
@@ -1124,8 +1119,8 @@ class Projection(Scene):
         tex_nh[4].get_brackets().set_color(CS[-1])
         arrow_nh = always_redraw(
             lambda: Arrow(
-                circle_c.get_center(),
-                circle_c.get_center() + 2*np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (circle_c.get_center() - self.origin)),
+                arrow_c.get_end(),
+                arrow_c.get_end() + 2*np.dot(np.array([[1,0.5,0],[0.5,1,0],[0,0,0]]), (arrow_c.get_end() - self.origin)),
                 color=CS[-1],
                 buff=0,
             )
@@ -1154,8 +1149,7 @@ class Projection(Scene):
             Write(tex_nh[3]),
         )
         self.play(
-            Rotate(circle_c, PI/3, about_point=self.origin),
-            Rotate(line_c, PI/3, about_point=self.origin),
+            Rotate(arrow_c, PI/3, about_point=self.origin),
         )
         self.wait(16)
         box_h00 = SurroundingRectangle(tex_h[2].get_rows()[0], color=CS[-1])
@@ -1175,12 +1169,10 @@ class Projection(Scene):
         # Thus, the function attains the maximum when trasformed vector [which is parallel to gradient vector] lines up with the original vector.
         # This is an eigen vector pointing straight out.
         self.play(
-            Rotate(circle_c, -2*PI/3, about_point=self.origin),
-            Rotate(line_c, -2*PI/3, about_point=self.origin),
+            Rotate(arrow_c, -2*PI/3, about_point=self.origin),
         )
         self.play(
-            Rotate(circle_c, PI/3, about_point=self.origin),
-            Rotate(line_c, PI/3, about_point=self.origin),
+            Rotate(arrow_c, PI/3, about_point=self.origin),
         )
         self.wait(16)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj not in [title, self.axes, self.unit_circle])))

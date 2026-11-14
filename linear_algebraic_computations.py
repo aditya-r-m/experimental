@@ -1431,11 +1431,13 @@ class Projection(Scene):
         arrow_m1 = self.get_arrow((0, 0), (m[0][1], m[1][1]), CS[1])
         arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
         arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[3])
+        angle = RightAngle(arrow_q0, arrow_q1, length=0.2, color=LIGHT_GRAY)
         self.play(
             GrowArrow(arrow_m0),
             GrowArrow(arrow_m1),
             GrowArrow(arrow_q0),
             GrowArrow(arrow_q1),
+            Create(angle),
         )
         for _ in range(5):
             q = m @ q
@@ -1444,12 +1446,17 @@ class Projection(Scene):
             self.play(
                 ReplacementTransform(arrow_q0, new_arrow_q0),
                 ReplacementTransform(arrow_q1, new_arrow_q1),
+                FadeOut(angle),
             )
             arrow_q0 = new_arrow_q0
             arrow_q1 = new_arrow_q1
             q, r = qr(q)
             new_arrow_q1 = self.get_arrow((0, 0), (r[1][1]*q[0][1], r[1][1]*q[1][1]), CS[3])
-            self.play(ReplacementTransform(arrow_q1, new_arrow_q1))
+            angle = RightAngle(arrow_q0, new_arrow_q1, length=0.2, color=LIGHT_GRAY)
+            self.play(
+                Create(angle),
+                ReplacementTransform(arrow_q1, new_arrow_q1),
+            )
             arrow_q1 = new_arrow_q1
             new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[3])
             self.play(ReplacementTransform(arrow_q1, new_arrow_q1))

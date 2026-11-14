@@ -1454,7 +1454,7 @@ class Projection(Scene):
             GrowArrow(arrow_q1),
             Create(angle),
         )
-        for _ in range(5):
+        for _ in range(8):
             q = m @ q
             new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
             new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[3])

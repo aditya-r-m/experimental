@@ -1,4 +1,4 @@
-# docker run -it --rm -v "$(pwd)":/manim manimcommunity/manim manim linear_algebraic_computations.py
+# podman run -it --rm -v "$(pwd)":/manim:z docker.io/manimcommunity/manim manim linear_algebraic_computations.py
 
 import math
 import numpy as np
@@ -1410,6 +1410,7 @@ class Projection(Scene):
         self.wait(4)
 
     def play_eigenvector_computation(self, title):
+        self.play(Create(self.axes), Create(self.unit_circle))
         '''
         def qr(A):
             m, n = A.shape
@@ -1467,7 +1468,7 @@ class Projection(Scene):
         self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
-        selected_chapter = 3
+        selected_chapter = 4
         Text.set_default(font_size=24)
         MathTex.set_default(font_size=36)
         self.axes = Axes(x_range=[-4, 4, 1], y_range=[-4, 4, 1], x_length=8, y_length=8).move_to(RIGHT*3)

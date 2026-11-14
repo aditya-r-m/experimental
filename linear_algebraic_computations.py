@@ -1479,10 +1479,9 @@ class Projection(Scene):
             new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
             self.play(ReplacementTransform(arrow_q0, new_arrow_q0))
             arrow_q0 = new_arrow_q0
-        # for faster convergence, we can follow a method similar to exponentiation by squaring
-        # A_0 = Q_0 R_0 -> E_0 = Q_0
-        # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
-        # A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
+        # A_0 = Q_0 R_0
+        # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 R_0
+        # A_2 = Q_0 R_0 Q_0 Q_1 R_1 R_0 = Q_0 Q_1 R_1 Q_1 R_1 R_0 = Q_0 Q_1 Q_2 R_2 R_1 R_0
 
     def play_svd(self, title):
         elliptic_tex = MathTex(

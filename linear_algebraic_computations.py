@@ -1410,6 +1410,7 @@ class Projection(Scene):
         self.wait(4)
 
     def play_eigenvector_computation(self, title):
+        '''
         self.play(Create(self.axes), Create(self.unit_circle))
 
         def qr(A):
@@ -1437,7 +1438,7 @@ class Projection(Scene):
             Matrix([["u","v"]], h_buff=0.6),
             MathTex(r"\leftarrow"),
             Matrix([["u","v"]], h_buff=0.6),
-            MathTex("R"),
+            MathTex("R'"),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + DOWN*0.5)
         tex_1[0].set_column_colors(*CS[2:])
         tex_1[2].set_column_colors(*CS[2:])
@@ -1513,9 +1514,16 @@ class Projection(Scene):
             new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
             self.play(ReplacementTransform(arrow_q0, new_arrow_q0))
             arrow_q0 = new_arrow_q0
-        # A_0 = Q_0 R_0
-        # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 R_0
-        # A_2 = Q_0 R_0 Q_0 Q_1 R_1 R_0 = Q_0 Q_1 R_1 Q_1 R_1 R_0 = Q_0 Q_1 Q_2 R_2 R_1 R_0
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        '''
+        tex_i = MathTex(r"M \rightarrow Q \ R").move_to(UP)
+        texs = [MathTex("A"), MathTex("="), MathTex("Q_0"), MathTex("R_0")]
+        texs[0].next_to(tex_i[0][0], DOWN)
+        self.play(Write(tex_i))
+        self.play(Write(texs[0]))
+        for i in range(1, len(texs)):
+            texs[i].next_to(texs[i-1], RIGHT, buff=0.2)
+            self.play(Write(texs[i]))
 
     def play_svd(self, title):
         elliptic_tex = MathTex(

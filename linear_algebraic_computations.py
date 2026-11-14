@@ -1429,12 +1429,27 @@ class Projection(Scene):
         q = np.array([[1,0],[0,1]])
         arrow_m0 = self.get_arrow((0, 0), (m[0][0], m[1][0]), CS[0])
         arrow_m1 = self.get_arrow((0, 0), (m[0][1], m[1][1]), CS[1])
+        arrows = [
+            self.get_arrow(
+                (i, j),
+                (i + (2*i+j) / (d := 4 * math.sqrt((2*i+j)**2 + (2*j+i)**2)), j + (2*j+i) / d),
+                LIGHT_GRAY
+            )
+            for i in [x/2 for x in range(-8, 9)]
+            for j in [y/2 for y in range(-8, 9)]
+            if i or j
+        ]
         arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
         arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[3])
         angle = RightAngle(arrow_q0, arrow_q1, length=0.2, color=LIGHT_GRAY)
         self.play(
             GrowArrow(arrow_m0),
             GrowArrow(arrow_m1),
+        )
+        self.play(
+            *(Create(arrow) for arrow in arrows)
+        )
+        self.play(
             GrowArrow(arrow_q0),
             GrowArrow(arrow_q1),
             Create(angle),

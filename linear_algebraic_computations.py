@@ -11,6 +11,48 @@ class Projection(Scene):
     def add_sound(self, path):
         super().add_sound(f"media/{path}.m4a", gain=8)
 
+    def get_arrow(self, start, end, color):
+        return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)
+
+    def get_line(self, start, end, color, stroke_opacity=1):
+        return Line(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end), stroke_opacity=stroke_opacity)
+
+    def get_dashed_line(self, start, end, color):
+        return DashedLine(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end))
+
+    def get_polygon(self, *points, color, fill_color, fill_opacity):
+        return Polygon(*(self.axes.c2p(*point) for point in points), color=color, fill_color=fill_color, fill_opacity=fill_opacity)
+
+    def get_brace_between_points(self, start, end, color, direction):
+        return BraceBetweenPoints(self.axes.c2p(*start), self.axes.c2p(*end), color=color, direction=direction, buff=0)
+
+    def get_circle(self, center, radius, color):
+        return Circle(radius=radius, color=color).move_to(self.axes.c2p(*center))
+
+    def get_lircle(self, center, color, radius=0.1, length_scale=8):
+        circle = self.get_circle(center, 0.1, color)
+        line = self.get_line(
+            (-length_scale*center[0], -length_scale*center[1]),
+            (length_scale*center[0], length_scale*center[1]),
+            color)
+        line.rotate(PI/2, about_point=self.axes.c2p(
+            center[0] / (center[0]**2 + center[1]**2),
+            center[1] / (center[0]**2 + center[1]**2)))
+        return line, circle
+
+    def get_elliptic_contours(self, width, height, color):
+        group = VGroup()
+        group.add(Ellipse(
+            width=2*width,
+            height=2*height,
+            color=color).move_to(self.origin))
+        for (dx, dy) in [(0,1),(1,0),(-1,0),(0,-1)]:
+            group.add(Line(
+                color=color,
+                start=self.axes.c2p(width*dx, height*dy),
+                end=self.axes.c2p((width+0.25)*dx, (height+0.25)*dy)))
+        return group
+
     def play_introduction(self):
         circle = Circle(radius=1, color=LIGHT_GRAY)
         counter_shear = [[1, 0.5],[0.5, 1]]
@@ -115,48 +157,6 @@ class Projection(Scene):
                     max_tip_length_to_length_ratio=100,
                 ))
         return title_texts, arrows
-
-    def get_arrow(self, start, end, color):
-        return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)
-
-    def get_line(self, start, end, color, stroke_opacity=1):
-        return Line(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end), stroke_opacity=stroke_opacity)
-
-    def get_dashed_line(self, start, end, color):
-        return DashedLine(color=color, start=self.axes.c2p(*start), end=self.axes.c2p(*end))
-
-    def get_polygon(self, *points, color, fill_color, fill_opacity):
-        return Polygon(*(self.axes.c2p(*point) for point in points), color=color, fill_color=fill_color, fill_opacity=fill_opacity)
-
-    def get_brace_between_points(self, start, end, color, direction):
-        return BraceBetweenPoints(self.axes.c2p(*start), self.axes.c2p(*end), color=color, direction=direction, buff=0)
-
-    def get_circle(self, center, radius, color):
-        return Circle(radius=radius, color=color).move_to(self.axes.c2p(*center))
-
-    def get_lircle(self, center, color, radius=0.1, length_scale=8):
-        circle = self.get_circle(center, 0.1, color)
-        line = self.get_line(
-            (-length_scale*center[0], -length_scale*center[1]),
-            (length_scale*center[0], length_scale*center[1]),
-            color)
-        line.rotate(PI/2, about_point=self.axes.c2p(
-            center[0] / (center[0]**2 + center[1]**2),
-            center[1] / (center[0]**2 + center[1]**2)))
-        return line, circle
-
-    def get_elliptic_contours(self, width, height, color):
-        group = VGroup()
-        group.add(Ellipse(
-            width=2*width,
-            height=2*height,
-            color=color).move_to(self.origin))
-        for (dx, dy) in [(0,1),(1,0),(-1,0),(0,-1)]:
-            group.add(Line(
-                color=color,
-                start=self.axes.c2p(width*dx, height*dy),
-                end=self.axes.c2p((width+0.25)*dx, (height+0.25)*dy)))
-        return group
 
     def play_rotation_matrix(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
@@ -1411,7 +1411,7 @@ class Projection(Scene):
 
     def play_eigenvector_computation(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))
-        '''
+
         def qr(A):
             m, n = A.shape
             Q = np.zeros((m, n))
@@ -1425,38 +1425,42 @@ class Projection(Scene):
                     V[:, j] -= R[i, j] * Q[:, i]
             return Q, R
 
-        get_arrows = lambda grid, m, q: [
-            Arrow(color=CS[0]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][0], m[1][0])),
-            Arrow(color=CS[1]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(m[0][1], m[1][1])),
-            Arrow(color=CS[2]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][0], q[1][0])),
-            Arrow(color=CS[3]).put_start_and_end_on(grid.c2p(0, 0), grid.c2p(q[0][1], q[1][1])),
-        ]
-        grid = NumberPlane(x_range=(-4, 4, 1))
-        self.play(Create(grid))
         m = np.array([[3,1],[1,3]])
         q = np.array([[1,0],[0,1]])
-        arrows = get_arrows(grid, m, q)
-        self.play(GrowArrow(arrows[0]),
-                  GrowArrow(arrows[1]),
-                  GrowArrow(arrows[2]),
-                  GrowArrow(arrows[3]),
+        arrow_m0 = self.get_arrow((0, 0), (m[0][0], m[1][0]), CS[0])
+        arrow_m1 = self.get_arrow((0, 0), (m[0][1], m[1][1]), CS[1])
+        arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
+        arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[3])
+        self.play(
+            GrowArrow(arrow_m0),
+            GrowArrow(arrow_m1),
+            GrowArrow(arrow_q0),
+            GrowArrow(arrow_q1),
         )
-        for _ in range(10):
+        for _ in range(5):
             q = m @ q
-            q, _ = qr(q)
-            new_arrows = get_arrows(grid, m, q)
-            self.play(ReplacementTransform(arrows[0], new_arrows[0]),
-                      ReplacementTransform(arrows[1], new_arrows[1]),
-                      ReplacementTransform(arrows[2], new_arrows[2]),
-                      ReplacementTransform(arrows[3], new_arrows[3]),
+            new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
+            new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[3])
+            self.play(
+                ReplacementTransform(arrow_q0, new_arrow_q0),
+                ReplacementTransform(arrow_q1, new_arrow_q1),
             )
-            arrows = new_arrows
-        for faster convergence, we can follow a method similar to exponentiation by squaring
-        A_0 = Q_0 R_0 -> E_0 = Q_0
-        A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
-        A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        '''
+            arrow_q0 = new_arrow_q0
+            arrow_q1 = new_arrow_q1
+            q, r = qr(q)
+            new_arrow_q1 = self.get_arrow((0, 0), (r[1][1]*q[0][1], r[1][1]*q[1][1]), CS[3])
+            self.play(ReplacementTransform(arrow_q1, new_arrow_q1))
+            arrow_q1 = new_arrow_q1
+            new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[3])
+            self.play(ReplacementTransform(arrow_q1, new_arrow_q1))
+            arrow_q1 = new_arrow_q1
+            new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[2])
+            self.play(ReplacementTransform(arrow_q0, new_arrow_q0))
+            arrow_q0 = new_arrow_q0
+        # for faster convergence, we can follow a method similar to exponentiation by squaring
+        # A_0 = Q_0 R_0 -> E_0 = Q_0
+        # A_1 = Q_0 R_0 Q_0 R_0 = Q_0 Q_1 R_1 Q_0 -> E_1 = Q_01
+        # A_2 = Q_01 R_01 Q_01 R_01 = Q_01 Q_2 R_2 R_01 -> E_2 = Q_02
 
     def play_svd(self, title):
         elliptic_tex = MathTex(
@@ -1475,21 +1479,21 @@ class Projection(Scene):
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
-        if selected_chapter == 0:
-            self.add_sound("0_i")
+        # if selected_chapter == 0:
+            # self.add_sound("0_i")
             # Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
-            self.play_introduction()
-            self.wait(8)
-            self.play(FadeOut(*(obj for obj in self.mobjects)))
-        self.add_sound(f"{selected_chapter}_0")
+            # self.play_introduction()
+            # self.wait(8)
+            # self.play(FadeOut(*(obj for obj in self.mobjects)))
+        # self.add_sound(f"{selected_chapter}_0")
         # Table of Contents
-        self.play(
-            *(Write(title_text) for title_text in title_texts),
-            *(GrowArrow(title_arrow) for title_arrow in title_arrows),
-        )
-        self.wait(8)
-        if selected_chapter == 3: self.wait(8)
-        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
+        # self.play(
+            # *(Write(title_text) for title_text in title_texts),
+            # *(GrowArrow(title_arrow) for title_arrow in title_arrows),
+        # )
+        # self.wait(8)
+        # if selected_chapter == 3: self.wait(8)
+        # self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
         if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])

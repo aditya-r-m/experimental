@@ -1426,16 +1426,23 @@ class Projection(Scene):
             return Q, R
 
         tex_0 = VGroup(
-            Matrix([["u","v"]]),
+            Matrix([["u","v"]], h_buff=0.6),
             MathTex(r"\leftarrow A"),
-            Matrix([["u","v"]]),
+            Matrix([["u","v"]], h_buff=0.6),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + UP*0.5)
+        tex_0[0].set_column_colors(*CS[2:])
+        tex_0[1][0][1].set_color_by_gradient(CS[:2])
+        tex_0[2].set_column_colors(*CS[2:])
         tex_1 = VGroup(
-            Matrix([["u","v"]]),
+            Matrix([["u","v"]], h_buff=0.6),
             MathTex(r"\leftarrow"),
-            Matrix([["u","v"]]),
+            Matrix([["u","v"]], h_buff=0.6),
             MathTex("R"),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + DOWN*0.5)
+        tex_1[0].set_column_colors(*CS[2:])
+        tex_1[2].set_column_colors(*CS[2:])
+        brace = Brace(tex_1[0], DOWN)
+        label = brace.get_text("Q")
         m = np.array([[3,1],[1,3]])
         q = np.array([[1,0],[0,1]])
         arrow_m0 = self.get_arrow((0, 0), (m[0][0], m[1][0]), CS[0])
@@ -1466,6 +1473,8 @@ class Projection(Scene):
             GrowArrow(arrow_q1),
             Create(angle),
             Write(tex_1),
+            GrowFromCenter(brace),
+            Write(label),
         )
         for _ in range(4):
             q = m @ q
@@ -1474,6 +1483,8 @@ class Projection(Scene):
             self.play(
                 tex_0.animate.set_opacity(1),
                 tex_1.animate.set_opacity(0.3),
+                brace.animate.set_opacity(0.3),
+                label.animate.set_opacity(0.3),
             )
             self.play(
                 ReplacementTransform(arrow_q0, new_arrow_q0),
@@ -1488,6 +1499,8 @@ class Projection(Scene):
             self.play(
                 tex_0.animate.set_opacity(0.3),
                 tex_1.animate.set_opacity(1),
+                brace.animate.set_opacity(1),
+                label.animate.set_opacity(1),
             )
             self.play(
                 Create(angle),

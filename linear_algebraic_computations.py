@@ -1425,6 +1425,21 @@ class Projection(Scene):
                     V[:, j] -= R[i, j] * Q[:, i]
             return Q, R
 
+        tex_0 = VGroup(
+            Matrix(["u","v"]),
+            MathTex("\leftarrow A"),
+            Matrix(["u","v"]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
+        tex_1 = VGroup(
+            Matrix(["e_0","e_1"]),
+            MathTex("\leftarrow"),
+            Matrix(["e_0","e_1"]),
+            Matrix([
+                [r"\frac{1}{|u|}",r"-\frac{u^T v}{u^T u} \frac{1}{|v_{u^\perp}|}"],
+                [0,r"\frac{1}{|v_{u^\perp}|}"],
+            ]),
+        ).arrange(RIGHT, buff=0.2).move_to(LEFT*3 + UP*1.5)
+        tex_f = MathTex("|u| = u^T u, v_{u\perp} = v - \frac{u^T v}{u^T u} u")
         m = np.array([[3,1],[1,3]])
         q = np.array([[1,0],[0,1]])
         arrow_m0 = self.get_arrow((0, 0), (m[0][0], m[1][0]), CS[0])

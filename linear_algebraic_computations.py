@@ -40,19 +40,6 @@ class Projection(Scene):
             center[1] / (center[0]**2 + center[1]**2)))
         return line, circle
 
-    def get_elliptic_contours(self, width, height, color):
-        group = VGroup()
-        group.add(Ellipse(
-            width=2*width,
-            height=2*height,
-            color=color).move_to(self.origin))
-        for (dx, dy) in [(0,1),(1,0),(-1,0),(0,-1)]:
-            group.add(Line(
-                color=color,
-                start=self.axes.c2p(width*dx, height*dy),
-                end=self.axes.c2p((width+0.25)*dx, (height+0.25)*dy)))
-        return group
-
     def play_introduction(self):
         circle = Circle(radius=1, color=LIGHT_GRAY)
         counter_shear = [[1, 0.5],[0.5, 1]]
@@ -1524,15 +1511,6 @@ class Projection(Scene):
         for i in range(1, len(texs)):
             texs[i].next_to(texs[i-1], RIGHT, buff=0.2)
             self.play(Write(texs[i]))
-
-    def play_svd(self, title):
-        elliptic_tex = MathTex(
-            r"\left(\frac{x}{a}\right)^2 + \left(\frac{y}{b}\right)^2 = 1",
-            color=CS[2]).move_to(LEFT*4)
-        self.play(Write(elliptic_tex))
-        ellipse = Ellipse(color=CS[2], width=4, height=6).move_to(self.origin)
-        self.play(ReplacementTransform(self.unit_circle.copy(), ellipse))
-        self.play(FadeOut(elliptic_tex), FadeOut(ellipse))
 
     def construct(self):
         selected_chapter = 4

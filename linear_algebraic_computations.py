@@ -1512,14 +1512,16 @@ class Projection(Scene):
                 + ("Q_0 R_0")
                 + " ".join((f"Q_{u}" for u in range(i)))
                 + " ".join((f"R_{u}" for u in range(i - 1, -1, -1))))
-            self.play(*([
-                ReplacementTransform(tex[0][u], tex_n[0][u])
-                for u in range(3)
-            ] + [
-                ReplacementTransform(tex[0][3 + u], tex_n[0][3 + u + 4])
-                for u in range(4*i)
-            ]))
-            self.play(Write(tex_n[0][3 : 3 + 4]))
+            self.play(
+                Write(tex_n[0][3 : 3 + 4]),
+                *([
+                    ReplacementTransform(tex[0][u], tex_n[0][u])
+                    for u in range(3)
+                ] + [
+                    ReplacementTransform(tex[0][3 + u], tex_n[0][3 + u + 4])
+                    for u in range(4*i)
+                ])
+            )
             tex = tex_n
             for j in range(i):
                 tex_n = MathTex(rf"A^{str(i+1)}="

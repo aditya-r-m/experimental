@@ -1425,7 +1425,7 @@ class Projection(Scene):
             Matrix([["u","v"]], h_buff=0.6),
             MathTex(r"\leftarrow"),
             Matrix([["u","v"]], h_buff=0.6),
-            MathTex("R'"),
+            MathTex("R^{-1}"),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + DOWN*0.5)
         tex_1[0].set_column_colors(*CS[2:])
         tex_1[2].set_column_colors(*CS[2:])
@@ -1502,15 +1502,41 @@ class Projection(Scene):
             self.play(ReplacementTransform(arrow_q0, new_arrow_q0))
             arrow_q0 = new_arrow_q0
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
-        '''
-        tex_i = MathTex(r"M \rightarrow Q \ R").move_to(UP)
-        texs = [MathTex("A"), MathTex("="), MathTex("Q_0"), MathTex("R_0")]
-        texs[0].next_to(tex_i[0][0], DOWN)
+        tex_i = MathTex(r"R_i Q_i \rightarrow M_i \rightarrow Q_{i+1} R_{i+1}").move_to(UP)
         self.play(Write(tex_i))
-        self.play(Write(texs[0]))
-        for i in range(1, len(texs)):
-            texs[i].next_to(texs[i-1], RIGHT, buff=0.2)
-            self.play(Write(texs[i]))
+        '''
+        tex = MathTex(r"A^1 = Q_0 R_0")
+        self.play(Write(tex))
+        for i in range(1,2):
+            tex_n = MathTex(rf"A^{str(i+1)}= "
+                + ("Q_0 R_0")
+                + " ".join((f"Q_{u}" for u in range(i)))
+                + " ".join((f"R_{u}" for u in range(i))))
+            self.play(*([
+                ReplacementTransform(tex[0][u], tex_n[0][u])
+                for u in range(3)
+            ] + [
+                ReplacementTransform(tex[0][3 + u], tex_n[0][3 + u + 4])
+                for u in range(4*i)
+            ]))
+            self.play(Write(tex_n[0][3 : 3 + 4]))
+            tex = tex_n
+            for j in range(i):
+                tex_n = MathTex(rf"A^{str(i+1)}= "
+                    + ("Q_0 R_0")
+                    + " ".join((f"Q_{u}" for u in range(i)))
+                    + " ".join((f"R_{u}" for u in range(i))))
+                self.play(ReplacementTransform(tex[0][3 + j*4 : 3 + j*4 * 4], tex_n[0][3 + j*4 : 3 + j*4 + 2]))
+                self.wait(4)
+                return
+                self.play(*([
+                    ReplacementTransform(tex[0][u], tex_n[0][u])
+                    for u in range(3 + j*4)
+                ] + [
+                    ReplacementTransform(tex[0][u], tex_n[0][u - 2])
+                    for u in range(3 + j*4 + 4, len(tex[0]))
+                ]))
+                tex = tex_n
 
     def construct(self):
         selected_chapter = 4

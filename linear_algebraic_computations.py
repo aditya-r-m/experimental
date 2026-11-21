@@ -1397,7 +1397,6 @@ class Projection(Scene):
         self.wait(4)
 
     def play_eigenvector_computation(self, title):
-        '''
         self.play(Create(self.axes), Create(self.unit_circle))
 
         def qr(A):
@@ -1502,9 +1501,9 @@ class Projection(Scene):
             self.play(ReplacementTransform(arrow_q0, new_arrow_q0))
             arrow_q0 = new_arrow_q0
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+
         tex_i = MathTex(r"R_i Q_i \rightarrow M_i \rightarrow Q_{i+1} R_{i+1}").move_to(UP)
         self.play(Write(tex_i))
-        '''
         tex = MathTex(r"A^1 = Q_0 R_0")
         self.play(Write(tex))
         for i in range(1,5):
@@ -1513,14 +1512,20 @@ class Projection(Scene):
                 + " ".join((f"Q_{u}" for u in range(i)))
                 + " ".join((f"R_{u}" for u in range(i - 1, -1, -1))))
             self.play(
-                Write(tex_n[0][3 : 3 + 4]),
                 *([
-                    ReplacementTransform(tex[0][u], tex_n[0][u])
+                    tex[0][u].animate.move_to(tex_n[0][u])
                     for u in range(3)
                 ] + [
                     ReplacementTransform(tex[0][3 + u], tex_n[0][3 + u + 4])
                     for u in range(4*i)
                 ])
+            )
+            self.play(
+                Write(tex_n[0][3 : 3 + 4]),
+                *([
+                    ReplacementTransform(tex[0][u], tex_n[0][u])
+                    for u in range(3)
+                ]),
             )
             tex = tex_n
             for j in range(i):

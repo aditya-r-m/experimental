@@ -1598,6 +1598,10 @@ class Projection(Scene):
                     ])
                 )
                 tex = tex_n
+        self.play(*(
+            x.animate.set_opacity(0.3)
+            for x in tex[0][3 + (len(tex[0]) - 3) // 2:]
+        ))
 
     def construct(self):
         selected_chapter = 4

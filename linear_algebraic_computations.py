@@ -1520,6 +1520,28 @@ class Projection(Scene):
             Write(tex_s),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
+        tex_h = MathTex(r"Q = A R^{-1} \implies A = Q R").shift(UP)
+        tex = VGroup(
+            MathTex("R^{-1} R ="),
+            Matrix([["x","d"],[0,"y"]], v_buff=1),
+            Matrix([["?","?"],[0,"?"]], v_buff=1),
+            MathTex("="),
+            Matrix([[1,0],[0,1]]),
+        ).arrange(RIGHT).move_to(LEFT*4).next_to(tex_h, DOWN)
+        self.play(
+            Write(tex_h),
+            Write(tex),
+        )
+        self.play(
+            ReplacementTransform(tex[2].get_entries()[3], MathTex(r"\frac{1}{y}").move_to(tex[2].get_entries()[3])),
+        )
+        self.play(
+            ReplacementTransform(tex[2].get_entries()[0], MathTex(r"\frac{1}{x}").move_to(tex[2].get_entries()[0])),
+        )
+        self.play(
+            ReplacementTransform(tex[2].get_entries()[1], MathTex(r"\frac{-yd}{x}").move_to(tex[2].get_entries()[1])),
+        )
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         tex_i = MathTex(r"R_i Q_i \rightarrow M_i \rightarrow Q_{i+1} R_{i+1}").move_to(UP)
         self.play(Write(tex_i))

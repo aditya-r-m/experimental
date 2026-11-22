@@ -1524,14 +1524,12 @@ class Projection(Scene):
         tex = VGroup(
             MathTex("R^{-1} R ="),
             Matrix([["x","d"],[0,"y"]], v_buff=1),
-            Matrix([["?","?"],[0,"?"]], v_buff=1),
+            Matrix([["?","?"],[0,"?"]], v_buff=1, bracket_h_buff=0.5),
             MathTex("="),
             Matrix([[1,0],[0,1]]),
         ).arrange(RIGHT).move_to(LEFT*4).next_to(tex_h, DOWN)
-        self.play(
-            Write(tex_h),
-            Write(tex),
-        )
+        self.play(Write(tex_h))
+        self.play(Write(tex))
         self.play(
             ReplacementTransform(tex[2].get_entries()[3], MathTex(r"\frac{1}{y}").move_to(tex[2].get_entries()[3])),
         )

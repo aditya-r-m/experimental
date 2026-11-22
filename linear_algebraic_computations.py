@@ -1444,8 +1444,8 @@ class Projection(Scene):
             for j in [y/2 for y in range(-8, 9)]
             if i or j
         ]
-        arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[-1])
-        arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[-2])
+        arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[-2])
+        arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[-1])
         angle = RightAngle(arrow_q0, arrow_q1, length=0.2, color=LIGHT_GRAY)
         self.play(
             GrowArrow(arrow_m0),
@@ -1463,8 +1463,8 @@ class Projection(Scene):
         )
         for _ in range(4):
             q = m @ q
-            new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[-1])
-            new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[-2])
+            new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[-2])
+            new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[-1])
             self.play(
                 tex_0.animate.set_opacity(1),
                 tex_1.animate.set_opacity(0.3),
@@ -1479,7 +1479,7 @@ class Projection(Scene):
             arrow_q0 = new_arrow_q0
             arrow_q1 = new_arrow_q1
             q, r = qr(q)
-            new_arrow_q1 = self.get_arrow((0, 0), (r[1][1]*q[0][1], r[1][1]*q[1][1]), CS[-2])
+            new_arrow_q1 = self.get_arrow((0, 0), (r[1][1]*q[0][1], r[1][1]*q[1][1]), CS[-1])
             angle = RightAngle(arrow_q0, new_arrow_q1, length=0.2, color=LIGHT_GRAY)
             self.play(
                 tex_0.animate.set_opacity(0.3),
@@ -1492,10 +1492,10 @@ class Projection(Scene):
                 ReplacementTransform(arrow_q1, new_arrow_q1),
             )
             arrow_q1 = new_arrow_q1
-            new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[-2])
+            new_arrow_q1 = self.get_arrow((0, 0), (q[0][1], q[1][1]), CS[-1])
             self.play(ReplacementTransform(arrow_q1, new_arrow_q1))
             arrow_q1 = new_arrow_q1
-            new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[-1])
+            new_arrow_q0 = self.get_arrow((0, 0), (q[0][0], q[1][0]), CS[-2])
             self.play(ReplacementTransform(arrow_q0, new_arrow_q0))
             arrow_q0 = new_arrow_q0
         self.play(
@@ -1506,7 +1506,7 @@ class Projection(Scene):
         )
         tex = VGroup(
             MathTex(r"R^{-1} = "),
-            Matrix([["1","?"],[0,r"\frac{1}{\sqrt{v^T v}}"]], h_buff=0.6),
+            Matrix([[r"\frac{1}{\sqrt{u^T u}}",r"-(\hat{u}^T v) \hat{u}"],[0,"1"]], h_buff=0.6),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4)
         self.play(Write(tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))

@@ -1506,7 +1506,7 @@ class Projection(Scene):
         )
         tex = VGroup(
             MathTex(r"R^{-1} = "),
-            Matrix([[r"\frac{1}{\sqrt{u^T u}}",r"-(\hat{u}^T v) \hat{u}"],[0,"1"]], h_buff=0.6),
+            Matrix([[r"\frac{1}{\sqrt{u^T u}}",r"-\frac{{u}^T v}{u^T u} \frac{1}{s}"],[0,r"\frac{1}{s}"]], h_buff=0.6),
         ).arrange(RIGHT, buff=0.2).move_to(LEFT*4)
         self.play(Write(tex))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))

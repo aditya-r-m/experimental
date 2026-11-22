@@ -1506,9 +1506,19 @@ class Projection(Scene):
         )
         tex = VGroup(
             MathTex(r"R^{-1} = "),
-            Matrix([[r"\frac{1}{\sqrt{u^T u}}",r"-\frac{{u}^T v}{u^T u} \frac{1}{s}"],[0,r"\frac{1}{s}"]], h_buff=0.6),
-        ).arrange(RIGHT, buff=0.2).move_to(LEFT*4)
-        self.play(Write(tex))
+            Matrix([
+                    [r"\frac{1}{u^T u}",r"(-s)\frac{u^T v}{u^T u}}"],
+                    [0,"s"],
+                ],
+                h_buff=2,
+                element_alignment_corner=ORIGIN,
+            ),
+        ).arrange(RIGHT).move_to(LEFT*4)
+        tex_s = MathTex(r"s = \frac{1}{v_{u^\perp}^T \ v_{u^\perp}}, \ v_{u^\perp} = v - \frac{u^T v}{u^T u} u").next_to(tex, DOWN)
+        self.play(
+            Write(tex),
+            Write(tex_s),
+        )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         tex_i = MathTex(r"R_i Q_i \rightarrow M_i \rightarrow Q_{i+1} R_{i+1}").move_to(UP)

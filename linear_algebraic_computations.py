@@ -1451,17 +1451,15 @@ class Projection(Scene):
             GrowArrow(arrow_m0),
             GrowArrow(arrow_m1),
             Write(tex_0),
-        )
-        self.play(
-            *(Create(arrow) for arrow in arrows)
-        )
-        self.play(
             GrowArrow(arrow_q0),
             GrowArrow(arrow_q1),
             Create(angle),
             Write(tex_1),
             GrowFromCenter(brace),
             Write(label),
+        )
+        self.play(
+            *(Create(arrow) for arrow in arrows)
         )
         for _ in range(4):
             q = m @ q

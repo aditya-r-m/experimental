@@ -1576,36 +1576,28 @@ class Projection(Scene):
                     + " ".join((f"Q_{u}" for u in range(j + 1, i)))
                     + " ".join((f"R_{u}" for u in range(i - 1, -1, -1))))
                 self.play(
-                    ReplacementTransform(tex[0][3 + j*2 + 2], tex_n[0][3 + j*2 + 2]),
-                    ReplacementTransform(tex[0][3 + j*2 + 3], tex_n[0][3 + j*2 + 2]),
-                    ReplacementTransform(tex[0][3 + j*2 + 4], tex_n[0][3 + j*2 + 3]),
-                    ReplacementTransform(tex[0][3 + j*2 + 5], tex_n[0][3 + j*2 + 3]),
+                    Transform(tex[0][3 + j*2 + 2], tex_n[0][3 + j*2 + 2]),
+                    Transform(tex[0][3 + j*2 + 3], tex_n[0][3 + j*2 + 2]),
+                    Transform(tex[0][3 + j*2 + 4], tex_n[0][3 + j*2 + 3]),
+                    Transform(tex[0][3 + j*2 + 5], tex_n[0][3 + j*2 + 3]),
                 )
-                self.play(*([
-                    ReplacementTransform(tex[0][u], tex_n[0][u])
-                    for u in range(3 + j*2 + 2)
-                ] + [
-                    ReplacementTransform(tex[0][u], tex_n[0][u - 2])
-                    for u in range(3 + j*2 + 6, len(tex[0]))
-                ]))
-                tex = tex_n
                 tex_n = MathTex(rf"A^{str(i+1)}="
                     + " ".join((f"Q_{u}" for u in range(j + 1)))
                     + f" Q_{j+1} R_{j+1} "
                     + " ".join((f"Q_{u}" for u in range(j + 1, i)))
                     + " ".join((f"R_{u}" for u in range(i - 1, -1, -1))))
-                self.play(*([
-                    ReplacementTransform(tex[0][u], tex_n[0][u])
-                    for u in range(3 + j*2 + 2)
-                ] + [
-                    ReplacementTransform(tex[0][u - 2], tex_n[0][u])
-                    for u in range(3 + j*2 + 6, len(tex_n[0]))
-                ]))
                 self.play(
-                    ReplacementTransform(tex[0][3 + j*2 + 2].copy(), tex_n[0][3 + j*2 + 2]),
-                    ReplacementTransform(tex[0][3 + j*2 + 2], tex_n[0][3 + j*2 + 3]),
-                    ReplacementTransform(tex[0][3 + j*2 + 3].copy(), tex_n[0][3 + j*2 + 4]),
-                    ReplacementTransform(tex[0][3 + j*2 + 3], tex_n[0][3 + j*2 + 5]),
+                    ReplacementTransform(tex[0][3 + j*2 + 2], tex_n[0][3 + j*2 + 2]),
+                    ReplacementTransform(tex[0][3 + j*2 + 3], tex_n[0][3 + j*2 + 3]),
+                    ReplacementTransform(tex[0][3 + j*2 + 4], tex_n[0][3 + j*2 + 4]),
+                    ReplacementTransform(tex[0][3 + j*2 + 5], tex_n[0][3 + j*2 + 5]),
+                    *([
+                        ReplacementTransform(tex[0][u], tex_n[0][u])
+                        for u in range(3 + j*2 + 2)
+                    ] + [
+                        ReplacementTransform(tex[0][u], tex_n[0][u])
+                        for u in range(3 + j*2 + 6, len(tex[0]))
+                    ])
                 )
                 tex = tex_n
 

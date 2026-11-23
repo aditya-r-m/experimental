@@ -1515,10 +1515,8 @@ class Projection(Scene):
             ),
         ).arrange(RIGHT).move_to(LEFT*4)
         tex_s = MathTex(r"s = \frac{1}{v_{u^\perp}^T \ v_{u^\perp}}, \ v_{u^\perp} = v - \frac{u^T v}{u^T u} u").next_to(tex, DOWN)
-        self.play(
-            Write(tex),
-            Write(tex_s),
-        )
+        self.play(Write(tex))
+        self.play(Write(tex_s))
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         tex_h = MathTex(r"Q = A R^{-1} \implies A = Q R").shift(UP)
         tex = VGroup(

@@ -1425,7 +1425,7 @@ class Projection(Scene):
             MathTex(r"\leftarrow"),
             Matrix([["u","v"]], h_buff=0.6),
             MathTex("R^{-1}"),
-        ).arrange(RIGHT, buff=0.2).move_to(LEFT*4 + DOWN*0.5)
+        ).arrange(RIGHT, buff=0.2).next_to(tex_0, DOWN, aligned_edge=LEFT)
         tex_1[0].set_column_colors(*CS[2:])
         tex_1[2].set_column_colors(*CS[2:])
         brace = Brace(tex_1[0], DOWN)

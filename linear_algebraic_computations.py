@@ -1513,7 +1513,7 @@ class Projection(Scene):
                 h_buff=2,
                 element_alignment_corner=ORIGIN,
             ),
-        ).arrange(RIGHT).move_to(LEFT*4)
+        ).arrange(RIGHT).move_to(LEFT*4.5)
         tex_s = MathTex(r"s = \frac{1}{\sqrt{v_{u^\perp}^T \ v_{u^\perp}}}, \ v_{u^\perp} = v - \frac{u^T v}{u^T u} u").next_to(tex, DOWN)
         self.play(Write(tex))
         self.play(Write(tex_s))
@@ -1597,7 +1597,7 @@ class Projection(Scene):
                 )
                 tex = tex_n
         self.play(*(
-            x.animate.set_opacity(0.3)
+            x.animate.set_opacity(0.5)
             for x in tex[0][3 + (len(tex[0]) - 3) // 2:]
         ))
 

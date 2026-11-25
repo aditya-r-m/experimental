@@ -1597,7 +1597,7 @@ class Projection(Scene):
                 )
                 tex = tex_n
         self.play(*(
-            x.animate.set_opacity(0.5)
+            x.animate.set_opacity(0.75)
             for x in tex[0][3 + (len(tex[0]) - 3) // 2:]
         ))
 

@@ -1507,7 +1507,7 @@ class Projection(Scene):
         tex = VGroup(
             MathTex(r"R^{-1} = "),
             Matrix([
-                    [r"\frac{1}{\sqrt{u^T u}}",r"(-s)\frac{u^T v}{u^T u}}"],
+                    [r"\frac{1}{\sqrt{u^T u}}",r"-s\frac{u^T v}{u^T u}}"],
                     [0,"s"],
                 ],
                 h_buff=2,

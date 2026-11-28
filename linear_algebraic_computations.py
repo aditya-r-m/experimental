@@ -1535,7 +1535,7 @@ class Projection(Scene):
             ReplacementTransform(tex[2].get_entries()[0], MathTex(r"\frac{1}{x}").move_to(tex[2].get_entries()[0])),
         )
         self.play(
-            ReplacementTransform(tex[2].get_entries()[1], MathTex(r"\frac{-yd}{x}").move_to(tex[2].get_entries()[1])),
+            ReplacementTransform(tex[2].get_entries()[1], MathTex(r"\frac{-d}{xy}").move_to(tex[2].get_entries()[1])),
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
@@ -1600,6 +1600,11 @@ class Projection(Scene):
             x.animate.set_opacity(0.75)
             for x in tex[0][3 + (len(tex[0]) - 3) // 2:]
         ))
+
+    def play_svd(self, title):
+        self.play(Create(self.axes), Create(self.unit_circle))
+        tex_0 = MathTex(r"A A^T = U \Sigma U^T")
+        tex_1 = MathTex(r"A^T A = V \Sigma V^T")
 
     def construct(self):
         selected_chapter = 4

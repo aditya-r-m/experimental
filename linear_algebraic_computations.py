@@ -9,8 +9,7 @@ Z = np.array([0., 0., 0.,])
 
 class Projection(Scene):
     def add_sound(self, path):
-        pass
-        # super().add_sound(f"media/{path}.m4a", gain=8)
+        super().add_sound(f"media/{path}.m4a", gain=8)
 
     def get_arrow(self, start, end, color):
         return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)

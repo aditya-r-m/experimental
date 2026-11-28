@@ -1539,6 +1539,7 @@ class Projection(Scene):
         self.play(
             ReplacementTransform(tex[2].get_entries()[1], MathTex(r"\frac{-d}{xy}").move_to(tex[2].get_entries()[1])),
         )
+        self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
         self.add_sound("4_3")
@@ -1599,10 +1600,6 @@ class Projection(Scene):
                     ])
                 )
                 tex = tex_n
-        self.play(*(
-            x.animate.set_opacity(0.75)
-            for x in tex[0][3 + (len(tex[0]) - 3) // 2:]
-        ))
 
     def play_svd(self, title):
         self.play(Create(self.axes), Create(self.unit_circle))

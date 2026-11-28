@@ -9,7 +9,8 @@ Z = np.array([0., 0., 0.,])
 
 class Projection(Scene):
     def add_sound(self, path):
-        super().add_sound(f"media/{path}.m4a", gain=8)
+        pass
+        # super().add_sound(f"media/{path}.m4a", gain=8)
 
     def get_arrow(self, start, end, color):
         return Arrow(start=self.axes.c2p(start), end=self.axes.c2p(end), color=color, buff=0)
@@ -1519,6 +1520,7 @@ class Projection(Scene):
         tex_s = MathTex(r"s = \frac{1}{\sqrt{v_{u^\perp}^T \ v_{u^\perp}}}, \ v_{u^\perp} = v - \frac{u^T v}{u^T u} u").next_to(tex, DOWN)
         self.play(Write(tex))
         self.play(Write(tex_s))
+        self.wait(4)
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
         tex_h = MathTex(r"Q = A R^{-1} \implies A = Q R").shift(UP)
         tex = VGroup(
@@ -1616,7 +1618,6 @@ class Projection(Scene):
         title_texts, title_arrows = self.get_titles()
         if selected_chapter == 0:
             self.add_sound("0_i")
-            Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
             self.play_introduction()
             self.wait(8)
             self.play(FadeOut(*(obj for obj in self.mobjects)))

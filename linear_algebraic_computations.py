@@ -1412,6 +1412,7 @@ class Projection(Scene):
                     V[:, j] -= R[i, j] * Q[:, i]
             return Q, R
 
+        self.add_sound("4_1")
         tex_0 = VGroup(
             Matrix([["u","v"]], h_buff=0.6),
             MathTex(r"\leftarrow A"),
@@ -1504,6 +1505,7 @@ class Projection(Scene):
             FadeOut(brace),
             FadeOut(label),
         )
+        self.add_sound("4_2")
         tex = VGroup(
             MathTex(r"R^{-1} = "),
             Matrix([
@@ -1539,6 +1541,7 @@ class Projection(Scene):
         )
         self.play(FadeOut(*(obj for obj in self.mobjects if obj != title)))
 
+        self.add_sound("4_3")
         tex_i = MathTex(r"R_i Q_i \rightarrow M_i \rightarrow Q_{i+1} R_{i+1}").move_to(UP)
         self.play(Write(tex_i))
         tex = MathTex(r"A^1 = Q_0 R_0")
@@ -1614,21 +1617,20 @@ class Projection(Scene):
         self.origin = self.axes.c2p(0, 0)
         self.unit_circle = self.get_circle((0, 0), 1, LIGHT_GRAY)
         title_texts, title_arrows = self.get_titles()
-        # if selected_chapter == 0:
-            # self.add_sound("0_i")
-            # Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
-            # self.play_introduction()
-            # self.wait(8)
-            # self.play(FadeOut(*(obj for obj in self.mobjects)))
-        # self.add_sound(f"{selected_chapter}_0")
-        # Table of Contents
-        # self.play(
-            # *(Write(title_text) for title_text in title_texts),
-            # *(GrowArrow(title_arrow) for title_arrow in title_arrows),
-        # )
-        # self.wait(8)
-        # if selected_chapter == 3: self.wait(8)
-        # self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
+        if selected_chapter == 0:
+            self.add_sound("0_i")
+            Any matrix turns the unit circle into an ellipse, with the concept similarly generlizing in higher dimensions.
+            self.play_introduction()
+            self.wait(8)
+            self.play(FadeOut(*(obj for obj in self.mobjects)))
+        self.add_sound(f"{selected_chapter}_0")
+        self.play(
+            *(Write(title_text) for title_text in title_texts),
+            *(GrowArrow(title_arrow) for title_arrow in title_arrows),
+        )
+        self.wait(8)
+        if selected_chapter == 3: self.wait(8)
+        self.play(FadeOut(*(obj for obj in self.mobjects if obj != title_texts[selected_chapter])))
         self.play(title_texts[selected_chapter].animate.scale(1.5).to_edge(UP+LEFT))
         if selected_chapter == 0: self.play_rotation_matrix(title_texts[selected_chapter])
         if selected_chapter == 1: self.play_projection_covector(title_texts[selected_chapter])
